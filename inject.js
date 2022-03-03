@@ -1,3 +1,14 @@
+window.addEventListener("message", function (event) {
+	if (
+		event.source == window &&
+		event.data &&
+		event.data.direction == "from-page-script"
+	) {
+		alert('Content script received message: "' + event.data.message + '"');
+        console.log(event.data.message);
+	}
+});
+
 /**
  * injectScript - Inject internal script to available access to the `window`
  *
