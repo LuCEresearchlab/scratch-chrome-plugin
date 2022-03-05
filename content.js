@@ -30,6 +30,7 @@ const data = [
   'sensing_current',
   'sensing_coloristouchingcolor',
   'operator_add',
+  'operator_or',
   'operator_subtract',
   'operator_round',
   'operator_random',
