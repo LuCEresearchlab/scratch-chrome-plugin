@@ -31,12 +31,20 @@ const svgns = 'http://www.w3.org/2000/svg';
 // }
 
 // eslint-disable-next-line no-undef
+
 const workspace = Blockly.getMainWorkspace();
 workspace.addChangeListener((event) => {
-	if (event.type === 'create') {
-		const { svgGroup_ } = workspace.getBlockById(event.blockId);
+  console.log(event.type);
+})
+workspace.addChangeListener((event) => {
+	if (event.type === 'endDrag') {
+		const block = workspace.getBlockById(event.blockId);
+    console.log(block.svgGroup_.querySelector('.exp'))
 
-		const svgButton = document.createElementNS(svgns, "rect");
+    if (block.parentBlock_ === null) {
+      if (block.svgGroup_.querySelector('.exp') === null) {
+        const svgButton = document.createElementNS(svgns, "rect");
+        svgButton.classList.add("exp");
         svgButton.setAttribute("data-block", event.blockId);
         svgButton.setAttribute("x", "0");
         svgButton.setAttribute("y", "-10");
@@ -45,21 +53,27 @@ workspace.addChangeListener((event) => {
         svgButton.setAttribute("fill", "#5cceee");
         // document.createElement("path");
         // svgButton.className = "myName";
-		// svgButton.setAttribute('stroke', '#AA0000');
-		// svgButton.setAttribute('fill', "#AA0000");
-		// svgButton.setAttribute('d', `
+    // svgButton.setAttribute('stroke', '#AA0000');
+    // svgButton.setAttribute('fill', "#AA0000");
+    // svgButton.setAttribute('d', `
         //     M (CX - R), CY
         //     a R,R 0 1,0 (R * 2),0
         //     a R,R 0 1,0 -(R * 2),0
         // `);
-
+  
         svgButton.addEventListener('mousedown', (ev) => {
             const blockId = ev.target.dataset.block;
             // const block = workspace.getBlockById(blockId);
             console.log(blockId)
         })
-        svgGroup_.append(svgButton);
+        block.svgGroup_.append(svgButton);
         // console.log(svgGroup_)
+      }
+    } else {
+      if (block.svgGroup_.querySelector('.exp') !== null) {
+        block.svgGroup_.removeChild(block.svgGroup_.querySelector('.exp'));
+      }
+      }
 	}
 });
 
