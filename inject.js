@@ -6,6 +6,13 @@ window.addEventListener("message", function (event) {
 	) {
 		alert('Content script received message: "' + event.data.message + '"');
         console.log(event.data.message);
+        window.postMessage(
+            {
+                direction: "from-content-script",
+                message: "Blockly.getMainWorkspace()",
+            },
+            "*"
+        );
 	}
 });
 
