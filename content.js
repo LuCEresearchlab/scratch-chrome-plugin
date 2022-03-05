@@ -122,16 +122,17 @@ if (Blockly) {
     if (event.type === 'endDrag') {
       const block = workspace.getBlockById(event.blockId);
       console.log(block.type);
-      if (block.parentBlock_ === null) {
-        if (block.svgGroup_.querySelector('.exp') === null && data.includes(block.type)) {
+      if (data.includes(block.type)
+        && (block.parentBlock_ === null || !data.includes(block.parentBlock_.type))) {
+        if (block.svgGroup_.querySelector('.exp') === null) {
           const svgns = 'http://www.w3.org/2000/svg';
           const svgButton = document.createElementNS(svgns, 'rect');
           svgButton.classList.add('exp');
           svgButton.setAttribute('data-block', event.blockId);
-          svgButton.setAttribute('x', '0');
+          svgButton.setAttribute('x', '-10');
           svgButton.setAttribute('y', '-10');
-          svgButton.setAttribute('width', '100');
-          svgButton.setAttribute('height', '100');
+          svgButton.setAttribute('width', '30');
+          svgButton.setAttribute('height', '30');
           svgButton.setAttribute('fill', '#5cceee');
           svgButton.addEventListener('mousedown', (ev) => {
             const blockId = ev.target.dataset.block;
