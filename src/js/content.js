@@ -124,8 +124,10 @@ if (Blockly) {
       const block = workspace.getBlockById(event.blockId);
       if (!block) return;
       console.log(block.type);
-      if (data.includes(block.type)
-        && (block.parentBlock_ === null || !data.includes(block.parentBlock_.type))) {
+      if (
+        data.includes(block.type)
+        && (block.parentBlock_ === null || !data.includes(block.parentBlock_.type))
+      ) {
         if (block.svgGroup_.querySelector(':scope > .exp') === null) {
           const svgns = 'http://www.w3.org/2000/svg';
           const svgButton = document.createElementNS(svgns, 'rect');
@@ -150,7 +152,9 @@ if (Blockly) {
           block.svgGroup_.append(svgButton);
         }
       } else if (block.svgGroup_.querySelector(':scope > .exp') !== null) {
-        block.svgGroup_.removeChild(block.svgGroup_.querySelector(':scope > .exp'));
+        block.svgGroup_.removeChild(
+          block.svgGroup_.querySelector(':scope > .exp'),
+        );
       }
     }
   });

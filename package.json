@@ -1,23 +1,52 @@
 {
   "name": "scratch-chrome-plugin",
   "version": "0.0.1",
-  "description": "Chrome extension to create expression trees from Scratch blocks",
-  "main": "index.js",
+  "description": "Source of Scratch expressions chrome plugin",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "build": "NODE_ENV=development BABEL_ENV=development webpack --mode=development",
+    "build-production": "NODE_ENV=production BABEL_ENV=production webpack --mode=production"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LuCEresearchlab/scratch-chrome-plugin.git"
   },
-  "author": "Alen Sugimoto",
-  "license": "MIT",
+  "keywords": [
+    "scratch",
+    "expressions"
+  ],
+  "author": {
+    "name": "Alen Sugimoto",
+    "email": "alen.sugimoto@usi.ch"
+  },
+  "contributors": [
+    {
+      "name": "Andrea Gallidabino",
+      "email": "andrea.gallidabino@usi.ch"
+    }
+  ],
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/LuCEresearchlab/scratch-chrome-plugin/issues"
   },
   "homepage": "https://github.com/LuCEresearchlab/scratch-chrome-plugin#readme",
   "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@babel/preset-react": "^7.16.7",
+    "babel-loader": "^8.2.3",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^10.2.4",
+    "css-loader": "^6.7.0",
     "eslint": "^8.10.0",
-    "eslint-config-airbnb-base": "^15.0.0"
+    "eslint-config-airbnb-base": "^15.0.0",
+    "file-loader": "^6.2.0",
+    "html-loader": "^3.1.0",
+    "html-webpack-plugin": "^5.5.0",
+    "mocha": "^9.2.1",
+    "style-loader": "^3.3.1",
+    "terser-webpack-plugin": "^5.3.1",
+    "webpack": "^5.70.0",
+    "webpack-cli": "^4.9.2",
+    "write-file-webpack-plugin": "^4.5.1"
   }
 }

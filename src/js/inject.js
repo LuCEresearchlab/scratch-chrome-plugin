@@ -4,7 +4,15 @@ window.addEventListener('message', (event) => {
     && event.data
     && event.data.direction === 'from-page-script'
   ) {
-    alert('Content script received message: "' + event.data.message + '"');
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://localhost:3000/translation', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = () => {
+      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+        console.log('Request finished.');
+      }
+    };
+    xhr.send(event.data.message);
   }
 });
 
