@@ -13,7 +13,9 @@ const fileExtensions = ['png'];
 const options = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
+    popup: path.join(__dirname, 'src', 'js', 'popup.js'),
     inject: path.join(__dirname, 'src', 'js', 'inject.js'),
+    options: path.join(__dirname, 'src', 'js', 'options.js'),
     content: path.join(__dirname, 'src', 'js', 'content.js'),
     background: path.join(__dirname, 'src', 'js', 'background.js'),
   },
@@ -49,6 +51,22 @@ const options = {
   module: {
     rules: [
       {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env', '@babel/preset-react'],
+            plugins: [
+              ['@babel/plugin-transform-runtime',
+                {
+                  regenerator: true,
+                }],
+            ],
+          },
+        },
+      },
+      {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
         exclude: /node_modules/,
@@ -67,9 +85,6 @@ const options = {
         exclude: /node_modules/,
       },
     ],
-  },
-  resolve: {
-    // alias,
   },
 
   optimization: {

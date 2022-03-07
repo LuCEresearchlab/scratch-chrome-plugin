@@ -4,7 +4,7 @@
   "description": "Source of Scratch expressions chrome plugin",
   "scripts": {
     "test": "mocha",
-    "build": "NODE_ENV=development BABEL_ENV=development webpack --mode=development",
+    "build": "NODE_ENV=development BABEL_ENV=development webpack --mode=development --watch",
     "build-production": "NODE_ENV=production BABEL_ENV=production webpack --mode=production"
   },
   "repository": {
@@ -32,13 +32,17 @@
   "homepage": "https://github.com/LuCEresearchlab/scratch-chrome-plugin#readme",
   "devDependencies": {
     "@babel/core": "^7.17.5",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
+    "@babel/runtime": "^7.17.2",
     "babel-loader": "^8.2.3",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^10.2.4",
     "css-loader": "^6.7.0",
     "eslint": "^8.10.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-react": "^7.29.3",
     "file-loader": "^6.2.0",
     "html-loader": "^3.1.0",
     "html-webpack-plugin": "^5.5.0",
@@ -48,5 +52,10 @@
     "webpack": "^5.70.0",
     "webpack-cli": "^4.9.2",
     "write-file-webpack-plugin": "^4.5.1"
+  },
+  "dependencies": {
+    "prop-types": "^15.8.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   }
 }
