@@ -4,7 +4,7 @@ window.addEventListener('message', (event) => {
     && event.data
     && event.data.direction === 'from-page-script'
   ) {
-    alert('Content script received message: "' + event.data.message + '"');
+    alert(`Content script received message: " ${event.data.message}"`);
   }
 });
 
