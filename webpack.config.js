@@ -8,7 +8,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const TerserPlugin = require('terser-webpack-plugin');
 
-const fileExtensions = ['png'];
+const fileExtensions = ['png', 'jpg', 'jpeg', 'gif', 'svg'];
 
 const options = {
   mode: process.env.NODE_ENV || 'development',
