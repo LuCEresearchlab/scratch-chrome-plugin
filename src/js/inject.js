@@ -1,18 +1,29 @@
 window.addEventListener('message', (event) => {
   if (
-    event.source === window
-    && event.data
-    && event.data.direction === 'from-page-script'
+    event.source === window &&
+    event.data &&
+    event.data.direction === 'from-page-script'
   ) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://localhost:3000/translation', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = () => {
-      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-        console.log('Request finished.');
-      }
+    const data = { id: event.data.id, xml: event.data.xml };
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(data),
     };
-    xhr.send(event.data.message);
+    fetch('http://localhost:3000/', options)
+      .then((response) => {
+        if (!response.ok) {
+          throw response;
+        } else {
+          return response.json();
+        }
+      })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch(console.error);
   }
 });
 

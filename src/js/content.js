@@ -27,14 +27,15 @@ if (blockly) {
       ) {
         if (block.svgGroup_.querySelector(expressionButtonQuerySelector) === null) {
           const { blockId } = event;
+          const { Xml } = blockly;
 
           const onClickListener = (e) => {
             e.preventDefault();
-            const b = workspace.getBlockById(blockId).toString();
             window.postMessage(
               {
                 direction: 'from-page-script',
-                message: b,
+                id: blockId,
+                xml: Xml.domToText(Xml.workspaceToDom(workspace)),
               },
               '*',
             );
@@ -42,10 +43,9 @@ if (blockly) {
 
           const svgButton = document.createElementNS(svgNS, 'g');
           svgButton.classList.add(buttonClassName);
-          svgButton.style.pointerEvents = 'auto';
           svgButton.style.cursor = 'pointer';
           svgButton.setAttribute('data-block', blockId);
-          svgButton.addEventListener('click', onClickListener);
+          svgButton.addEventListener('mousedown', onClickListener);
           block.svgGroup_.append(svgButton);
           ReactDOM.render(<ETLogo />, svgButton);
         }
