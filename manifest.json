@@ -36,6 +36,8 @@
     }
   ],
 
+  "host_permissions": ["http://*/*"],
+
   "web_accessible_resources": [
     {
       "resources": ["content.js"],

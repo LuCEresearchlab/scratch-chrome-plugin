@@ -7,7 +7,6 @@ window.addEventListener('message', (event) => {
     const data = { id: event.data.id, xml: event.data.xml };
     const options = {
       method: 'POST',
-      mode: 'no-cors',
       headers: {
         'Content-type': 'application/json',
       },
