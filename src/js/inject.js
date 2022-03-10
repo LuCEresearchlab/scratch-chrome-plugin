@@ -1,29 +1,22 @@
 window.addEventListener('message', (event) => {
   if (
-    event.source === window &&
-    event.data &&
-    event.data.direction === 'from-page-script'
+    event.source === window
+    && event.data
+    && event.data.direction === 'from-page-script'
   ) {
     const data = { id: event.data.id, xml: event.data.xml };
     const options = {
       method: 'POST',
+      mode: 'no-cors',
       headers: {
         'Content-type': 'application/json',
       },
       body: JSON.stringify(data),
     };
-    fetch('http://localhost:3000/', options)
-      .then((response) => {
-        if (!response.ok) {
-          throw response;
-        } else {
-          return response.json();
-        }
-      })
-      .then((result) => {
-        console.log(result);
-      })
-      .catch(console.error);
+    const url = 'http://localhost:3000/api';
+    chrome.runtime.sendMessage({ url, options }, (response) => {
+      console.log(response);
+    });
   }
 });
 
