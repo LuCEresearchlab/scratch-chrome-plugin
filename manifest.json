@@ -43,7 +43,5 @@
       "resources": ["content.js"],
       "matches": ["https://scratch.mit.edu/*"]
     }
-  ],
-
-  "options_page": "options.html"
+  ]
 }

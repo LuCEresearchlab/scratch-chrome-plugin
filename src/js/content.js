@@ -27,7 +27,7 @@ function createContent(block, plugAs) {
     begin = end + e.string.length;
   });
   if (s.length - begin > 0) {
-    content.push({ string: s.substring(begin) });
+    content.push({ content: s.substring(begin) });
   }
   return content;
 }
@@ -57,7 +57,7 @@ const postOrderTraversal = (block, isRoot, diagram, parentLevel, childNum) => {
     .getChildren(true)
     .map((child, i) => postOrderTraversal(child, false, diagram, parentLevel + 1, i));
   const plugA = createNode(block, plugAs, isRoot, diagram, parentLevel, childNum);
-  return { plugA, string: block.toString() };
+  return { plugA, content: block.toString() };
 };
 
 const createDiagram = (root) => {
@@ -92,7 +92,7 @@ if (blockly) {
             window.postMessage(
               {
                 direction: 'from-page-script',
-                diagram: JSON.stringify(d),
+                payload: { diagram: JSON.stringify(d) },
               },
               '*',
             );
