@@ -85,17 +85,14 @@ if (blockly) {
       ) {
         if (block.svgGroup_.querySelector(expressionButtonQuerySelector) === null) {
           const { blockId } = event;
-          const { Xml } = blockly;
 
           const onClickListener = (e) => {
             e.preventDefault();
             const d = createDiagram(workspace.getBlockById(blockId));
-            console.log(JSON.stringify(d));
             window.postMessage(
               {
                 direction: 'from-page-script',
-                id: blockId,
-                xml: Xml.domToText(Xml.workspaceToDom(workspace)),
+                diagram: JSON.stringify(d),
               },
               '*',
             );

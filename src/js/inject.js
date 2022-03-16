@@ -23,18 +23,8 @@ window.addEventListener('message', (event) => {
     && event.data
     && event.data.direction === 'from-page-script'
   ) {
-    const data = { id: event.data.id, xml: event.data.xml };
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    };
-    const url = 'http://localhost:3000/api';
-    chrome.runtime.sendMessage({ url, options }, (response) => {
-      console.log(response);
-    });
+    const { diagram } = event.data;
+    chrome.storage.sync.set({ diagram });
   }
 });
 

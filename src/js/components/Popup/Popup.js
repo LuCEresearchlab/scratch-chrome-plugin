@@ -1,3 +1,4 @@
+import propTypes from 'prop-types';
 import React from 'react';
 // import PropTypes from 'prop-types';
 
@@ -7,7 +8,7 @@ const setPageBackgroundColor = () => {
   });
 };
 
-function Popup() {
+function Popup({ message }) {
   const changeColor = async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
@@ -25,12 +26,18 @@ function Popup() {
         }}
         onClick={changeColor}
       >
-        Hello
+        { message }
       </div>
     </>
   );
 }
 
-Popup.propTypes = {};
+Popup.propTypes = {
+  message: propTypes.string,
+};
+
+Popup.defaultProps = {
+  message: '',
+};
 
 export default Popup;

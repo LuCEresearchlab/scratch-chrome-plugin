@@ -3,7 +3,9 @@ import { render } from 'react-dom';
 
 import Popup from './components/Popup/Popup';
 
-render(
-<Popup />,
-window.document.getElementById('popup-container'),
-);
+chrome.storage.sync.get('diagram', ({ diagram }) => {
+  render(
+    <Popup message={diagram} />,
+    window.document.getElementById('popup-container'),
+  );
+});
