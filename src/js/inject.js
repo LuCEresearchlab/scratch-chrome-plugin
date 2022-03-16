@@ -1,3 +1,6 @@
+
+import { setLocalStorage } from './utils/chrome';
+
 /**
  * injectScript - Inject internal script to available access to the `window`
  *
@@ -18,14 +21,13 @@ function main() {
 }
 
 window.addEventListener('message', (event) => {
-  if (
-    event.source === window
-    && event.data
-    && event.data.direction === 'from-page-script'
-  ) {
-    const { diagram } = event.data;
-    chrome.storage.sync.set({ diagram });
-    chrome.runtime.sendMessage({ url: 'popup.html' });
+  const { source, data } = event;
+  if (source === window && data) {
+    const { direction, payload } = data;
+    if (direction === 'from-page-script') {
+      const { diagram } = payload;
+      setLocalStorage({ diagram }, () => console.log('Saved'));
+    }
   }
 });
 

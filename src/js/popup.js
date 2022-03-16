@@ -1,11 +1,16 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import Popup from './components/Popup/Popup';
+import Tree from './components/Tree/Tree';
 
-chrome.storage.sync.get('diagram', ({ diagram }) => {
+import { clearBadge, getLocalStorage } from './utils/chrome';
+
+getLocalStorage(['diagram'], (data) => {
+  const { diagram } = data;
   render(
-    <Popup message={diagram} />,
+    <Tree diagram={JSON.parse(diagram)} />,
     window.document.getElementById('popup-container'),
   );
 });
+
+clearBadge();

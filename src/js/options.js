@@ -1,9 +1,0 @@
-import React from 'react';
-import { render } from 'react-dom';
-
-import Options from './components/Options/Options';
-
-render(
-<Options />,
-window.document.getElementById('options-container'),
-);

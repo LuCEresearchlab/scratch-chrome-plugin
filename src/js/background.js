@@ -1,13 +1,9 @@
-// background.js
+import { onInstalled, setBadge, onChangeLocalStorage } from './utils/chrome';
 
-const color = '#3aa757';
-
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.set({ color });
-  console.log('Default background color set to %cgreen', `color: ${color}`);
+onInstalled(() => {
+  console.log('Installed correctly');
 });
 
-chrome.runtime.onMessage.addListener((request) => {
-  chrome.tabs.create(request);
-  return true; // respond asynchronously.
+onChangeLocalStorage((changes, namespace) => {
+  setBadge('change');
 });
