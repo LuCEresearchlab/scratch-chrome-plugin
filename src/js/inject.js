@@ -25,6 +25,7 @@ window.addEventListener('message', (event) => {
   ) {
     const { diagram } = event.data;
     chrome.storage.sync.set({ diagram });
+    chrome.runtime.sendMessage({ url: 'popup.html' });
   }
 });
 
