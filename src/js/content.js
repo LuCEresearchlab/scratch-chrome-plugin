@@ -21,7 +21,7 @@ function createContent(block, plugAs) {
       throw Error('Incorrect number of plugs');
     }
     if (end - begin > 0) {
-      content.push({ string: s.substring(begin, end) });
+      content.push({ content: s.substring(begin, end) });
     }
     content.push(e.plugA);
     begin = end + e.string.length;
@@ -32,40 +32,49 @@ function createContent(block, plugAs) {
   return content;
 }
 
-function createEdge(plugB, diagram, parentLevel, childNum) {
+function createEdge(plugB, diagram, parentId, childNum) {
   const edge = {
-    plugA: { valA: parentLevel, valB: childNum },
+    plugA: { valA: parentId, valB: childNum },
     plugB,
   };
   diagram.edges.push(edge);
   return edge.plugA;
 }
 
-const createNode = (block, plugAs, isRoot, diagram, parentLevel, childNum) => {
-  const nodePlug = { valA: parentLevel + 1, valB: diagram.nodes.length };
+let id = 0;
+
+const create = () => {
+  const ans = id;
+  id += 1;
+  return ans;
+};
+
+const createNode = (block, plugAs, isRoot, diagram, thisId, parentId, childNum) => {
+  const nodePlug = { valA: thisId, valB: 0 };
   const content = createContent(block, plugAs);
   const node = { nodePlug, content };
   diagram.nodes.push(node);
   if (isRoot) {
     diagram.root = node;
   }
-  return isRoot ? null : createEdge(nodePlug, diagram, parentLevel, childNum);
+  return isRoot ? null : createEdge(nodePlug, diagram, parentId, childNum);
 };
 
-const postOrderTraversal = (block, isRoot, diagram, parentLevel, childNum) => {
+const postOrderTraversal = (block, isRoot, diagram, thisId, parentId, childNum) => {
   const plugAs = block
     .getChildren(true)
-    .map((child, i) => postOrderTraversal(child, false, diagram, parentLevel + 1, i));
-  const plugA = createNode(block, plugAs, isRoot, diagram, parentLevel, childNum);
-  return { plugA, content: block.toString() };
+    .map((child, i) => postOrderTraversal(child, false, diagram, create(), thisId, i + 1));
+  const plugA = createNode(block, plugAs, isRoot, diagram, thisId, parentId, childNum);
+  return { plugA, string: block.toString() };
 };
 
 const createDiagram = (root) => {
+  id = 0;
   const diagram = {
     nodes: [],
     edges: [],
   };
-  postOrderTraversal(root, true, diagram, -1, -1);
+  postOrderTraversal(root, true, diagram, create(), -1, -1);
   return diagram;
 };
 
@@ -89,6 +98,7 @@ if (blockly) {
           const onClickListener = (e) => {
             e.preventDefault();
             const d = createDiagram(workspace.getBlockById(blockId));
+            console.log(JSON.stringify(d));
             window.postMessage(
               {
                 direction: 'from-page-script',
