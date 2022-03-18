@@ -83,8 +83,7 @@ if (blockly) {
   workspace.addChangeListener((event) => {
     const buttonClassName = 'expressionButton';
     const expressionButtonQuerySelector = `:scope > .${buttonClassName}`;
-
-    if (event.type === 'endDrag') {
+    if (event.type === 'move') {
       const block = workspace.getBlockById(event.blockId);
       if (!block) return;
       console.log(block.type);
