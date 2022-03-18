@@ -1,4 +1,4 @@
-const data = [
+const scratchExpBlocks = [
   'motion_direction',
   'motion_yposition',
   'motion_xposition',
@@ -116,4 +116,4 @@ const data = [
   'argument_reporter_boolean',
 ];
 
-export default data;
+export default scratchExpBlocks;

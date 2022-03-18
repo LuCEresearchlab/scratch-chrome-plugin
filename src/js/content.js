@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import data from '../data/scratch-expression-blocks';
+import scratchExpBlocks from '../data/scratch-expression-blocks';
 import ETLogo from './components/ETLogo/ETLogo';
 
 // Namespace for svg
@@ -88,8 +88,8 @@ if (blockly) {
       if (!block) return;
       console.log(block.type);
       if (
-        data.includes(block.type)
-        && (block.parentBlock_ === null || !data.includes(block.parentBlock_.type))
+        scratchExpBlocks.includes(block.type)
+        && (block.parentBlock_ === null || !scratchExpBlocks.includes(block.parentBlock_.type))
       ) {
         if (block.svgGroup_.querySelector(expressionButtonQuerySelector) === null) {
           const { blockId } = event;
