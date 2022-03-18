@@ -3,7 +3,23 @@ import { render } from 'react-dom';
 
 import Tree from './components/Tree/Tree';
 
-import { clearBadge, getLocalStorage } from './utils/chrome';
+import { clearBadge, getLocalStorage, setLocalStorage } from './utils/chrome';
+
+let enabled = true;
+const toggle = document.getElementById('toggle');
+
+getLocalStorage('enabled', (data) => {
+  if (data.enabled !== undefined) {
+    enabled = !!data.enabled;
+  }
+  toggle.textContent = enabled ? 'Disable' : 'Enable';
+});
+
+toggle.onclick = () => {
+  enabled = !enabled;
+  toggle.textContent = enabled ? 'Disable' : 'Enable';
+  setLocalStorage({ enabled });
+};
 
 getLocalStorage(['diagram'], (data) => {
   const { diagram } = data;

@@ -11,6 +11,10 @@ const svgNS = 'http://www.w3.org/2000/svg';
 // eslint-disable-next-line no-undef
 const blockly = Blockly;
 
+const buttonClassName = 'expressionButton';
+
+let enabled = true;
+
 function createContent(block, plugAs) {
   const s = block.toString();
   const content = [];
@@ -78,48 +82,81 @@ const createDiagram = (root) => {
   return diagram;
 };
 
+function onBlocklyEvent(event) {
+  const workspace = blockly.getMainWorkspace();
+  if (event.type === 'move') {
+    const block = workspace.getBlockById(event.blockId);
+    const expressionButtonQuerySelector = `:scope > .${buttonClassName}`;
+    if (!block) return;
+    console.log(block.type);
+    console.log(enabled);
+    if (
+      scratchExpBlocks.includes(block.type)
+      && (block.parentBlock_ === null || !scratchExpBlocks.includes(block.parentBlock_.type))
+    ) {
+      if (block.svgGroup_.querySelector(expressionButtonQuerySelector) === null) {
+        const { blockId } = event;
+
+        const onClickListener = (e) => {
+          e.preventDefault();
+          const d = createDiagram(workspace.getBlockById(blockId));
+          console.log(JSON.stringify(d));
+          window.postMessage(
+            {
+              direction: 'from-page-script',
+              payload: { diagram: JSON.stringify(d) },
+            },
+            '*',
+          );
+        };
+
+        const svgButton = document.createElementNS(svgNS, 'g');
+        svgButton.classList.add(buttonClassName);
+        svgButton.style.cursor = 'pointer';
+        svgButton.style.display = enabled ? 'block' : 'none';
+        svgButton.setAttribute('data-block', blockId);
+        svgButton.addEventListener('mousedown', onClickListener);
+        block.svgGroup_.append(svgButton);
+        ReactDOM.render(<ETLogo />, svgButton);
+      }
+    } else if (block.svgGroup_.querySelector(expressionButtonQuerySelector) !== null) {
+      block.svgGroup_.removeChild(
+        block.svgGroup_.querySelector(expressionButtonQuerySelector),
+      );
+    }
+  }
+}
+
+function handleEnabledChanged(e) {
+  if (enabled === e) return;
+  enabled = e;
+  const allButtons = document.querySelectorAll(`.${buttonClassName}`);
+  allButtons.forEach((button) => {
+    button.style.display = enabled ? 'block' : 'none';
+  });
+}
+
+// receive response/notification for enabled
+window.addEventListener('message', (event) => {
+  const { source, data } = event;
+  if (source === window && data) {
+    const { direction, payload } = data;
+    if (direction === 'from-content-script') {
+      handleEnabledChanged(!!payload.enabled);
+    }
+  }
+});
+
+// send request for enabled
+window.postMessage(
+  {
+    direction: 'from-new-page-script',
+    payload: {},
+  },
+  '*',
+);
+
 if (blockly) {
   const workspace = blockly.getMainWorkspace();
-  workspace.addChangeListener((event) => {
-    const buttonClassName = 'expressionButton';
-    const expressionButtonQuerySelector = `:scope > .${buttonClassName}`;
-    if (event.type === 'move') {
-      const block = workspace.getBlockById(event.blockId);
-      if (!block) return;
-      console.log(block.type);
-      if (
-        scratchExpBlocks.includes(block.type)
-        && (block.parentBlock_ === null || !scratchExpBlocks.includes(block.parentBlock_.type))
-      ) {
-        if (block.svgGroup_.querySelector(expressionButtonQuerySelector) === null) {
-          const { blockId } = event;
-
-          const onClickListener = (e) => {
-            e.preventDefault();
-            const d = createDiagram(workspace.getBlockById(blockId));
-            console.log(JSON.stringify(d));
-            window.postMessage(
-              {
-                direction: 'from-page-script',
-                payload: { diagram: JSON.stringify(d) },
-              },
-              '*',
-            );
-          };
-
-          const svgButton = document.createElementNS(svgNS, 'g');
-          svgButton.classList.add(buttonClassName);
-          svgButton.style.cursor = 'pointer';
-          svgButton.setAttribute('data-block', blockId);
-          svgButton.addEventListener('mousedown', onClickListener);
-          block.svgGroup_.append(svgButton);
-          ReactDOM.render(<ETLogo />, svgButton);
-        }
-      } else if (block.svgGroup_.querySelector(expressionButtonQuerySelector) !== null) {
-        block.svgGroup_.removeChild(
-          block.svgGroup_.querySelector(expressionButtonQuerySelector),
-        );
-      }
-    }
-  });
+  workspace.addChangeListener(onBlocklyEvent);
 }

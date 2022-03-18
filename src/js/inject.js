@@ -1,5 +1,4 @@
-
-import { setLocalStorage } from './utils/chrome';
+import { getLocalStorage, onChangeLocalStorage, setLocalStorage } from './utils/chrome';
 
 /**
  * injectScript - Inject internal script to available access to the `window`
@@ -20,6 +19,22 @@ function main() {
   injectScript(chrome.runtime.getURL('content.js'), 'body');
 }
 
+function notifyPageScript(enabled) {
+  window.postMessage(
+    {
+      direction: 'from-content-script',
+      payload: { enabled },
+    },
+    '*',
+  );
+}
+
+onChangeLocalStorage((changes) => {
+  const key = changes.enabled;
+  if (!key) return;
+  notifyPageScript(key.newValue);
+});
+
 window.addEventListener('message', (event) => {
   const { source, data } = event;
   if (source === window && data) {
@@ -27,6 +42,10 @@ window.addEventListener('message', (event) => {
     if (direction === 'from-page-script') {
       const { diagram } = payload;
       setLocalStorage({ diagram }, () => console.log('Saved'));
+    } else if (direction === 'from-new-page-script') {
+      getLocalStorage('enabled', (d) => {
+        notifyPageScript(d.enabled);
+      });
     }
   }
 });
