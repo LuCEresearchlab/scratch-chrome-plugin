@@ -15,72 +15,100 @@ const buttonClassName = 'expressionButton';
 
 let enabled = true;
 
-function createContent(block, plugAs) {
-  const s = block.toString();
-  const content = [];
-  let begin = 0;
-  plugAs.forEach((e) => {
-    const end = s.indexOf(e.string, begin);
-    if (end === -1) {
-      throw Error('Incorrect number of plugs');
-    }
-    if (end - begin > 0) {
-      content.push({ content: s.substring(begin, end) });
-    }
-    content.push(e.plugA);
-    begin = end + e.string.length;
-  });
-  if (s.length - begin > 0) {
-    content.push({ content: s.substring(begin) });
-  }
-  return content;
-}
-
-function createEdge(plugB, diagram, parentId, childNum) {
-  const edge = {
-    plugA: { valA: parentId, valB: childNum },
-    plugB,
-  };
-  diagram.edges.push(edge);
-  return edge.plugA;
-}
-
 let id = 0;
 
-const create = () => {
+function newID() {
   const ans = id;
   id += 1;
   return ans;
-};
+}
 
-const createNode = (block, plugAs, isRoot, diagram, thisId, parentId, childNum) => {
-  const nodePlug = { valA: thisId, valB: 0 };
-  const content = createContent(block, plugAs);
-  const node = { nodePlug, content };
+function toDiagram(block, diagram, parentId, thisId, t) {
+  const node = {
+    nodePlug: { valA: thisId, valB: 0 },
+    content: [],
+  };
+  let o = [];
+  const n = t || '?';
+  // eslint-disable-next-line no-underscore-dangle
+  if (block.collapsed_) {
+    node.content.push({
+      // eslint-disable-next-line no-underscore-dangle
+      content: block.getInput('_TEMP_COLLAPSED_INPUT').fieldRow[0].text_.trim() || '???',
+    });
+  } else {
+    block.inputList.forEach((a, i) => {
+      a.fieldRow.forEach((r) => {
+        // eslint-disable-next-line no-undef
+        if (r.menuGenerator_ && !r.getValue()) {
+          // if r instanceof Blockly.FieldDropdown
+          o.push(n);
+        } else {
+          o.push(r.getText());
+        }
+      });
+      if (!a.connection) {
+        return;
+      }
+      const str = o.join(' ').trim();
+      if (str.length === 0) {
+        if (node.content.length !== 0) {
+          node.content.push({
+            content: ' ',
+          });
+        }
+      } else {
+        node.content.push({
+          content: node.content.length === 0 ? `${str} ` : ` ${str} `,
+        });
+      }
+      o = [];
+      const childId = newID();
+      const plugA = {
+        valA: thisId,
+        valB: i + 1,
+      };
+      node.content.push(plugA);
+      const edge = {
+        plugA,
+        plugB: {
+          valA: childId,
+          valB: 0,
+        },
+      };
+      diagram.edges.push(edge);
+      if (a.connection.targetBlock()) {
+        toDiagram(a.connection.targetBlock(), diagram, thisId, childId, t);
+      } else {
+        diagram.nodes.push({
+          nodePlug: { valA: childId, valB: 0 },
+          content: [],
+        });
+      }
+    });
+    if (o.length > 0) {
+      const str = o.join(' ').trim();
+      node.content.push({
+        content: node.content.length === 0 ? str : ` ${str}`,
+      });
+      o = [];
+    }
+  }
   diagram.nodes.push(node);
-  if (isRoot) {
+  if (parentId < 0) {
     diagram.root = node;
   }
-  return isRoot ? null : createEdge(nodePlug, diagram, parentId, childNum);
-};
+}
 
-const postOrderTraversal = (block, isRoot, diagram, thisId, parentId, childNum) => {
-  const plugAs = block
-    .getChildren(true)
-    .map((child, i) => postOrderTraversal(child, false, diagram, create(), thisId, i + 1));
-  const plugA = createNode(block, plugAs, isRoot, diagram, thisId, parentId, childNum);
-  return { plugA, string: block.toString() };
-};
-
-const createDiagram = (root) => {
+function createDiagram(block) {
   id = 0;
   const diagram = {
     nodes: [],
     edges: [],
   };
-  postOrderTraversal(root, true, diagram, create(), -1, -1);
+  toDiagram(block, diagram, -1, newID());
   return diagram;
-};
+}
 
 function onBlocklyEvent(event) {
   const workspace = blockly.getMainWorkspace();

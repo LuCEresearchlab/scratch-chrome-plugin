@@ -10,8 +10,6 @@ function Tree({ diagram }) {
     edges,
     selectedRootNode,
   } = useMemo(() => serviceToTutor(diagram), [diagram]);
-
-
   return (
     <>
       <ExpressionTreeEditor
