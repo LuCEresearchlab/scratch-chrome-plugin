@@ -23,10 +23,15 @@ function newID() {
   return ans;
 }
 
+function connectionToType(con) {
+  return typeof con.check_[0] === 'boolean' ? 'Any' : con.check_[0];
+}
+
 function toDiagram(block, diagram, parentId, thisId, t) {
   const node = {
     nodePlug: { valA: thisId, valB: 0 },
     content: [],
+    type: connectionToType(block.outputConnection),
   };
   let o = [];
   const n = t || '?';
@@ -83,6 +88,7 @@ function toDiagram(block, diagram, parentId, thisId, t) {
         diagram.nodes.push({
           nodePlug: { valA: childId, valB: 0 },
           content: [],
+          type: connectionToType(a.connection),
         });
       }
     });
