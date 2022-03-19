@@ -5,14 +5,13 @@ import { ExpressionTreeEditor } from 'react-expression-tree';
 import serviceToTutor from '../../utils/serviceToTutor';
 
 function Tree({ diagram }) {
-  console.log(diagram)
   const {
     nodes,
     edges,
-    root,
+    selectedRootNode,
   } = useMemo(() => serviceToTutor(diagram), [diagram]);
 
-  console.log(nodes)
+
   return (
     <>
       <ExpressionTreeEditor
@@ -21,7 +20,7 @@ function Tree({ diagram }) {
         height={600}
         nodes={nodes}
         edges={edges}
-        root={root}
+        selectedRootNode={selectedRootNode}
       />
     </>
   );
