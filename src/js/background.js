@@ -1,4 +1,10 @@
-import { onInstalled, setBadge, onChangeLocalStorage } from './utils/chrome';
+import {
+  onInstalled,
+  setBadge,
+  onChangeLocalStorage,
+  onResourceRequest,
+  getResourceURL,
+} from './utils/chrome';
 
 onInstalled(() => {
   console.log('Installed correctly');

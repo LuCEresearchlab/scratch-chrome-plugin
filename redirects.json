@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": { 
+      "type": "redirect",
+      "redirect": { 
+        "extensionPath": "/modified.common.bundle.js" 
+      }
+    },
+    "condition": {
+      "urlFilter": "scratch.mit.edu/js/common.bundle.js"
+    }
+  }
+]

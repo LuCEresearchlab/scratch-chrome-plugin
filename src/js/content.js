@@ -2,6 +2,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import scratchVM from 'scratch-vm';
+
 import scratchExpBlocks from '../data/scratch-expression-blocks';
 import ETLogo from './components/ETLogo/ETLogo';
 

@@ -27,3 +27,15 @@ export function setLocalStorage(data, callback) {
 export function getLocalStorage(keys, callback) {
   chrome.storage.local.get(keys, callback);
 }
+
+export function onResourceRequest(callback, filter, extra) {
+  chrome.webRequest.onBeforeRequest.addListener(callback, filter, extra);
+}
+
+export function onResponseStarted(callback, filter, extra) {
+  chrome.webRequest.onResponseStarted.addListener(callback, filter, extra);
+}
+
+export function getResourceURL(filename) {
+  return chrome.runtime.getURL(filename);
+}

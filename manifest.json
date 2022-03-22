@@ -16,7 +16,23 @@
     "service_worker": "background.js"
   },
 
-  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "permissions": [
+    "storage",
+    "scripting",
+    "declarativeNetRequest"
+  ],
+
+  "declarative_net_request": {
+    "rule_resources": [{
+      "id": "redirects",
+      "enabled": true,
+      "path": "redirects.json"
+    }]
+  },
+
+  "host_permissions": [
+    "*://scratch.mit.edu/*"
+  ],
 
   "action": {
     "default_popup": "popup.html",
@@ -30,18 +46,17 @@
 
   "content_scripts": [
     {
-      "matches": ["https://scratch.mit.edu/*"],
+      "matches": ["*://scratch.mit.edu/*"],
       "js": ["inject.js"],
       "all_frames": true
     }
   ],
 
-  "host_permissions": ["http://*/*"],
 
   "web_accessible_resources": [
     {
-      "resources": ["content.js"],
-      "matches": ["https://scratch.mit.edu/*"]
+      "resources": ["content.js", "modified.common.bundle.js"],
+      "matches": ["*://scratch.mit.edu/*"]
     }
   ]
 }

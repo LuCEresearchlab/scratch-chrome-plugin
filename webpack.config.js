@@ -37,6 +37,8 @@ const options = {
       patterns: [
         { from: path.join(__dirname, 'logos'), to: 'logos' },
         path.join(__dirname, 'manifest.json'),
+        path.join(__dirname, 'redirects.json'),
+        path.join(__dirname, 'modifiedFiles/modified.common.bundle.js'),
       ],
     }),
     new WriteFilePlugin(),
