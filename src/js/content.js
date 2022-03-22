@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import scratchVM from 'scratch-vm';
+// import scratchVM from 'scratch-vm';
 
 import scratchExpBlocks from '../data/scratch-expression-blocks';
 import ETLogo from './components/ETLogo/ETLogo';
@@ -214,3 +214,7 @@ if (blockly) {
   const workspace = blockly.getMainWorkspace();
   workspace.addChangeListener(onBlocklyEvent);
 }
+
+// const evalExpression = (blockId) => (
+
+// );
