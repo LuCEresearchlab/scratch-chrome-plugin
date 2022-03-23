@@ -35,10 +35,10 @@ const options = {
     }),
     new CopyPlugin({
       patterns: [
-        { from: path.join(__dirname, 'logos'), to: 'logos' },
-        path.join(__dirname, 'manifest.json'),
-        path.join(__dirname, 'redirects.json'),
-        path.join(__dirname, 'modifiedFiles/modified.common.bundle.js'),
+        { from: path.join(__dirname, 'src', 'assets', 'logos'), to: 'logos' },
+        path.join(__dirname, 'src', 'assets', 'manifest.json'),
+        path.join(__dirname, 'src', 'assets', 'redirects.json'),
+        path.join(__dirname, 'src', 'assets', 'modified.common.bundle.js'),
       ],
     }),
     new WriteFilePlugin(),
