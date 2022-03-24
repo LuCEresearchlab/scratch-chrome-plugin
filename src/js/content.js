@@ -2,8 +2,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-// import scratchVM from 'scratch-vm';
-
 import scratchExpBlocks from '../data/scratch-expression-blocks';
 import ETLogo from './components/ETLogo/ETLogo';
 
@@ -14,6 +12,8 @@ const svgNS = 'http://www.w3.org/2000/svg';
 const blockly = Blockly;
 
 const buttonClassName = 'expressionButton';
+
+const expressionButtonQuerySelector = `:scope > .${buttonClassName}`;
 
 let enabled = true;
 
@@ -92,8 +92,8 @@ function toDiagram(block, diagram, parentId, thisId, t) {
         },
       };
       diagram.edges.push(edge);
-      if (a.connection.targetBlock()) {
-        toDiagram(a.connection.targetBlock(), diagram, thisId, childId, t);
+      if (a.connection.targetConnection) {
+        toDiagram(a.connection.targetConnection.sourceBlock_, diagram, thisId, childId, t);
       } else {
         const type = connectionToType(a.connection);
         diagram.nodes.push({
@@ -136,48 +136,153 @@ function createDiagram(block) {
   return diagram;
 }
 
-function onBlocklyEvent(event) {
+function isExpression(block) {
+  return scratchExpBlocks.includes(block.type);
+}
+
+function isRootExpression(block) {
+  return isExpression(block)
+      && (block.parentBlock_ === null || !isExpression(block.parentBlock_));
+}
+
+function hasButton(block) {
+  return block.svgGroup_.querySelector(expressionButtonQuerySelector) !== null;
+}
+
+function getShadows(block) {
+  const shadows = [];
+  block.inputList.forEach((a) => {
+    if (!a.connection) {
+      return;
+    }
+    const tb = a.connection?.targetConnection;
+    if (tb && tb.sourceBlock_.isShadow_) {
+      shadows.push(tb.sourceBlock_);
+    }
+  });
+  return shadows;
+}
+
+function getEmptySvgs(block) {
+  const emptySvgs = [];
+  block.inputList.forEach((a) => {
+    if (!a.connection) {
+      return;
+    }
+    const tb = a.connection.targetConnection;
+    if (!tb && a.outlinePath) {
+      emptySvgs.push({
+        outlinePath: a.outlinePath,
+        type: a.connection.check_[0],
+      });
+    }
+  });
+  return emptySvgs;
+}
+
+function addButton(block) {
   const workspace = blockly.getMainWorkspace();
-  if (event.type === 'move') {
-    const block = workspace.getBlockById(event.blockId);
-    const expressionButtonQuerySelector = `:scope > .${buttonClassName}`;
-    if (!block) return;
-    console.log(block.type);
-    console.log(enabled);
-    if (
-      scratchExpBlocks.includes(block.type)
-      && (block.parentBlock_ === null || !scratchExpBlocks.includes(block.parentBlock_.type))
-    ) {
-      if (block.svgGroup_.querySelector(expressionButtonQuerySelector) === null) {
-        const { blockId } = event;
 
-        const onClickListener = (e) => {
-          e.preventDefault();
-          const d = createDiagram(workspace.getBlockById(blockId));
-          console.log(JSON.stringify(d));
-          window.postMessage(
-            {
-              direction: 'from-page-script',
-              payload: { diagram: JSON.stringify(d) },
-            },
-            '*',
-          );
+  const blockId = block.id;
+
+  const onClickListener = (e) => {
+    e.preventDefault();
+    const d = createDiagram(workspace.getBlockById(blockId));
+    console.log(JSON.stringify(d));
+    window.postMessage(
+      {
+        direction: 'from-page-script',
+        payload: { diagram: JSON.stringify(d) },
+      },
+      '*',
+    );
+  };
+
+  const svgButton = document.createElementNS(svgNS, 'g');
+  svgButton.classList.add(buttonClassName);
+  svgButton.style.cursor = 'pointer';
+  svgButton.style.display = enabled ? 'block' : 'none';
+  svgButton.setAttribute('data-block', blockId);
+  svgButton.addEventListener('mousedown', onClickListener);
+  block.svgGroup_.append(svgButton);
+  ReactDOM.render(<ETLogo />, svgButton);
+}
+
+function tryAddSmallButtons(block) {
+  const shadows = getShadows(block);
+  shadows.forEach((shadow) => {
+    if (!hasButton(shadow)) {
+      addButton(shadow);
+    }
+  });
+  const emptySvgs = getEmptySvgs(block);
+  emptySvgs.forEach((emptySvg) => {
+    const { outlinePath, type } = emptySvg;
+    if (outlinePath.parentNode.querySelector(expressionButtonQuerySelector) === null) {
+      const onClickListener = (e) => {
+        e.preventDefault();
+        const node = {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [{
+            content: typeToDefaultValue(type),
+          }],
+          type,
         };
+        const d = {
+          nodes: [node],
+          edges: [],
+          root: node,
+        };
+        console.log(JSON.stringify(d));
+        window.postMessage(
+          {
+            direction: 'from-page-script',
+            payload: { diagram: JSON.stringify(d) },
+          },
+          '*',
+        );
+      };
 
-        const svgButton = document.createElementNS(svgNS, 'g');
-        svgButton.classList.add(buttonClassName);
-        svgButton.style.cursor = 'pointer';
-        svgButton.style.display = enabled ? 'block' : 'none';
-        svgButton.setAttribute('data-block', blockId);
-        svgButton.addEventListener('mousedown', onClickListener);
-        block.svgGroup_.append(svgButton);
-        ReactDOM.render(<ETLogo />, svgButton);
-      }
-    } else if (block.svgGroup_.querySelector(expressionButtonQuerySelector) !== null) {
+      const svgGroup = document.createElementNS(svgNS, 'g');
+      const svgButton = document.createElementNS(svgNS, 'g');
+      svgButton.classList.add(buttonClassName);
+      svgButton.style.cursor = 'pointer';
+      svgButton.style.display = enabled ? 'block' : 'none';
+      svgButton.setAttribute('transform', outlinePath.getAttribute('transform'));
+      svgButton.style.visibility = outlinePath.style.visibility;
+      svgButton.setAttribute('data-block', '');
+      svgButton.addEventListener('mousedown', onClickListener);
+      block.svgGroup_.replaceChild(svgGroup, outlinePath);
+      svgGroup.appendChild(outlinePath);
+      svgGroup.appendChild(svgButton);
+      ReactDOM.render(<ETLogo />, svgButton);
+    }
+  });
+}
+
+function tryAddButton(block) {
+  console.log(block.type);
+  console.log(enabled);
+  if (isRootExpression(block)) {
+    if (!hasButton(block)) {
+      addButton(block);
+    }
+  } else {
+    if (hasButton(block)) {
       block.svgGroup_.removeChild(
         block.svgGroup_.querySelector(expressionButtonQuerySelector),
       );
     }
+    tryAddSmallButtons(block);
+  }
+}
+
+function onBlocklyEvent(event) {
+  const workspace = blockly.getMainWorkspace();
+  if (event.type === 'move') {
+    const block = workspace.getBlockById(event.blockId);
+    if (!block) return;
+    tryAddButton(block);
   }
 }
 
@@ -214,7 +319,3 @@ if (blockly) {
   const workspace = blockly.getMainWorkspace();
   workspace.addChangeListener(onBlocklyEvent);
 }
-
-// const evalExpression = (blockId) => (
-
-// );
