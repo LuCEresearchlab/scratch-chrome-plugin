@@ -180,6 +180,22 @@ function getEmptySvgs(block) {
   return emptySvgs;
 }
 
+function insertSvgButton(grandparent, child, onClickListener) {
+  const parent = document.createElementNS(svgNS, 'g');
+  const svgButton = document.createElementNS(svgNS, 'g');
+  svgButton.classList.add(buttonClassName);
+  svgButton.style.cursor = 'pointer';
+  svgButton.style.display = enabled ? 'block' : 'none';
+  svgButton.setAttribute('transform', child.getAttribute('transform'));
+  svgButton.style.visibility = child.style.visibility;
+  svgButton.setAttribute('data-block', '');
+  svgButton.addEventListener('mousedown', onClickListener);
+  grandparent.replaceChild(parent, child);
+  parent.appendChild(child);
+  parent.appendChild(svgButton);
+  ReactDOM.render(<ETLogo />, svgButton);
+}
+
 function addButton(block) {
   const workspace = blockly.getMainWorkspace();
 
@@ -198,14 +214,7 @@ function addButton(block) {
     );
   };
 
-  const svgButton = document.createElementNS(svgNS, 'g');
-  svgButton.classList.add(buttonClassName);
-  svgButton.style.cursor = 'pointer';
-  svgButton.style.display = enabled ? 'block' : 'none';
-  svgButton.setAttribute('data-block', blockId);
-  svgButton.addEventListener('mousedown', onClickListener);
-  block.svgGroup_.append(svgButton);
-  ReactDOM.render(<ETLogo />, svgButton);
+  insertSvgButton(block.svgGroup_.parentNode, block.svgGroup_, onClickListener);
 }
 
 function tryAddSmallButtons(block) {
@@ -243,19 +252,7 @@ function tryAddSmallButtons(block) {
         );
       };
 
-      const svgGroup = document.createElementNS(svgNS, 'g');
-      const svgButton = document.createElementNS(svgNS, 'g');
-      svgButton.classList.add(buttonClassName);
-      svgButton.style.cursor = 'pointer';
-      svgButton.style.display = enabled ? 'block' : 'none';
-      svgButton.setAttribute('transform', outlinePath.getAttribute('transform'));
-      svgButton.style.visibility = outlinePath.style.visibility;
-      svgButton.setAttribute('data-block', '');
-      svgButton.addEventListener('mousedown', onClickListener);
-      block.svgGroup_.replaceChild(svgGroup, outlinePath);
-      svgGroup.appendChild(outlinePath);
-      svgGroup.appendChild(svgButton);
-      ReactDOM.render(<ETLogo />, svgButton);
+      insertSvgButton(block.svgGroup_, outlinePath, onClickListener);
     }
   });
 }
