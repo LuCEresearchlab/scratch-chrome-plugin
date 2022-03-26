@@ -145,8 +145,13 @@ function isRootExpression(block) {
       && (block.parentBlock_ === null || !isExpression(block.parentBlock_));
 }
 
-function hasButton(block) {
-  return block.svgGroup_.querySelector(expressionButtonQuerySelector) !== null;
+function hasButton(blockSvg) {
+  if (blockSvg.tagName === 'g') {
+    return blockSvg.querySelector(`:scope > .${buttonClassName}`) !== null;
+  }
+  return [...blockSvg.parentNode.querySelectorAll(`:scope > .${buttonClassName}`)]
+    .some((e) => e.getAttribute('transform') === blockSvg.getAttribute('transform')
+        && e.style.visibility === blockSvg.style.visibility);
 }
 
 function getShadows(block) {
@@ -180,19 +185,56 @@ function getEmptySvgs(block) {
   return emptySvgs;
 }
 
-function insertSvgButton(grandparent, child, onClickListener) {
-  const parent = document.createElementNS(svgNS, 'g');
+function removeAllButtons(scope) {
+  if (scope.tagName === 'g') {
+    scope.querySelectorAll(`:scope > g .${buttonClassName}`).forEach((e) => {
+      e.remove();
+    });
+  }
+}
+
+function removeButton(blockSvg) {
+  if (blockSvg.tagName === 'g') {
+    blockSvg.querySelector(`:scope > .${buttonClassName}`).remove();
+  } else {
+    [...blockSvg.parentNode.querySelectorAll(`:scope > .${buttonClassName}`)]
+      .some((e) => {
+        const ans = e.getAttribute('transform') === blockSvg.getAttribute('transform')
+            && e.style.visibility === blockSvg.style.visibility;
+        if (ans) {
+          e.remove();
+        }
+        return ans;
+      });
+  }
+}
+
+function insertSvgButton(child, onClickListener) {
+  removeAllButtons(child);
+  const paths = child.parentNode.querySelectorAll(':scope > path');
+  const parentButtons = child.parentNode.querySelectorAll(`:scope > .${buttonClassName}`);
+  [...parentButtons].some((e) => {
+    const ans = [...paths].every((path) => e.getAttribute('transform') !== path.getAttribute('transform')
+        || e.style.visibility !== path.style.visibility);
+    if (ans) {
+      e.remove();
+    }
+    return ans;
+  });
   const svgButton = document.createElementNS(svgNS, 'g');
   svgButton.classList.add(buttonClassName);
   svgButton.style.cursor = 'pointer';
   svgButton.style.display = enabled ? 'block' : 'none';
-  svgButton.setAttribute('transform', child.getAttribute('transform'));
-  svgButton.style.visibility = child.style.visibility;
-  svgButton.setAttribute('data-block', '');
+  if (child.tagName !== 'g') {
+    svgButton.setAttribute('transform', child.getAttribute('transform'));
+    svgButton.style.visibility = child.style.visibility;
+  }
   svgButton.addEventListener('mousedown', onClickListener);
-  grandparent.replaceChild(parent, child);
-  parent.appendChild(child);
-  parent.appendChild(svgButton);
+  if (child.tagName === 'g') {
+    child.appendChild(svgButton);
+  } else {
+    child.parentNode.appendChild(svgButton);
+  }
   ReactDOM.render(<ETLogo />, svgButton);
 }
 
@@ -214,20 +256,20 @@ function addButton(block) {
     );
   };
 
-  insertSvgButton(block.svgGroup_.parentNode, block.svgGroup_, onClickListener);
+  insertSvgButton(block.svgGroup_, onClickListener);
 }
 
 function tryAddSmallButtons(block) {
   const shadows = getShadows(block);
   shadows.forEach((shadow) => {
-    if (!hasButton(shadow)) {
+    if (!hasButton(shadow.svgGroup_)) {
       addButton(shadow);
     }
   });
   const emptySvgs = getEmptySvgs(block);
   emptySvgs.forEach((emptySvg) => {
     const { outlinePath, type } = emptySvg;
-    if (outlinePath.parentNode.querySelector(expressionButtonQuerySelector) === null) {
+    if (!hasButton(outlinePath)) {
       const onClickListener = (e) => {
         e.preventDefault();
         const node = {
@@ -251,8 +293,7 @@ function tryAddSmallButtons(block) {
           '*',
         );
       };
-
-      insertSvgButton(block.svgGroup_, outlinePath, onClickListener);
+      insertSvgButton(outlinePath, onClickListener);
     }
   });
 }
@@ -261,16 +302,13 @@ function tryAddButton(block) {
   console.log(block.type);
   console.log(enabled);
   if (isRootExpression(block)) {
-    if (!hasButton(block)) {
+    if (!hasButton(block.svgGroup_)) {
       addButton(block);
     }
-  } else {
-    if (hasButton(block)) {
-      block.svgGroup_.removeChild(
-        block.svgGroup_.querySelector(expressionButtonQuerySelector),
-      );
-    }
+  } else if (!isExpression(block)) {
     tryAddSmallButtons(block);
+  } else if (hasButton(block.svgGroup_)) {
+    removeButton(block.svgGroup_);
   }
 }
 
