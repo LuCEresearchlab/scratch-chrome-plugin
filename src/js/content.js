@@ -137,7 +137,7 @@ function createDiagram(block) {
 }
 
 function isExpression(block) {
-  return scratchExpBlocks.includes(block.type);
+  return scratchExpBlocks.includes(block.type) || block.isShadow_;
 }
 
 function isRootExpression(block) {
@@ -302,7 +302,9 @@ function tryAddButton(block) {
   console.log(block.type);
   console.log(enabled);
   if (isRootExpression(block)) {
+    console.log('root');
     if (!hasButton(block.svgGroup_)) {
+      console.log('add');
       addButton(block);
     }
   } else if (!isExpression(block)) {
