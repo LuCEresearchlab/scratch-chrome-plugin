@@ -211,16 +211,6 @@ function removeButton(blockSvg) {
 
 function insertSvgButton(child, onClickListener) {
   removeAllButtons(child);
-  const paths = child.parentNode.querySelectorAll(':scope > path');
-  const parentButtons = child.parentNode.querySelectorAll(`:scope > .${buttonClassName}`);
-  [...parentButtons].some((e) => {
-    const ans = [...paths].every((path) => e.getAttribute('transform') !== path.getAttribute('transform')
-        || e.style.visibility !== path.style.visibility);
-    if (ans) {
-      e.remove();
-    }
-    return ans;
-  });
   const svgButton = document.createElementNS(svgNS, 'g');
   svgButton.classList.add(buttonClassName);
   svgButton.style.cursor = 'pointer';
@@ -298,13 +288,32 @@ function tryAddSmallButtons(block) {
   });
 }
 
+function updateEmptyButtonsVisibility(blockId) {
+  const workspace = blockly.getMainWorkspace();
+  const group = workspace.getBlockById(blockId).svgGroup_;
+  const paths = group.querySelectorAll(':scope > path');
+  const parentButtons = group.querySelectorAll(`:scope > .${buttonClassName}`);
+  parentButtons.forEach((e) => {
+    const ans = [...paths].find((path) => e.getAttribute('transform') === path.getAttribute('transform'));
+    e.style.visibility = ans.style.visibility;
+  });
+}
+
+function updateVisibilityOfEmptyButtons(event) {
+  const { newParentId, oldParentId } = event;
+  if (newParentId) {
+    updateEmptyButtonsVisibility(newParentId);
+  }
+  if (oldParentId) {
+    updateEmptyButtonsVisibility(oldParentId);
+  }
+}
+
 function tryAddButton(block) {
   console.log(block.type);
   console.log(enabled);
   if (isRootExpression(block)) {
-    console.log('root');
     if (!hasButton(block.svgGroup_)) {
-      console.log('add');
       addButton(block);
     }
   } else if (!isExpression(block)) {
@@ -320,6 +329,7 @@ function onBlocklyEvent(event) {
     const block = workspace.getBlockById(event.blockId);
     if (!block) return;
     tryAddButton(block);
+    updateVisibilityOfEmptyButtons(event);
   }
 }
 
