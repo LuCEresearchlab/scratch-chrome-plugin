@@ -15,6 +15,8 @@ const buttonClassName = 'expressionButton';
 
 const expressionButtonQuerySelector = `:scope > .${buttonClassName}`;
 
+const updateBeforePassing = false;
+
 let enabled = true;
 
 let id = 0;
@@ -89,17 +91,19 @@ function toDiagram(block, diagram, parentId, thisId, t) {
         valB: i + 1,
       };
       node.content.push(plugA);
-      const edge = {
-        plugA,
-        plugB: {
-          valA: childId,
-          valB: 0,
-        },
-      };
-      diagram.edges.push(edge);
+      if (a.connection.targetConnection || updateBeforePassing) {
+        const edge = {
+          plugA,
+          plugB: {
+            valA: childId,
+            valB: 0,
+          },
+        };
+        diagram.edges.push(edge);
+      }
       if (a.connection.targetConnection) {
         toDiagram(a.connection.targetConnection.sourceBlock_, diagram, thisId, childId, t);
-      } else {
+      } else if (updateBeforePassing) {
         const type = connectionToType(a.connection);
         const value = typeToDefaultValue(type);
         diagram.nodes.push({
@@ -122,7 +126,7 @@ function toDiagram(block, diagram, parentId, thisId, t) {
       o = [];
     }
   }
-  if (node.content.length === 0) {
+  if (updateBeforePassing && node.content.length === 0) {
     node.content.push({
       content: typeToDefaultValue(node.type),
     });
@@ -263,38 +267,40 @@ function tryAddSmallButtons(block) {
       addButton(shadow);
     }
   });
-  const emptySvgs = getEmptySvgs(block);
-  emptySvgs.forEach((emptySvg) => {
-    const { outlinePath, type } = emptySvg;
-    if (!hasButton(outlinePath)) {
-      const onClickListener = (e) => {
-        e.preventDefault();
-        const value = typeToDefaultValue(type);
-        const node = {
-          nodePlug: { valA: 0, valB: 0 },
-          content: [{
-            content: value,
-          }],
-          type,
-          value,
+  if (updateBeforePassing) {
+    const emptySvgs = getEmptySvgs(block);
+    emptySvgs.forEach((emptySvg) => {
+      const { outlinePath, type } = emptySvg;
+      if (!hasButton(outlinePath)) {
+        const onClickListener = (e) => {
+          e.preventDefault();
+          const value = typeToDefaultValue(type);
+          const node = {
+            nodePlug: { valA: 0, valB: 0 },
+            content: [{
+              content: value,
+            }],
+            type,
+            value,
+          };
+          const d = {
+            nodes: [node],
+            edges: [],
+            root: node,
+          };
+          console.log(JSON.stringify(d));
+          window.postMessage(
+            {
+              direction: 'from-page-script',
+              payload: { diagram: JSON.stringify(d) },
+            },
+            '*',
+          );
         };
-        const d = {
-          nodes: [node],
-          edges: [],
-          root: node,
-        };
-        console.log(JSON.stringify(d));
-        window.postMessage(
-          {
-            direction: 'from-page-script',
-            payload: { diagram: JSON.stringify(d) },
-          },
-          '*',
-        );
-      };
-      insertSvgButton(outlinePath, onClickListener);
-    }
-  });
+        insertSvgButton(outlinePath, onClickListener);
+      }
+    });
+  }
 }
 
 function updateEmptyButtonsVisibilityUnder(blockId) {
