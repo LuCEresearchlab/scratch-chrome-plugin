@@ -38,11 +38,16 @@ function typeToDefaultValue(type) {
 }
 
 function toDiagram(block, diagram, parentId, thisId, t) {
+  _ScratchStore.getState().scratchGui.vm.runtime.toggleScript(block.id);
+  const c = _ScratchStore.getState().scratchGui.vm.runtime
+    ._editingTarget.blocks._cache._executeCached[block.id];
   const node = {
     nodePlug: { valA: thisId, valB: 0 },
     content: [],
     type: connectionToType(block.outputConnection),
+    value: c._isShadowBlock ? c._shadowValue : c._blockFunction(c._argValues),
   };
+  console.log(c._isShadowBlock ? c._shadowValue : c._blockFunction(c._argValues));
   let o = [];
   const n = t || '?';
   // eslint-disable-next-line no-underscore-dangle
@@ -96,12 +101,14 @@ function toDiagram(block, diagram, parentId, thisId, t) {
         toDiagram(a.connection.targetConnection.sourceBlock_, diagram, thisId, childId, t);
       } else {
         const type = connectionToType(a.connection);
+        const value = typeToDefaultValue(type);
         diagram.nodes.push({
           nodePlug: { valA: childId, valB: 0 },
           content: [{
-            content: typeToDefaultValue(type),
+            content: value,
           }],
           type,
+          value,
         });
       }
     });
@@ -262,12 +269,14 @@ function tryAddSmallButtons(block) {
     if (!hasButton(outlinePath)) {
       const onClickListener = (e) => {
         e.preventDefault();
+        const value = typeToDefaultValue(type);
         const node = {
           nodePlug: { valA: 0, valB: 0 },
           content: [{
-            content: typeToDefaultValue(type),
+            content: value,
           }],
           type,
+          value,
         };
         const d = {
           nodes: [node],
