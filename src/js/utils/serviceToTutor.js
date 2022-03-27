@@ -13,7 +13,7 @@ export default function serviceToTutor(
 
   diagram.nodes.forEach((node) => {
     const key = `n${node.nodePlug.valA}`;
-    const { type } = node;
+    const { type, value } = node;
 
     const holes = [];
     const pieces = node.content.map((piece, i) => {
@@ -33,6 +33,7 @@ export default function serviceToTutor(
     nodes[key] = {
       pieces,
       type,
+      value,
       x: 0,
       y: 0,
     };
