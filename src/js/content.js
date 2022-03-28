@@ -39,20 +39,24 @@ function typeToDefaultValue(type) {
   }
 }
 
-function toDiagram(block, diagram, parentId, thisId, t) {
+function getCachedValue(block, type) {
+  // eslint-disable-next-line no-undef
   const { runtime } = _ScratchStore.getState().scratchGui.vm;
   const c = runtime._editingTarget.blocks._cache._executeCached[block.id];
+  if (c._isShadowBlock) {
+    return !c._shadowValue ? typeToDefaultValue(type) : c._shadowValue;
+  }
+  return c._blockFunction(c._argValues);
+}
+
+function toDiagram(block, diagram, parentId, thisId, t) {
   const type = connectionToType(block.outputConnection);
   const node = {
     nodePlug: { valA: thisId, valB: 0 },
     content: [],
     type,
-    value: 'hello', // TODO
-  // value: c._isShadowBlock
-  //   ? (!c._shadowValue ? typeToDefaultValue(type) : c._shadowValue)
-  //   : c._blockFunction(c._argValues),
+    value: getCachedValue(block, type),
   };
-  // console.log(c._isShadowBlock ? c._shadowValue : c._blockFunction(c._argValues));
   let o = [];
   const n = t || '?';
   // eslint-disable-next-line no-underscore-dangle
@@ -107,15 +111,15 @@ function toDiagram(block, diagram, parentId, thisId, t) {
       if (a.connection.targetConnection) {
         toDiagram(a.connection.targetConnection.sourceBlock_, diagram, thisId, childId, t);
       } else if (updateBeforePassing) {
-        const type = connectionToType(a.connection);
-        const value = typeToDefaultValue(type);
+        const emptyType = connectionToType(a.connection);
+        const emptyValue = typeToDefaultValue(type);
         diagram.nodes.push({
           nodePlug: { valA: childId, valB: 0 },
           content: [{
-            content: value,
+            content: emptyValue,
           }],
-          type,
-          value,
+          type: emptyType,
+          value: emptyValue,
         });
       }
     });
@@ -254,7 +258,6 @@ function addButton(block) {
     const listener = () => {
       runtime.removeListener('PROJECT_RUN_STOP', listener);
       const d = createDiagram(workspace.getBlockById(blockId));
-      console.log(JSON.stringify(d));
       window.postMessage(
         {
           direction: 'from-page-script',
@@ -298,7 +301,6 @@ function tryAddSmallButtons(block) {
             edges: [],
             root: node,
           };
-          console.log(JSON.stringify(d));
           window.postMessage(
             {
               direction: 'from-page-script',
