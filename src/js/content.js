@@ -15,7 +15,7 @@ const buttonClassName = 'expressionButton';
 
 const expressionButtonQuerySelector = `:scope > .${buttonClassName}`;
 
-const updateBeforePassing = false;
+const updateBeforePassing = true;
 
 let enabled = true;
 
@@ -40,16 +40,19 @@ function typeToDefaultValue(type) {
 }
 
 function toDiagram(block, diagram, parentId, thisId, t) {
-  _ScratchStore.getState().scratchGui.vm.runtime.toggleScript(block.id);
-  const c = _ScratchStore.getState().scratchGui.vm.runtime
-    ._editingTarget.blocks._cache._executeCached[block.id];
+  const { runtime } = _ScratchStore.getState().scratchGui.vm;
+  const c = runtime._editingTarget.blocks._cache._executeCached[block.id];
+  const type = connectionToType(block.outputConnection);
   const node = {
     nodePlug: { valA: thisId, valB: 0 },
     content: [],
-    type: connectionToType(block.outputConnection),
-    value: c._isShadowBlock ? c._shadowValue : c._blockFunction(c._argValues),
+    type,
+    value: 'hello', // TODO
+  // value: c._isShadowBlock
+  //   ? (!c._shadowValue ? typeToDefaultValue(type) : c._shadowValue)
+  //   : c._blockFunction(c._argValues),
   };
-  console.log(c._isShadowBlock ? c._shadowValue : c._blockFunction(c._argValues));
+  // console.log(c._isShadowBlock ? c._shadowValue : c._blockFunction(c._argValues));
   let o = [];
   const n = t || '?';
   // eslint-disable-next-line no-underscore-dangle
@@ -246,15 +249,22 @@ function addButton(block) {
 
   const onClickListener = (e) => {
     e.preventDefault();
-    const d = createDiagram(workspace.getBlockById(blockId));
-    console.log(JSON.stringify(d));
-    window.postMessage(
-      {
-        direction: 'from-page-script',
-        payload: { diagram: JSON.stringify(d) },
-      },
-      '*',
-    );
+    // eslint-disable-next-line no-undef
+    const { runtime } = _ScratchStore.getState().scratchGui.vm;
+    const listener = () => {
+      runtime.removeListener('PROJECT_RUN_STOP', listener);
+      const d = createDiagram(workspace.getBlockById(blockId));
+      console.log(JSON.stringify(d));
+      window.postMessage(
+        {
+          direction: 'from-page-script',
+          payload: { diagram: JSON.stringify(d) },
+        },
+        '*',
+      );
+    };
+    runtime.addListener('PROJECT_RUN_STOP', listener);
+    runtime.toggleScript(blockId, { updateMonitor: false });
   };
 
   insertSvgButton(block.svgGroup_, onClickListener);
