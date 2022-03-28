@@ -35,7 +35,7 @@ function typeToDefaultValue(type) {
   switch (type) {
     case 'Boolean': return 'false';
     case 'Number': return '0';
-    default: return '';
+    default: return '""';
   }
 }
 
@@ -44,100 +44,114 @@ function getCachedValue(block, type) {
   const { runtime } = _ScratchStore.getState().scratchGui.vm;
   const c = runtime._editingTarget.blocks._cache._executeCached[block.id];
   if (c._isShadowBlock) {
-    return !c._shadowValue ? typeToDefaultValue(type) : c._shadowValue;
+    if (!c._shadowValue) {
+      return typeToDefaultValue(type);
+    }
+    if (type === 'String') {
+      return `"${c._shadowValue}"`;
+    }
+    return String(c._shadowValue);
   }
-  return c._blockFunction(c._argValues);
+  return String(c._blockFunction(c._argValues));
 }
 
 function toDiagram(block, diagram, parentId, thisId, t) {
   const type = connectionToType(block.outputConnection);
+  const value = getCachedValue(block, type);
   const node = {
     nodePlug: { valA: thisId, valB: 0 },
     content: [],
     type,
-    value: getCachedValue(block, type),
+    value,
   };
-  let o = [];
-  const n = t || '?';
-  // eslint-disable-next-line no-underscore-dangle
-  if (block.collapsed_) {
+  if (block.isShadow_) {
     node.content.push({
-      // eslint-disable-next-line no-underscore-dangle
-      content: block.getInput('_TEMP_COLLAPSED_INPUT').fieldRow[0].text_.trim(),
+      content: value,
     });
   } else {
-    block.inputList.forEach((a, i) => {
-      a.fieldRow.forEach((r) => {
-        // eslint-disable-next-line no-undef
-        if (r.menuGenerator_ && !r.getValue()) {
-          // if r instanceof Blockly.FieldDropdown
-          o.push(n);
-        } else {
-          o.push(r.getText());
-        }
+    let o = [];
+    const n = t || '?';
+    // eslint-disable-next-line no-underscore-dangle
+    if (block.collapsed_) {
+      node.content.push({
+      // eslint-disable-next-line no-underscore-dangle
+        content: block.getInput('_TEMP_COLLAPSED_INPUT').fieldRow[0].text_.trim(),
       });
-      if (!a.connection) {
-        return;
-      }
-      const str = o.join(' ').trim();
-      if (str.length === 0) {
-        if (node.content.length !== 0) {
+    } else {
+      block.inputList.forEach((a, i) => {
+        a.fieldRow.forEach((r) => {
+        // eslint-disable-next-line no-undef
+          if (r.menuGenerator_ && !r.getValue()) {
+          // if r instanceof Blockly.FieldDropdown
+            o.push(n);
+          } else {
+            o.push(r.getText());
+          }
+        });
+        if (!a.connection) {
+          return;
+        }
+        const str = o.join(' ').trim();
+        if (str.length === 0) {
+          if (node.content.length !== 0) {
+            node.content.push({
+              content: ' ',
+            });
+          }
+        } else {
           node.content.push({
-            content: ' ',
+            content: node.content.length === 0 ? `${str} ` : ` ${str} `,
           });
         }
-      } else {
-        node.content.push({
-          content: node.content.length === 0 ? `${str} ` : ` ${str} `,
-        });
-      }
-      o = [];
-      const childId = newID();
-      const plugA = {
-        valA: thisId,
-        valB: i + 1,
-      };
-      node.content.push(plugA);
-      if (a.connection.targetConnection || updateBeforePassing) {
-        const edge = {
-          plugA,
-          plugB: {
-            valA: childId,
-            valB: 0,
-          },
+        o = [];
+        const childId = newID();
+        const plugA = {
+          valA: thisId,
+          valB: i + 1,
         };
-        diagram.edges.push(edge);
+        node.content.push(plugA);
+        if (a.connection.targetConnection || updateBeforePassing) {
+          const edge = {
+            plugA,
+            plugB: {
+              valA: childId,
+              valB: 0,
+            },
+          };
+          diagram.edges.push(edge);
+        }
+        if (a.connection.targetConnection) {
+          toDiagram(a.connection.targetConnection.sourceBlock_, diagram, thisId, childId, t);
+        } else if (updateBeforePassing) {
+          const emptyType = connectionToType(a.connection);
+          const emptyValue = typeToDefaultValue(type);
+          diagram.nodes.push({
+            nodePlug: { valA: childId, valB: 0 },
+            content: [{
+              content: emptyValue,
+            }],
+            type: emptyType,
+            value: emptyValue,
+          });
+        }
+      });
+      if (o.length > 0) {
+        const str = o.join(' ').trim();
+        if (str.length !== 0) {
+          node.content.push({
+            content: node.content.length === 0 ? str : ` ${str}`,
+          });
+        }
+        o = [];
       }
-      if (a.connection.targetConnection) {
-        toDiagram(a.connection.targetConnection.sourceBlock_, diagram, thisId, childId, t);
-      } else if (updateBeforePassing) {
-        const emptyType = connectionToType(a.connection);
-        const emptyValue = typeToDefaultValue(type);
-        diagram.nodes.push({
-          nodePlug: { valA: childId, valB: 0 },
-          content: [{
-            content: emptyValue,
-          }],
-          type: emptyType,
-          value: emptyValue,
-        });
-      }
-    });
-    if (o.length > 0) {
-      const str = o.join(' ').trim();
-      if (str.length !== 0) {
-        node.content.push({
-          content: node.content.length === 0 ? str : ` ${str}`,
-        });
-      }
-      o = [];
+    }
+    if (updateBeforePassing && node.content.length === 0) {
+      node.content.push({
+        content: typeToDefaultValue(node.type),
+      });
     }
   }
-  if (updateBeforePassing && node.content.length === 0) {
-    node.content.push({
-      content: typeToDefaultValue(node.type),
-    });
-  }
+
   diagram.nodes.push(node);
   if (parentId < 0) {
     diagram.root = node;
