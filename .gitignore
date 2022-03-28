@@ -1,2 +1,7 @@
+.tempScratchWWW
+.buildScratchWWW
+
 node_modules
 build
+
+bundle/modified.common.bundle.js
