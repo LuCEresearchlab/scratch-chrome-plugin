@@ -23,10 +23,10 @@ toggle.onclick = () => {
 
 getLocalStorage(['diagram'], (data) => {
   const { diagram } = data;
-  render(
-    <Tree diagram={JSON.parse(diagram)} />,
-    window.document.getElementById('popup-container'),
-  );
+  // render(
+  //   <Tree diagram={JSON.parse(diagram)} />,
+  //   window.document.getElementById('popup-container'),
+  // );
 });
 
 clearBadge();

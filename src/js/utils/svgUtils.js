@@ -12,6 +12,7 @@ import createDiagram, { updateBeforePassing } from './diagramUtils';
 import {
   typeToDefaultValue,
 } from './scratchVmUtils';
+import renderApp from '../renderer/renderModal';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
@@ -161,6 +162,8 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
       },
       '*',
     );
+
+    renderApp(d);
   };
   runtime.addListener('PROJECT_RUN_STOP', listener);
   runtime.toggleScript(blockId, { updateMonitor: false });

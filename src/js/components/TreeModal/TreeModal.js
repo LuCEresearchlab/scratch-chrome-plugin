@@ -6,7 +6,7 @@ import { Modal } from '@material-ui/core';
 import Tree from '../Tree/Tree';
 
 function TreeModal({ diagram }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const openHandle = useCallback(() => setIsOpen(true), [setIsOpen]);
   const closeHandle = useCallback(() => setIsOpen(false), [setIsOpen]);
@@ -17,9 +17,11 @@ function TreeModal({ diagram }) {
         open={isOpen}
         onClose={closeHandle}
       >
-        <Tree
-          diagram={diagram}
-        />
+        <>
+          <Tree
+            diagram={diagram}
+          />
+        </>
       </Modal>
     </>
   );
