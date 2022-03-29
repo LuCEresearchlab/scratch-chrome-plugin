@@ -5,11 +5,10 @@ import ReactDOM from 'react-dom';
 import scratchExpBlocks from '../data/scratch-expression-blocks';
 import ETLogo from './components/ETLogo/ETLogo';
 
+import { getBlockly, getScratchVM } from './utils/stateHandler';
+
 // Namespace for svg
 const svgNS = 'http://www.w3.org/2000/svg';
-
-// eslint-disable-next-line no-undef
-const blockly = Blockly;
 
 const buttonClassName = 'expressionButton';
 
@@ -41,7 +40,7 @@ function typeToDefaultValue(type) {
 
 function getCachedValue(block, type) {
   // eslint-disable-next-line no-undef
-  const { runtime } = _ScratchStore.getState().scratchGui.vm;
+  const { runtime } = getScratchVM();
   const c = runtime._editingTarget.blocks._cache._executeCached[block.id];
   if (c._isShadowBlock) {
     if (!c._shadowValue) {
@@ -261,14 +260,14 @@ function insertSvgButton(child, onClickListener) {
 }
 
 function addButton(block) {
-  const workspace = blockly.getMainWorkspace();
+  const workspace = getBlockly().getMainWorkspace();
 
   const blockId = block.id;
 
   const onClickListener = (e) => {
     e.preventDefault();
     // eslint-disable-next-line no-undef
-    const { runtime } = _ScratchStore.getState().scratchGui.vm;
+    const { runtime } = getScratchVM();
     const listener = () => {
       runtime.removeListener('PROJECT_RUN_STOP', listener);
       const d = createDiagram(workspace.getBlockById(blockId));
@@ -330,7 +329,7 @@ function tryAddSmallButtons(block) {
 }
 
 function updateEmptyButtonsVisibilityUnder(blockId) {
-  const group = blockly.getMainWorkspace().getBlockById(blockId).svgGroup_;
+  const group = getBlockly().getMainWorkspace().getBlockById(blockId).svgGroup_;
   const paths = group.querySelectorAll(':scope > path');
   const parentButtons = group.querySelectorAll(expressionButtonQuerySelector);
   parentButtons.forEach((e) => {
@@ -350,7 +349,7 @@ function updateEmptyButtonsVisibility(event) {
 }
 
 function tryAddButton(event) {
-  const block = blockly.getMainWorkspace().getBlockById(event.blockId);
+  const block = getBlockly().getMainWorkspace().getBlockById(event.blockId);
   if (!block) return;
   console.log(block.type);
   console.log(enabled);
@@ -401,7 +400,7 @@ window.postMessage(
   '*',
 );
 
-if (blockly) {
-  const workspace = blockly.getMainWorkspace();
+if (getBlockly()) {
+  const workspace = getBlockly().getMainWorkspace();
   workspace.addChangeListener(onBlocklyEvent);
 }

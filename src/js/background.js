@@ -2,9 +2,7 @@ import {
   onInstalled,
   setBadge,
   onChangeLocalStorage,
-  onResourceRequest,
-  getResourceURL,
-} from './utils/chrome';
+} from './utils/chromeAPI';
 
 onInstalled(() => {
   console.log('Installed correctly');

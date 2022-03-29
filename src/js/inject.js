@@ -1,4 +1,4 @@
-import { getLocalStorage, onChangeLocalStorage, setLocalStorage } from './utils/chrome';
+import { getLocalStorage, onChangeLocalStorage, setLocalStorage } from './utils/chromeAPI';
 
 /**
  * injectScript - Inject internal script to available access to the `window`

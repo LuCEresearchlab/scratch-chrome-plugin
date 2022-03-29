@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 
 import Tree from './components/Tree/Tree';
 
-import { clearBadge, getLocalStorage, setLocalStorage } from './utils/chrome';
+import { clearBadge, getLocalStorage, setLocalStorage } from './utils/chromeAPI';
 
 let enabled = true;
 const toggle = document.getElementById('toggle');
