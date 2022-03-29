@@ -25,7 +25,7 @@ const storeDefinitionRegExp = /const(\s)+store(\s)+=[^\n\r]+;/g;
 const renderSrcUpdate = 'window._ScratchStore = store;';
 
 const srcProjectBundle = path.join(temporaryProjectDirectory, 'build', 'js', 'common.bundle.js');
-const targetProjectBundle = path.join(__dirname, 'bundle', 'modified.common.bundle.js');
+const targetProjectBundle = path.join(__dirname, 'bundle', 'modified.common.bundle');
 
 task('clean:before', () => del([
   targetProjectBundle,

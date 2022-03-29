@@ -39,7 +39,7 @@ const options = {
         { from: path.join(__dirname, 'src', 'assets', 'logos'), to: 'logos' },
         path.join(__dirname, 'src', 'assets', 'manifest.json'),
         path.join(__dirname, 'src', 'assets', 'redirects.json'),
-        path.join(__dirname, 'bundle', 'modified.common.bundle.js'),
+        path.join(__dirname, 'bundle', 'modified.common.bundle', 'common.bundle.js'),
       ],
     }),
     new WriteFilePlugin(),

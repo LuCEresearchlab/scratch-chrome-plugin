@@ -55,7 +55,7 @@
 
   "web_accessible_resources": [
     {
-      "resources": ["content.js", "modified.common.bundle.js"],
+      "resources": ["content.js", "common.bundle.js"],
       "matches": ["*://scratch.mit.edu/*"]
     }
   ]

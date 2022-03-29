@@ -6,7 +6,7 @@
     "test": "mocha",
     "build:plugin": "NODE_ENV=development BABEL_ENV=development webpack --mode=development --watch --config ./webpack.plugin.config.js",
     "build:bundle": "node_modules/gulp/bin/gulp.js",
-    "build-production": "NODE_ENV=production BABEL_ENV=production webpack --mode=production"
+    "build:production": "NODE_ENV=production BABEL_ENV=production webpack --mode=production"
   },
   "repository": {
     "type": "git",

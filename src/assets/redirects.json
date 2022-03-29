@@ -5,7 +5,7 @@
     "action": { 
       "type": "redirect",
       "redirect": { 
-        "extensionPath": "/modified.common.bundle.js" 
+        "extensionPath": "/common.bundle.js" 
       }
     },
     "condition": {

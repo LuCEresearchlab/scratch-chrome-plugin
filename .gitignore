@@ -4,4 +4,4 @@
 node_modules
 build
 
-bundle/modified.common.bundle.js
+bundle/modified.common.bundle/*
