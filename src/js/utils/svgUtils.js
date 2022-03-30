@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 import scratchExpBlocks from '../../data/scratch-expression-blocks';
 
-import ETLogo from '../components/ETLogo/ETLogo';
+import ExpressionTutorLogo from '../components/ExpressionTutorLogo/ExpressionTutorLogo';
 
 import { getBlockly, getScratchVM } from './stateHandler';
 import createDiagram, { updateBeforePassing } from './diagramUtils';
@@ -12,7 +12,7 @@ import createDiagram, { updateBeforePassing } from './diagramUtils';
 import {
   typeToDefaultValue,
 } from './scratchVmUtils';
-import renderApp from '../renderer/renderModal';
+import renderInjectedApp from '../renderer/renderInjectedApp';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
@@ -112,7 +112,7 @@ const createSvgButton = (element, onClickListener) => {
   } else {
     element.parentNode.appendChild(svgButton);
   }
-  ReactDOM.render(<ETLogo />, svgButton);
+  ReactDOM.render(<ExpressionTutorLogo />, svgButton);
 };
 
 const createSvgButtonShadowListener = () => (e) => {
@@ -163,7 +163,7 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
       '*',
     );
 
-    renderApp(d);
+    renderInjectedApp(d);
   };
   runtime.addListener('PROJECT_RUN_STOP', listener);
   runtime.toggleScript(blockId, { updateMonitor: false });

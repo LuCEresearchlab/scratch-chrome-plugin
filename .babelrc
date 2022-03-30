@@ -1,0 +1,22 @@
+{
+  "plugins": [
+    [
+      "babel-plugin-import",
+      {
+        "camel2DashComponentName": false,
+        "libraryName": "@material-ui/core",
+        "libraryDirectory": "esm"
+      },
+      "core"
+    ],
+    [
+      "babel-plugin-import",
+      {
+        "libraryName": "@material-ui/icons",
+        "libraryDirectory": "esm",
+        "camel2DashComponentName": false
+      },
+      "icons"
+    ]
+  ]
+}

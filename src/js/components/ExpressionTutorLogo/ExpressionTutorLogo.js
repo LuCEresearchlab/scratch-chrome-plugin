@@ -1,6 +1,6 @@
 import React from 'react';
 
-function ETLogo() {
+function ExpressionTutorLogo() {
   return (
     <g>
       <circle
@@ -38,4 +38,4 @@ function ETLogo() {
   );
 }
 
-export default ETLogo;
+export default ExpressionTutorLogo;
