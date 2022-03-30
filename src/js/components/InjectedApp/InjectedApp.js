@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 
 import { Modal } from '@material-ui/core';
 
+import { ThemeProvider } from '@material-ui/core/styles';
+
 import Tree from '../Tree/Tree';
 import OpenModalButton from '../OpenModalButton/OpenModalButton';
 
 import { reducer, initialState, createDispatchActions } from '../../store/injectedAppReducer';
+
+import theme from '../../themes/injectedAppTheme';
 
 function InjectedApp({ diagram }) {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -23,17 +27,19 @@ function InjectedApp({ diagram }) {
 
   return (
     <>
-      <OpenModalButton />
-      <Modal
-        open={isModalOpen}
-        onClose={closeModal}
-      >
-        <>
-          <Tree
-            diagram={diagram}
-          />
-        </>
-      </Modal>
+      <ThemeProvider theme={theme}>
+        <OpenModalButton />
+        <Modal
+          open={isModalOpen}
+          onClose={closeModal}
+        >
+          <>
+            <Tree
+              diagram={diagram}
+            />
+          </>
+        </Modal>
+      </ThemeProvider>
     </>
   );
 }
