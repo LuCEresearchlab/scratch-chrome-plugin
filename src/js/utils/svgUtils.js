@@ -154,19 +154,13 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
   const { runtime } = getScratchVM();
   const { _editingTarget: currentTarget } = runtime;
   const newThreads = [];
-  // we need to find the topIdBlock of the current block
-  let topParentBlockId = blockId;
-  let searching = true;
-  do {
-    const currentBlock = currentTarget.blocks.getBlock(topParentBlockId);
-    const { parent } = currentBlock;
-    if (!parent) {
-      searching = false;
-    } else {
-      topParentBlockId = parent;
-    }
-  } while (searching);
 
+  // We create an artificial script if the block is not a topLevel block
+  let addedTemporaryScript = false;
+  if (!currentTarget.blocks.getScripts().includes(blockId)) {
+    currentTarget.blocks._addScript(blockId);
+    addedTemporaryScript = true;
+  }
   runtime.allScriptsDo((topBlockId, target) => {
     const ret = runtime.threads.some((t) => {
       if (t.target === target && t.topBlock === topBlockId
@@ -178,12 +172,19 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
       return false;
     });
     if (ret) return;
-    if (blockId === topBlockId || topParentBlockId === topBlockId) {
+    if (blockId === topBlockId) {
       newThreads.push(runtime._pushThread(topBlockId, target));
     }
-  }, runtime._editingTarget);
+  }, currentTarget);
+  // runtime.toggleScript(blockId);
   const listener = () => {
     runtime.removeListener('PROJECT_RUN_STOP', listener);
+
+    // We remove our artificial script if we previously added it
+    if (addedTemporaryScript) {
+      currentTarget.blocks._deleteScript(blockId);
+    }
+
     const workspace = getBlockly().getMainWorkspace();
     const d = createDiagram(workspace.getBlockById(blockId), newThreads);
     window.postMessage(
@@ -196,7 +197,6 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
 
     renderInjectedApp(d);
   };
-  console.log(newThreads);
   runtime.addListener('PROJECT_RUN_STOP', listener);
 };
 
