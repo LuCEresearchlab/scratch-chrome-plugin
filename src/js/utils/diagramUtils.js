@@ -7,7 +7,7 @@ import {
 
 export const updateBeforePassing = true;
 
-const createDiagram = (inputBlock) => {
+const createDiagram = (inputBlock, threads) => {
   let uuid = 0;
 
   const newID = () => {
@@ -23,7 +23,7 @@ const createDiagram = (inputBlock) => {
 
   function traverseDiagram(block, diagram, parentId, thisId, t) {
     const type = connectionToType(block.outputConnection);
-    const value = getCachedVmValue(block, type);
+    const value = getCachedVmValue(block, type, threads);
     const node = {
       nodePlug: { valA: thisId, valB: 0 },
       content: [],

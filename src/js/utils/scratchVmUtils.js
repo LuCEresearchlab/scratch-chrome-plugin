@@ -17,9 +17,10 @@ export const typeToDefaultValue = (type) => {
   }
 };
 
-export const getCachedVmValue = (block, type) => {
+export const getCachedVmValue = (block, type, threads) => {
   const { runtime } = getScratchVM();
   const c = runtime._editingTarget.blocks._cache._executeCached[block.id];
+  console.log(runtime);
   if (c._isShadowBlock) {
     if (!c._shadowValue) {
       return typeToDefaultValue(type);
@@ -29,5 +30,8 @@ export const getCachedVmValue = (block, type) => {
     }
     return String(c._shadowValue);
   }
-  return String(c._blockFunction(c._argValues));
+  if (c._parentKey) {
+    return String(c._parentValues[c._parentKey]);
+  }
+  return String(threads.find((t) => t.topBlock === block.id).justReported);
 };

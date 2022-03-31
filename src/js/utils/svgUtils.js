@@ -145,16 +145,31 @@ const createSvgButtonEmptyListener = (type) => (e) => {
     },
     '*',
   );
+  renderInjectedApp(d);
 };
 
 const createSvgButtonExpressionListener = (blockId) => (e) => {
   e.stopPropagation();
   e.preventDefault();
   const { runtime } = getScratchVM();
+  const newThreads = [];
+  runtime.allScriptsDo((topBlockId, target) => {
+    const ret = runtime.threads.some((t) => {
+      if (t.target === target && t.topBlock === topBlockId
+          // stack click threads and hat threads can coexist
+          && !t.stackClick) {
+        newThreads.push(runtime._restartThread(t));
+        return true;
+      }
+      return false;
+    });
+    if (ret) return;
+    newThreads.push(runtime._pushThread(topBlockId, target));
+  }, runtime._editingTarget);
   const listener = () => {
     runtime.removeListener('PROJECT_RUN_STOP', listener);
     const workspace = getBlockly().getMainWorkspace();
-    const d = createDiagram(workspace.getBlockById(blockId));
+    const d = createDiagram(workspace.getBlockById(blockId), newThreads);
     window.postMessage(
       {
         direction: 'from-page-script',
@@ -165,8 +180,8 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
 
     renderInjectedApp(d);
   };
+  console.log(newThreads);
   runtime.addListener('PROJECT_RUN_STOP', listener);
-  runtime.toggleScript(blockId, { updateMonitor: false });
 };
 
 const getEmptySvgs = (block) => {
