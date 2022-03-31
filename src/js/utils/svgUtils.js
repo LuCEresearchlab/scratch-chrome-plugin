@@ -154,8 +154,19 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
   const { runtime } = getScratchVM();
   const { _editingTarget: currentTarget } = runtime;
   const newThreads = [];
-  const currentBlock = currentTarget.blocks.getBlock(blockId);
-  const { parent } = currentBlock;
+  // we need to find the topIdBlock of the current block
+  let topParentBlockId = blockId;
+  let searching = true;
+  do {
+    const currentBlock = currentTarget.blocks.getBlock(topParentBlockId);
+    const { parent } = currentBlock;
+    if (!parent) {
+      searching = false;
+    } else {
+      topParentBlockId = parent;
+    }
+  } while (searching);
+
   runtime.allScriptsDo((topBlockId, target) => {
     const ret = runtime.threads.some((t) => {
       if (t.target === target && t.topBlock === topBlockId
@@ -167,7 +178,7 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
       return false;
     });
     if (ret) return;
-    if (blockId === topBlockId || parent === topBlockId) {
+    if (blockId === topBlockId || topParentBlockId === topBlockId) {
       newThreads.push(runtime._pushThread(topBlockId, target));
     }
   }, runtime._editingTarget);
