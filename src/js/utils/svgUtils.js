@@ -152,7 +152,10 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
   e.stopPropagation();
   e.preventDefault();
   const { runtime } = getScratchVM();
+  const { _editingTarget: currentTarget } = runtime;
   const newThreads = [];
+  const currentBlock = currentTarget.blocks.getBlock(blockId);
+  const { parent } = currentBlock;
   runtime.allScriptsDo((topBlockId, target) => {
     const ret = runtime.threads.some((t) => {
       if (t.target === target && t.topBlock === topBlockId
@@ -164,7 +167,9 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
       return false;
     });
     if (ret) return;
-    newThreads.push(runtime._pushThread(topBlockId, target));
+    if (blockId === topBlockId || parent === topBlockId) {
+      newThreads.push(runtime._pushThread(topBlockId, target));
+    }
   }, runtime._editingTarget);
   const listener = () => {
     runtime.removeListener('PROJECT_RUN_STOP', listener);
