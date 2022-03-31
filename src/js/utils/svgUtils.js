@@ -39,7 +39,7 @@ const getShadows = (block) => {
   return shadows;
 };
 
-const updateEmptyButtonsVisibilityUnder = (blockId) => {
+const updateEmptyButtonsVisibilityById = (blockId) => {
   const group = getBlockly().getMainWorkspace().getBlockById(blockId).svgGroup_;
   const paths = group.querySelectorAll(':scope > path');
   const parentButtons = group.querySelectorAll(expressionButtonQuerySelector);
@@ -49,13 +49,13 @@ const updateEmptyButtonsVisibilityUnder = (blockId) => {
   });
 };
 
-const updateEmptyButtonsVisibility = (event) => {
+const updateButtonsVisibilityByEvent = (event) => {
   const { newParentId, oldParentId } = event;
   if (newParentId) {
-    updateEmptyButtonsVisibilityUnder(newParentId);
+    updateEmptyButtonsVisibilityById(newParentId);
   }
   if (oldParentId) {
-    updateEmptyButtonsVisibilityUnder(oldParentId);
+    updateEmptyButtonsVisibilityById(oldParentId);
   }
 };
 
@@ -78,7 +78,7 @@ const removeAllSvgButtonsFromScope = (scope) => {
   }
 };
 
-const removeButtonFromBlock = (block) => {
+const removeSvgButtonFromBlock = (block) => {
   const { svgGroup_ } = block;
   if (svgGroup_.tagName === 'g') {
     svgGroup_.querySelector(expressionButtonQuerySelector).remove();
@@ -200,7 +200,7 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
   runtime.addListener('PROJECT_RUN_STOP', listener);
 };
 
-const getEmptySvgs = (block) => {
+const getEmptyBlockSvgElements = (block) => {
   const emptySvgs = [];
   block.inputList.forEach((a) => {
     if (!a.connection) {
@@ -229,7 +229,7 @@ function appendSvgButtonToNonExpressionBlock(block) {
   });
 
   if (updateBeforePassing) {
-    const emptySvgs = getEmptySvgs(block);
+    const emptySvgs = getEmptyBlockSvgElements(block);
     emptySvgs.forEach((emptySvg) => {
       const { outlinePath, type } = emptySvg;
       if (!blockHasSvgButton({ svgGroup_: outlinePath })) {
@@ -253,7 +253,7 @@ export const appendSvgButtonToBlock = (event, block) => {
     if (!blockHasSvgButton(block)) {
       appendSvgButtonToExpressionBlock(block);
     }
-    updateEmptyButtonsVisibility(event);
+    updateButtonsVisibilityByEvent(event);
     return;
   }
 
@@ -263,7 +263,7 @@ export const appendSvgButtonToBlock = (event, block) => {
   }
 
   if (blockHasSvgButton(block)) {
-    removeButtonFromBlock(block);
+    removeSvgButtonFromBlock(block);
   }
 };
 
@@ -272,6 +272,7 @@ export const updateDisplaySvgButtons = (newValue) => {
   displaySvgButtons = newValue;
   const allButtons = document.querySelectorAll(`.${svgButtonClassName}`);
   allButtons.forEach((button) => {
+    // eslint-disable-next-line no-param-reassign
     button.style.display = displaySvgButtons ? 'block' : 'none';
   });
 };
