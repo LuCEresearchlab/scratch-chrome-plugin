@@ -8,14 +8,6 @@ npm install
 
 ## Build:
 
-Build the scratchWWW bundle. **This operation may takes several minutes to complete!**
-This command is not guaranteed to work on machine without Unix.
-
-```
-npm run build:bundle
-```
-
-
 Build the plugin:
 
 ```

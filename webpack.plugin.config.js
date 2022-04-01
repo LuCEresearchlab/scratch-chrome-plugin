@@ -15,9 +15,11 @@ const options = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
     popup: path.join(__dirname, 'src', 'js', 'popup.js'),
-    inject: path.join(__dirname, 'src', 'js', 'inject.js'),
-    content: path.join(__dirname, 'src', 'js', 'content.js'),
     background: path.join(__dirname, 'src', 'js', 'background.js'),
+    injectApp: path.join(__dirname, 'src', 'js', 'injectApp.js'),
+    injectRedux: path.join(__dirname, 'src', 'js', 'injectRedux.js'),
+    contentApp: path.join(__dirname, 'src', 'js', 'contentScripts', 'contentApp.js'),
+    contentRedux: path.join(__dirname, 'src', 'js', 'contentScripts', 'contentRedux.js'),
   },
   output: {
     path: path.join(__dirname, 'build'),
@@ -38,8 +40,6 @@ const options = {
       patterns: [
         { from: path.join(__dirname, 'src', 'assets', 'logos'), to: 'logos' },
         path.join(__dirname, 'src', 'assets', 'manifest.json'),
-        path.join(__dirname, 'src', 'assets', 'redirects.json'),
-        path.join(__dirname, 'bundle', 'modified.common.bundle', 'common.bundle.js'),
       ],
     }),
     new WriteFilePlugin(),

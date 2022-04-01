@@ -22,14 +22,6 @@
     "declarativeNetRequest"
   ],
 
-  "declarative_net_request": {
-    "rule_resources": [{
-      "id": "redirects",
-      "enabled": true,
-      "path": "redirects.json"
-    }]
-  },
-
   "host_permissions": [
     "*://scratch.mit.edu/*"
   ],
@@ -47,15 +39,20 @@
   "content_scripts": [
     {
       "matches": ["*://scratch.mit.edu/*"],
-      "js": ["inject.js"],
+      "js": ["injectRedux.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["*://scratch.mit.edu/*"],
+      "js": ["injectApp.js"],
       "all_frames": true
     }
   ],
 
-
   "web_accessible_resources": [
     {
-      "resources": ["content.js", "common.bundle.js"],
+      "resources": ["contentApp.js", "contentRedux.js"],
       "matches": ["*://scratch.mit.edu/*"]
     }
   ]

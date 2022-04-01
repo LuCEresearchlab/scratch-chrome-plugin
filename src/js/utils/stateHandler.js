@@ -8,9 +8,9 @@ export const getScratchVM = () => {
   }
 
   // eslint-disable-next-line no-underscore-dangle
-  if (window && window._ScratchStore && window._ScratchStore.getState) {
+  if (window && window.ScratchStore && window.ScratchStore.getState) {
     // eslint-disable-next-line no-underscore-dangle
-    const state = window._ScratchStore.getState();
+    const state = window.ScratchStore.getState();
 
     if (state && state.scratchGui && state.scratchGui.vm) {
       const { scratchGui: { vm } } = state;

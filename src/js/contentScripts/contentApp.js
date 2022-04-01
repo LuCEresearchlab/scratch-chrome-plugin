@@ -1,9 +1,9 @@
 /* eslint-disable no-underscore-dangle */
-import { getBlockly } from './utils/stateHandler';
+import { getBlockly } from '../utils/stateHandler';
 import {
   appendSvgButtonToBlock,
   updateDisplaySvgButtons,
-} from './utils/svgUtils';
+} from '../utils/svgUtils';
 
 function moveEventListener(event) {
   const block = getBlockly().getMainWorkspace().getBlockById(event.blockId);

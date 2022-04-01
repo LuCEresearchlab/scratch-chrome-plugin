@@ -16,7 +16,7 @@ function injectScript(filePath, tag) {
 }
 
 function main() {
-  injectScript(chrome.runtime.getURL('content.js'), 'body');
+  injectScript(chrome.runtime.getURL('contentApp.js'), 'body');
 }
 
 function notifyPageScript(enabled) {
