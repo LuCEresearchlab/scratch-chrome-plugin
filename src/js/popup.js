@@ -1,21 +1,22 @@
-import React from 'react';
-import { render } from 'react-dom';
-
 import { clearBadge, getLocalStorage, setLocalStorage } from './utils/chromeAPI';
 
 let enabled = true;
 const toggle = document.getElementById('toggle');
 
+function updateToggleText() {
+  toggle.textContent = enabled ? 'Disable' : 'Enable';
+}
+
 getLocalStorage('enabled', (data) => {
   if (data.enabled !== undefined) {
     enabled = !!data.enabled;
   }
-  toggle.textContent = enabled ? 'Disable' : 'Enable';
+  updateToggleText();
 });
 
 toggle.onclick = () => {
   enabled = !enabled;
-  toggle.textContent = enabled ? 'Disable' : 'Enable';
+  updateToggleText();
   setLocalStorage({ enabled });
 };
 
