@@ -162,7 +162,8 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
     addedTemporaryScript = true;
   }
   runtime.allScriptsDo((topBlockId, target) => {
-    const ret = runtime.threads.some((t) => {
+    if (blockId !== topBlockId) return;
+    const pushedThread = runtime.threads.some((t) => {
       if (t.target === target && t.topBlock === topBlockId
           // stack click threads and hat threads can coexist
           && !t.stackClick) {
@@ -171,12 +172,9 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
       }
       return false;
     });
-    if (ret) return;
-    if (blockId === topBlockId) {
-      newThreads.push(runtime._pushThread(topBlockId, target));
-    }
+    if (pushedThread) return;
+    newThreads.push(runtime._pushThread(topBlockId, target));
   }, currentTarget);
-  // runtime.toggleScript(blockId);
   const listener = () => {
     runtime.removeListener('PROJECT_RUN_STOP', listener);
 
