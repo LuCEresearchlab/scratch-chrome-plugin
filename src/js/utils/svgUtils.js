@@ -63,6 +63,7 @@ const updateLeafButtonsVisibilityById = (blockId) => {
   const svgs = group.querySelectorAll(':scope > path, :scope > g');
   const buttons = group.querySelectorAll(expressionButtonQuerySelector);
   buttons.forEach((button) => {
+    if (svgHasButton(group, button)) return;
     const leaf = [...svgs].find((svg) => svgHasButton(svg, button));
     if (leaf) {
       // eslint-disable-next-line no-param-reassign
