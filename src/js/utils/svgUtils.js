@@ -144,12 +144,6 @@ const createSvgButton = (element, onClickListener) => {
   ReactDOM.render(<ExpressionTutorLogo />, svgButton);
 };
 
-const createSvgButtonShadowListener = () => (e) => {
-  e.stopPropagation();
-  e.preventDefault();
-  // TODO
-};
-
 const createSvgButtonEmptyListener = (type) => (e) => {
   e.stopPropagation();
   e.preventDefault();
@@ -167,6 +161,7 @@ const createSvgButtonEmptyListener = (type) => (e) => {
     edges: [],
     root: node,
   };
+  // TODO remove
   window.postMessage(
     {
       direction: 'from-page-script',
@@ -249,14 +244,18 @@ const getEmptyBlockSvgElementsAndTypes = (block) => {
   return emptyInfo;
 };
 
+export const appendSvgButtonToExpressionBlock = (block) => {
+  const { id: blockId, svgGroup_ } = block;
+  const onClickListener = createSvgButtonExpressionListener(blockId);
+  createSvgButton(svgGroup_, onClickListener);
+};
+
 function appendSvgButtonsInsideNonExpressionBlock(block) {
   // Shadows are shadowBlocks in Blockly
   const shadows = getShadows(block);
   shadows.forEach((shadow) => {
     if (!blockHasSvgButton(shadow)) {
-      const { svgGroup_ } = shadow;
-      const onClickListener = createSvgButtonShadowListener();
-      createSvgButton(svgGroup_, onClickListener);
+      appendSvgButtonToExpressionBlock(shadow);
     }
   });
 
@@ -270,12 +269,6 @@ function appendSvgButtonsInsideNonExpressionBlock(block) {
     });
   }
 }
-
-export const appendSvgButtonToExpressionBlock = (block) => {
-  const { id: blockId, svgGroup_ } = block;
-  const onClickListener = createSvgButtonExpressionListener(blockId);
-  createSvgButton(svgGroup_, onClickListener);
-};
 
 export const appendSvgButtonToBlock = (event, block) => {
   if (!block) return;
