@@ -42,34 +42,52 @@ const getShadows = (block) => {
 };
 
 /**
- * Update SVG buttons on empty blocks of direct parent block with id.
- * @param {String} blockId the id of the direct parent of empty buttons to update
+ * Check if button is on svg.
+ * @param {HTMLElement} svg the svg
+ * @param {HTMLElement} button the button
+ * @returns true if button is on svg
  */
-const updateEmptyButtonsVisibilityById = (blockId) => {
+const svgHasButton = (svg, button) => {
+  if (button.dataset.blockId) {
+    return button.dataset.blockId === svg.dataset.id;
+  }
+  return svg.tagName === 'path' && button.getAttribute('transform') === svg.getAttribute('transform');
+};
+
+/**
+ * Update SVG buttons on leaf blocks of direct parent block with id.
+ * @param {String} blockId the id of the direct parent of leaf buttons to update
+ */
+const updateLeafButtonsVisibilityById = (blockId) => {
   const group = getBlockly().getMainWorkspace().getBlockById(blockId).svgGroup_;
-  const paths = group.querySelectorAll(':scope > path');
+  const svgs = group.querySelectorAll(':scope > path, :scope > g');
   const buttons = group.querySelectorAll(expressionButtonQuerySelector);
   buttons.forEach((button) => {
-    const empty = [...paths].find((path) => button.getAttribute('transform') === path.getAttribute('transform'));
-    // eslint-disable-next-line no-param-reassign
-    button.style.visibility = empty.style.visibility;
+    const leaf = [...svgs].find((svg) => svgHasButton(svg, button));
+    if (leaf) {
+      // eslint-disable-next-line no-param-reassign
+      button.style.visibility = leaf.style.visibility === undefined ? 'visible' : leaf.style.visibility;
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      button.style.visibility = 'hidden';
+    }
   });
 };
 
 /**
- * Update the visibility of SVG buttons on empty blocks
+ * Update the visibility of SVG buttons on blocks with no children and
  * that have been affected by the event
  * @param {Object} event the event to handle
  * @param {String} event.newParentId the id of the new parent of the moved block
  * @param {String} event.oldParentId the id of the old parent of the moved block
  */
-const updateEmptyButtonsVisibilityByEvent = (event) => {
+const updateLeafButtonsVisibilityByEvent = (event) => {
   const { newParentId, oldParentId } = event;
   if (newParentId) {
-    updateEmptyButtonsVisibilityById(newParentId);
+    updateLeafButtonsVisibilityById(newParentId);
   }
   if (oldParentId) {
-    updateEmptyButtonsVisibilityById(oldParentId);
+    updateLeafButtonsVisibilityById(oldParentId);
   }
 };
 
@@ -77,20 +95,20 @@ const updateEmptyButtonsVisibilityByEvent = (event) => {
  * Check if the block has an SVG button directly on it.
  * @param {Object} block the block to check if has SVG button
  * @param {HTMLElement} block.svgGroup_ the top-level svg associated with the block
+ * @param {Boolean} isLeaf if the block has no children
  * @returns true if the block has an SVG button directly on it
  */
-const blockHasSvgButton = (block) => {
+const blockHasSvgButton = (block, isLeaf = block.isShadow_) => {
   const { svgGroup_ } = block;
-  if (svgGroup_.tagName === 'g') {
+  if (!isLeaf) {
     return svgGroup_.querySelector(expressionButtonQuerySelector) !== null;
   }
   return [...svgGroup_.parentNode.querySelectorAll(expressionButtonQuerySelector)]
-    .some((e) => e.getAttribute('transform') === svgGroup_.getAttribute('transform')
-        && e.style.visibility === svgGroup_.style.visibility);
+    .some((e) => svgHasButton(svgGroup_, e));
 };
 
-const removeAllSvgButtonsFromScope = (scope) => {
-  if (scope.tagName === 'g') {
+const removeAllSvgButtonsFromScope = (scope, isLeaf = false) => {
+  if (!isLeaf) {
     scope.querySelectorAll(`:scope > g .${svgButtonClassName}`).forEach((e) => {
       e.remove();
     });
@@ -101,17 +119,17 @@ const removeAllSvgButtonsFromScope = (scope) => {
  * Remove SVG button from this block.
  * @param {Object} block the block of the button to remove
  * @param {HTMLElement} block.svgGroup_ the top-level svg associated with the block
+ * @param {Boolean} isLeaf if the block has no children
  */
-const removeSvgButtonFromBlock = (block) => {
+const removeSvgButtonFromBlock = (block, isLeaf = block.isShadow_) => {
   const { svgGroup_ } = block;
-  if (svgGroup_.tagName === 'g') {
+  if (!isLeaf) {
     svgGroup_.querySelector(expressionButtonQuerySelector).remove();
     return;
   }
   [...svgGroup_.parentNode.querySelectorAll(expressionButtonQuerySelector)]
     .some((e) => {
-      const remove = e.getAttribute('transform') === svgGroup_.getAttribute('transform')
-          && e.style.visibility === svgGroup_.style.visibility;
+      const remove = svgHasButton(svgGroup_, e);
       if (remove) {
         e.remove();
       }
@@ -123,23 +141,26 @@ const removeSvgButtonFromBlock = (block) => {
  * Add an SVG button to this element and onclick listener
  * @param {HTMLElement} element the element to have a button
  * @param {Function} onClickListener the click listener for the new button
+ * @param {Boolean} isLeaf if the block has no children
+ * @param {String} blockId the block id
  */
-const createSvgButton = (element, onClickListener) => {
-  removeAllSvgButtonsFromScope(element); // TODO remove
+const createSvgButton = (element, onClickListener, isLeaf = false, blockId = '') => {
+  removeAllSvgButtonsFromScope(element, isLeaf); // TODO remove
   const svgButton = document.createElementNS(svgNS, 'g');
   svgButton.classList.add(svgButtonClassName);
+  svgButton.dataset.blockId = blockId;
   svgButton.style.cursor = 'pointer';
   svgButton.style.display = displaySvgButtons ? 'block' : 'none';
 
-  if (element.tagName !== 'g') {
+  if (isLeaf) {
     svgButton.setAttribute('transform', element.getAttribute('transform'));
     svgButton.style.visibility = element.style.visibility;
   }
   svgButton.addEventListener('mousedown', onClickListener);
-  if (element.tagName === 'g') {
-    element.appendChild(svgButton);
-  } else {
+  if (isLeaf) {
     element.parentNode.appendChild(svgButton);
+  } else {
+    element.appendChild(svgButton);
   }
   ReactDOM.render(<ExpressionTutorLogo />, svgButton);
 };
@@ -247,7 +268,7 @@ const getEmptyBlockSvgElementsAndTypes = (block) => {
 export const appendSvgButtonToExpressionBlock = (block) => {
   const { id: blockId, svgGroup_ } = block;
   const onClickListener = createSvgButtonExpressionListener(blockId);
-  createSvgButton(svgGroup_, onClickListener);
+  createSvgButton(svgGroup_, onClickListener, block.isShadow_, blockId);
 };
 
 function appendSvgButtonsInsideNonExpressionBlock(block) {
@@ -264,7 +285,7 @@ function appendSvgButtonsInsideNonExpressionBlock(block) {
     emptyInfo.forEach(({ outlinePath, type }) => {
       if (!blockHasSvgButton({ svgGroup_: outlinePath })) {
         const onClickListener = createSvgButtonEmptyListener(type);
-        createSvgButton(outlinePath, onClickListener);
+        createSvgButton(outlinePath, onClickListener, true);
       }
     });
   }
@@ -277,7 +298,7 @@ export const appendSvgButtonToBlock = (event, block) => {
     if (!blockHasSvgButton(block)) {
       appendSvgButtonToExpressionBlock(block);
     }
-    updateEmptyButtonsVisibilityByEvent(event);
+    updateLeafButtonsVisibilityByEvent(event);
     return;
   }
 
