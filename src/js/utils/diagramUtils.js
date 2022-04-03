@@ -5,6 +5,7 @@ import {
   typeToDefaultValue,
 } from './scratchVmUtils';
 
+// true if parameters should be casted before function call
 export const updateBeforePassing = true;
 
 const createDiagram = (inputBlock, threads) => {
