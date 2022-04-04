@@ -108,14 +108,6 @@ const blockHasSvgButton = (block, isLeaf = block.isShadow_) => {
     .some((e) => svgHasButton(svgGroup_, e));
 };
 
-const removeAllSvgButtonsFromScope = (scope, isLeaf = false) => {
-  if (!isLeaf) {
-    scope.querySelectorAll(`:scope > g .${svgButtonClassName}`).forEach((e) => {
-      e.remove();
-    });
-  }
-};
-
 /**
  * Remove SVG button from this block.
  * @param {Object} block the block of the button to remove
@@ -146,7 +138,6 @@ const removeSvgButtonFromBlock = (block, isLeaf = block.isShadow_) => {
  * @param {String} blockId the block id
  */
 const createSvgButton = (element, onClickListener, isLeaf = false, blockId = '') => {
-  removeAllSvgButtonsFromScope(element, isLeaf); // TODO remove
   const svgButton = document.createElementNS(svgNS, 'g');
   svgButton.classList.add(svgButtonClassName);
   svgButton.dataset.blockId = blockId;
