@@ -32,5 +32,8 @@ export const getCachedVmValue = (block, type, thread) => {
   if (c._parentKey) {
     return String(c._parentValues[c._parentKey]);
   }
-  return String(thread.find((t) => t.topBlock === block.id).justReported);
+  if (thread.topBlock !== block.id) {
+    throw new Error('Invalid block being evaluated');
+  }
+  return String(thread.justReported);
 };
