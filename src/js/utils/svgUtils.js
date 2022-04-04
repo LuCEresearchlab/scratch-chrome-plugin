@@ -183,14 +183,6 @@ const createSvgButtonEmptyListener = (type) => (e) => {
     edges: [],
     root: node,
   };
-  // TODO remove
-  window.postMessage(
-    {
-      direction: 'from-page-script',
-      payload: { diagram: JSON.stringify(d) },
-    },
-    '*',
-  );
   renderInjectedApp(d);
 };
 
@@ -231,14 +223,6 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
 
     const workspace = getBlockly().getMainWorkspace();
     const d = createDiagram(workspace.getBlockById(blockId), newThreads);
-    window.postMessage(
-      {
-        direction: 'from-page-script',
-        payload: { diagram: JSON.stringify(d) },
-      },
-      '*',
-    );
-
     renderInjectedApp(d);
   };
   runtime.addListener('PROJECT_RUN_STOP', listener);

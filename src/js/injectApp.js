@@ -38,11 +38,8 @@ onChangeLocalStorage((changes) => {
 window.addEventListener('message', (event) => {
   const { source, data } = event;
   if (source === window && data) {
-    const { direction, payload } = data;
-    if (direction === 'from-page-script') {
-      const { diagram } = payload;
-      setLocalStorage({ diagram }, () => console.log('Saved'));
-    } else if (direction === 'from-new-page-script') {
+    const { direction } = data;
+    if (direction === 'from-new-page-script') {
       getLocalStorage('enabled', (d) => {
         notifyPageScript(d.enabled);
       });
