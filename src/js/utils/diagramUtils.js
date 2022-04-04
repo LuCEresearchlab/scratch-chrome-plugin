@@ -8,7 +8,7 @@ import {
 // true if parameters should be casted before function call
 export const updateBeforePassing = true;
 
-const createDiagram = (inputBlock, threads) => {
+const createDiagram = (inputBlock, thread) => {
   let uuid = 0;
 
   const newID = () => {
@@ -22,9 +22,73 @@ const createDiagram = (inputBlock, threads) => {
     edges: [],
   };
 
-  function traverseDiagram(block, diagram, parentId, thisId, t) {
+  function getTexts(fieldRow, emptyDropdownPlaceHolder) {
+    const texts = [];
+    fieldRow.forEach((row) => {
+      if (row.menuGenerator_ // if row instanceof Blockly.FieldDropdown
+        && !row.getValue()) {
+        texts.push(emptyDropdownPlaceHolder || '?');
+      } else {
+        texts.push(row.getText());
+      }
+    });
+    return texts;
+  }
+
+  function addTextToNode(node, text) {
+    if (text.length === 0) {
+      if (node.content.length !== 0) {
+        node.content.push({
+          content: ' ',
+        });
+      }
+    } else {
+      node.content.push({
+        content: node.content.length === 0 ? `${text} ` : ` ${text} `,
+      });
+    }
+  }
+
+  function addTrailingTextToNode(node, text) {
+    if (text.length !== 0) {
+      node.content.push({
+        content: node.content.length === 0 ? text : ` ${text}`,
+      });
+    }
+    if (updateBeforePassing && node.content.length === 0) {
+      node.content.push({
+        content: typeToDefaultValue(node.type),
+      });
+    }
+  }
+
+  function pushEdge(diagram, plugA, childId) {
+    const edge = {
+      plugA,
+      plugB: {
+        valA: childId,
+        valB: 0,
+      },
+    };
+    diagram.edges.push(edge);
+  }
+
+  function pushEmptyBlock(diagram, connection, childId) {
+    const emptyType = connectionToType(connection);
+    const emptyValue = typeToDefaultValue(emptyType);
+    diagram.nodes.push({
+      nodePlug: { valA: childId, valB: 0 },
+      content: [{
+        content: emptyValue,
+      }],
+      type: emptyType,
+      value: emptyValue,
+    });
+  }
+
+  function traverseDiagram(block, diagram, parentId, thisId, emptyDropdownPlaceHolder) {
     const type = connectionToType(block.outputConnection);
-    const value = getCachedVmValue(block, type, threads);
+    const value = getCachedVmValue(block, type, thread);
     const node = {
       nodePlug: { valA: thisId, valB: 0 },
       content: [],
@@ -35,91 +99,46 @@ const createDiagram = (inputBlock, threads) => {
       node.content.push({
         content: value,
       });
+    } else if (block.collapsed_) {
+      node.content.push({
+        content: block.getInput('_TEMP_COLLAPSED_INPUT').fieldRow[0].text_.trim(),
+      });
     } else {
-      let o = [];
-      const n = t || '?';
-      if (block.collapsed_) {
-        node.content.push({
-          content: block.getInput('_TEMP_COLLAPSED_INPUT').fieldRow[0].text_.trim(),
-        });
-      } else {
-        block.inputList.forEach((a, i) => {
-          a.fieldRow.forEach((r) => {
-            if (r.menuGenerator_ && !r.getValue()) {
-            // if r instanceof Blockly.FieldDropdown
-              o.push(n);
-            } else {
-              o.push(r.getText());
-            }
-          });
-          if (!a.connection) {
-            return;
-          }
-          const str = o.join(' ').trim();
-          if (str.length === 0) {
-            if (node.content.length !== 0) {
-              node.content.push({
-                content: ' ',
-              });
-            }
-          } else {
-            node.content.push({
-              content: node.content.length === 0 ? `${str} ` : ` ${str} `,
-            });
-          }
-          o = [];
-          const childId = newID();
-          const plugA = {
-            valA: thisId,
-            valB: i + 1,
-          };
-          node.content.push(plugA);
-          if (a.connection.targetConnection || updateBeforePassing) {
-            const edge = {
-              plugA,
-              plugB: {
-                valA: childId,
-                valB: 0,
-              },
-            };
-            diagram.edges.push(edge);
-          }
-          if (a.connection.targetConnection) {
-            traverseDiagram(
-              a.connection.targetConnection.sourceBlock_,
-              diagram,
-              thisId,
-              childId,
-              t,
-            );
-          } else if (updateBeforePassing) {
-            const emptyType = connectionToType(a.connection);
-            const emptyValue = typeToDefaultValue(type);
-            diagram.nodes.push({
-              nodePlug: { valA: childId, valB: 0 },
-              content: [{
-                content: emptyValue,
-              }],
-              type: emptyType,
-              value: emptyValue,
-            });
-          }
-        });
-        if (o.length > 0) {
-          const str = o.join(' ').trim();
-          if (str.length !== 0) {
-            node.content.push({
-              content: node.content.length === 0 ? str : ` ${str}`,
-            });
-          }
-          o = [];
+      let textsToAdd = [];
+      // block example: think _ for _ seconds
+      // input list example: ["think _", "for _", "seconds"]
+      block.inputList.forEach((input, i) => {
+        // field row example: "think"
+        textsToAdd.push(getTexts(input.fieldRow, emptyDropdownPlaceHolder));
+        // connection example: "_"
+        if (!input.connection) {
+          return;
         }
-      }
-      if (updateBeforePassing && node.content.length === 0) {
-        node.content.push({
-          content: typeToDefaultValue(node.type),
-        });
-      }
+        addTextToNode(node, textsToAdd.join(' ').trim());
+        textsToAdd = [];
+        const childId = newID();
+        const plugA = {
+          valA: thisId,
+          valB: i + 1,
+        };
+        node.content.push(plugA);
+        // target connection example: the block in "_"
+        if (input.connection.targetConnection || updateBeforePassing) {
+          pushEdge(diagram, plugA, childId);
+        }
+        if (input.connection.targetConnection) {
+          traverseDiagram(
+            input.connection.targetConnection.sourceBlock_,
+            diagram,
+            thisId,
+            childId,
+            emptyDropdownPlaceHolder,
+          );
+        } else if (updateBeforePassing) {
+          pushEmptyBlock(diagram, input.connection, childId);
+        }
+      });
+      addTrailingTextToNode(node, textsToAdd.join(' ').trim());
     }
 
     diagram.nodes.push(node);
