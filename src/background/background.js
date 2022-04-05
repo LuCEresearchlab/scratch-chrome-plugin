@@ -5,14 +5,13 @@ import {
   setIconRed,
   setIconGreen,
   observeLocalStorage,
+  clearBadge,
 } from '../chromeAPI';
 
 import initialPluginState from './initialPluginState';
 
 onInstalled(() => {
-  setLocalStorage(initialPluginState, () => {
-    console.log('Set value `isPluginEnabled` to: ', true);
-  });
+  setLocalStorage(initialPluginState);
 });
 
 observeLocalStorage('isReduxError', (isError) => {
@@ -22,5 +21,6 @@ observeLocalStorage('isReduxError', (isError) => {
     return;
   }
 
+  clearBadge();
   setIconGreen();
 });
