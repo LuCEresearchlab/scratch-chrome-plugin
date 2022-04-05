@@ -12,7 +12,7 @@ import createDiagram, { updateBeforePassing } from './diagramUtils';
 import {
   typeToDefaultValue,
 } from './scratchVmUtils';
-import renderInjectedApp from '../renderer/renderInjectedApp';
+import renderInjectedApp from '../renderer/renderPageApp';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 

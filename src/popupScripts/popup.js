@@ -1,9 +1,19 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 import {
   clearBadge,
   getLocalStorage,
   observeLocalStorage,
   setLocalStorage,
-} from './utils/chromeAPI';
+} from '../pluginScripts/utils/chromeAPI';
+
+import Popup from './components/Popup/Popup';
+
+const renderPopup = () => {
+  const container = document.querySelector('#popup-container');
+  ReactDOM.render(<Popup/>, container);
+};
 
 const getIsPluginEnabled = (callback) => {
   getLocalStorage('isPluginEnabled', (data) => {
@@ -28,6 +38,7 @@ toggle.onclick = () => {
 
 getIsPluginEnabled((isPluginEnabled) => {
   updateToggleText(isPluginEnabled);
+  renderPopup();
 });
 
 observeLocalStorage('isPluginEnabled', (newValue) => {

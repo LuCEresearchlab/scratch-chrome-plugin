@@ -1,3 +1,5 @@
+import { postMessageToContentScript } from '../messages';
+
 const compose = (...args) => {
   if (args.length === 0) return (...internalArgs) => internalArgs;
   return (...internalArgs) => args.reverse().reduce((acc, fn) => {
@@ -24,6 +26,12 @@ const apply = (...middlewareArray) => (createStore) => (...createStoreArgs) => {
 (() => {
   // Append our store to the window object
   window.ScratchStore = {};
+
+  // eslint-disable-next-line no-underscore-dangle
+  if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ !== undefined) {
+    postMessageToContentScript('errorLoadingRedux');
+    return;
+  }
 
   // eslint-disable-next-line no-underscore-dangle
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ = (...args) => {

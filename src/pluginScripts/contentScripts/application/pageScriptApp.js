@@ -15,7 +15,7 @@ handleMessageFromContentScript((payload) => {
       handleEnabledChanged(value);
       break;
     default:
-      throw new Error(`Unknown content script action: ${action} ${payload}`);
+      break;
   }
 });
 

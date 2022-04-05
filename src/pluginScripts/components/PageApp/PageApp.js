@@ -8,11 +8,11 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import Tree from '../Tree/Tree';
 import OpenModalButton from '../OpenModalButton/OpenModalButton';
 
-import { reducer, initialState, createDispatchActions } from '../../store/injectedAppReducer';
+import { reducer, initialState, createDispatchActions } from '../../store/pageAppReducer';
 
-import theme from '../../themes/injectedAppTheme';
+import theme from '../../../themes/pageTheme';
 
-function InjectedApp({ diagram }) {
+function PageApp({ diagram }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const {
@@ -44,12 +44,12 @@ function InjectedApp({ diagram }) {
   );
 }
 
-InjectedApp.propTypes = {
+PageApp.propTypes = {
   diagram: PropTypes.shape({}),
 };
 
-InjectedApp.defaultProps = {
+PageApp.defaultProps = {
   diagram: { nodes: [], edges: [], root: {} },
 };
 
-export default InjectedApp;
+export default PageApp;

@@ -1,4 +1,4 @@
-import injectedAppInitialState from './initialStates/injectedAppInitialState';
+import injectedAppInitialState from './initialStates/pageAppInitialState';
 
 import modalActions from './actions/modalActions';
 import modalReducers from './reducers/modalReducers';

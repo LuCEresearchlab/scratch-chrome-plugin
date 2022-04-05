@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import InjectedApp from '../components/InjectedApp/InjectedApp';
+import PageApp from '../components/PageApp/PageApp';
 
-const renderApp = (diagram) => {
+const renderPageApp = (diagram) => {
   const injectedAppContainer = document.createElement('div');
   injectedAppContainer.id = 'my-expression-tutor-viewer';
   document.body.appendChild(injectedAppContainer);
 
-  ReactDOM.render(<InjectedApp diagram={diagram}/>, injectedAppContainer);
+  ReactDOM.render(<PageApp diagram={diagram}/>, injectedAppContainer);
 };
 
-export default renderApp;
+export default renderPageApp;

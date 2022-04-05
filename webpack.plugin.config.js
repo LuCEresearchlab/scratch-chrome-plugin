@@ -14,16 +14,19 @@ const fileExtensions = ['png', 'jpg', 'jpeg', 'gif', 'svg'];
 const options = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
-    popup: path.join(__dirname, 'src', 'js', 'popup.js'),
-    background: path.join(__dirname, 'src', 'js', 'background.js'),
+    // Background script
+    background: path.join(__dirname, 'src', 'pluginScripts', 'background.js'),
+
+    // Popup script
+    popup: path.join(__dirname, 'src', 'popupScripts', 'popup.js'),
 
     // Content and page script app
-    contentScriptApp: path.join(__dirname, 'src', 'js', 'contentScripts', 'application', 'contentScriptApp.js'),
-    pageScriptApp: path.join(__dirname, 'src', 'js', 'contentScripts', 'application', 'pageScriptApp.js'),
+    contentScriptApp: path.join(__dirname, 'src', 'pluginScripts', 'contentScripts', 'application', 'contentScriptApp.js'),
+    pageScriptApp: path.join(__dirname, 'src', 'pluginScripts', 'contentScripts', 'application', 'pageScriptApp.js'),
 
     // Content and page script redux
-    contentScriptRedux: path.join(__dirname, 'src', 'js', 'contentScripts', 'redux', 'contentScriptRedux.js'),
-    pageScriptRedux: path.join(__dirname, 'src', 'js', 'contentScripts', 'redux', 'pageScriptRedux.js'),
+    contentScriptRedux: path.join(__dirname, 'src', 'pluginScripts', 'contentScripts', 'redux', 'contentScriptRedux.js'),
+    pageScriptRedux: path.join(__dirname, 'src', 'pluginScripts', 'contentScripts', 'redux', 'pageScriptRedux.js'),
   },
   output: {
     path: path.join(__dirname, 'build'),
@@ -36,7 +39,7 @@ const options = {
     }),
     new webpack.ProgressPlugin(),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src', 'popup.html'),
+      template: path.join(__dirname, 'src', 'popupScripts', 'popup.html'),
       filename: 'popup.html',
       chunks: ['popup'],
     }),

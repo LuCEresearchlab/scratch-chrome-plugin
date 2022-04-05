@@ -11,6 +11,6 @@ onInstalled(() => {
   });
 });
 
-onChangeLocalStorage((changes, namespace) => {
-  setBadge('change');
-});
+// onChangeLocalStorage((changes, namespace) => {
+//   setBadge('change');
+// });

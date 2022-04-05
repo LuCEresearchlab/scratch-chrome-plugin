@@ -14,7 +14,7 @@ handleMessageFromPageScript((payload) => {
   // const { action, value } = payload;
   // switch (action) {
   //   default:
-  //     throw new Error(`Unknown content script action: ${action} ${payload}`);
+  //     break;
   // }
 });
 
