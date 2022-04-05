@@ -28,6 +28,17 @@ export function getLocalStorage(keys, callback) {
   chrome.storage.local.get(keys, callback);
 }
 
+export function observeLocalStorage(property, callback) {
+  onChangeLocalStorage((changes) => {
+    if (changes[property]) {
+      const { newValue, oldValue } = changes[property];
+      callback(newValue, oldValue);
+    }
+
+    return undefined;
+  });
+}
+
 export function onResourceRequest(callback, filter, extra) {
   chrome.webRequest.onBeforeRequest.addListener(callback, filter, extra);
 }

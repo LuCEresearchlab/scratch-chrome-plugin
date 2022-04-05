@@ -1,6 +1,6 @@
 const compose = (...args) => {
   if (args.length === 0) return (...internalArgs) => internalArgs;
-  return (...internalArgs) => args.reduce((acc, fn) => {
+  return (...internalArgs) => args.reverse().reduce((acc, fn) => {
     if (acc) {
       return fn(acc);
     }

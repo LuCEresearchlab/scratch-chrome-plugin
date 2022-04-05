@@ -16,10 +16,14 @@ const options = {
   entry: {
     popup: path.join(__dirname, 'src', 'js', 'popup.js'),
     background: path.join(__dirname, 'src', 'js', 'background.js'),
-    injectApp: path.join(__dirname, 'src', 'js', 'injectApp.js'),
-    injectRedux: path.join(__dirname, 'src', 'js', 'injectRedux.js'),
-    contentApp: path.join(__dirname, 'src', 'js', 'contentScripts', 'contentApp.js'),
-    contentRedux: path.join(__dirname, 'src', 'js', 'contentScripts', 'contentRedux.js'),
+
+    // Content and page script app
+    contentScriptApp: path.join(__dirname, 'src', 'js', 'contentScripts', 'application', 'contentScriptApp.js'),
+    pageScriptApp: path.join(__dirname, 'src', 'js', 'contentScripts', 'application', 'pageScriptApp.js'),
+
+    // Content and page script redux
+    contentScriptRedux: path.join(__dirname, 'src', 'js', 'contentScripts', 'redux', 'contentScriptRedux.js'),
+    pageScriptRedux: path.join(__dirname, 'src', 'js', 'contentScripts', 'redux', 'pageScriptRedux.js'),
   },
   output: {
     path: path.join(__dirname, 'build'),

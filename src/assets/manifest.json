@@ -1,15 +1,15 @@
 {
-  "name": "Scratch Expression Analyser",
+  "name": "Scratch Expression Tutor",
   "description": "Find expressions in your Scratch workspace, analyze them, and learn!",
   
   "version": "0.1",
   "manifest_version": 3,
 
   "icons": {
-    "16": "./logos/logo16.png",
-    "32": "./logos/logo32.png",
-    "48": "./logos/logo48.png",
-    "128": "./logos/logo128.png"
+    "16": "./logos/logo16green.png",
+    "32": "./logos/logo32green.png",
+    "48": "./logos/logo48green.png",
+    "128": "./logos/logo128green.png"
   },
 
   "background": {
@@ -18,8 +18,7 @@
 
   "permissions": [
     "storage",
-    "scripting",
-    "declarativeNetRequest"
+    "scripting"
   ],
 
   "host_permissions": [
@@ -29,30 +28,30 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "./logos/logo16.png",
-      "32": "./logos/logo32.png",
-      "48": "./logos/logo48.png",
-      "128": "./logos/logo128.png"
+      "16": "./logos/logo16green.png",
+      "32": "./logos/logo32green.png",
+      "48": "./logos/logo48green.png",
+      "128": "./logos/logo128green.png"
     }
   },
 
   "content_scripts": [
     {
       "matches": ["*://scratch.mit.edu/*"],
-      "js": ["injectRedux.js"],
+      "js": ["contentScriptRedux.js"],
       "run_at": "document_start",
       "all_frames": true
     },
     {
       "matches": ["*://scratch.mit.edu/*"],
-      "js": ["injectApp.js"],
+      "js": ["contentScriptApp.js"],
       "all_frames": true
     }
   ],
 
   "web_accessible_resources": [
     {
-      "resources": ["contentApp.js", "contentRedux.js"],
+      "resources": ["pageScriptApp.js", "pageScriptRedux.js"],
       "matches": ["*://scratch.mit.edu/*"]
     }
   ]

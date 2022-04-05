@@ -1,27 +1,37 @@
-import { clearBadge, getLocalStorage, setLocalStorage } from './utils/chromeAPI';
+import {
+  clearBadge,
+  getLocalStorage,
+  observeLocalStorage,
+  setLocalStorage,
+} from './utils/chromeAPI';
 
-let enabled = true;
-const toggle = document.getElementById('toggle');
-
-function updateToggleText() {
-  toggle.textContent = enabled ? 'Disable' : 'Enable';
-}
-
-getLocalStorage('enabled', (data) => {
-  if (data.enabled !== undefined) {
-    enabled = !!data.enabled;
-  }
-  updateToggleText();
-});
-
-toggle.onclick = () => {
-  enabled = !enabled;
-  updateToggleText();
-  setLocalStorage({ enabled });
+const getIsPluginEnabled = (callback) => {
+  getLocalStorage('isPluginEnabled', (data) => {
+    const { isPluginEnabled } = data;
+    callback(isPluginEnabled);
+  });
 };
 
-getLocalStorage(['diagram'], (data) => {
-  const { diagram } = data;
+const toggle = document.getElementById('toggle');
+
+function updateToggleText(isPluginEnabled) {
+  toggle.textContent = isPluginEnabled ? 'Disable' : 'Enable';
+}
+
+toggle.onclick = () => {
+  getIsPluginEnabled((isPluginEnabled) => {
+    setLocalStorage({ isPluginEnabled: !isPluginEnabled }, () => {
+      updateToggleText(!isPluginEnabled);
+    });
+  });
+};
+
+getIsPluginEnabled((isPluginEnabled) => {
+  updateToggleText(isPluginEnabled);
+});
+
+observeLocalStorage('isPluginEnabled', (newValue) => {
+  updateToggleText(newValue);
 });
 
 clearBadge();

@@ -2,10 +2,13 @@ import {
   onInstalled,
   setBadge,
   onChangeLocalStorage,
+  setLocalStorage,
 } from './utils/chromeAPI';
 
 onInstalled(() => {
-  console.log('Installed correctly');
+  setLocalStorage({ isPluginEnabled: true }, () => {
+    console.log('Set value `isPluginEnabled` to: ', true);
+  });
 });
 
 onChangeLocalStorage((changes, namespace) => {
