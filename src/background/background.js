@@ -2,10 +2,9 @@ import {
   onInstalled,
   setBadge,
   setLocalStorage,
-  setIconRed,
-  setIconGreen,
   observeLocalStorage,
   clearBadge,
+  setIconColor,
 } from '../chromeAPI';
 
 import initialPluginState from './initialPluginState';
@@ -17,10 +16,10 @@ onInstalled(() => {
 observeLocalStorage('isReduxError', (isError) => {
   if (isError) {
     setBadge('!');
-    setIconRed();
+    setIconColor('red');
     return;
   }
 
   clearBadge();
-  setIconGreen();
+  setIconColor('green');
 });

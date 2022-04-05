@@ -1,35 +1,39 @@
-import { postMessageToContentScript } from '../messages';
-
-const compose = (...args) => {
-  if (args.length === 0) return (...internalArgs) => internalArgs;
-  return (...internalArgs) => args.reverse().reduce((acc, fn) => {
-    if (acc) {
-      return fn(acc);
-    }
-    return fn(...internalArgs);
-  }, null);
-};
-
-const apply = (...middlewareArray) => (createStore) => (...createStoreArgs) => {
-  const store = createStore(...createStoreArgs);
-  const initialized = middlewareArray.map((middleware) => middleware({
-    getState: store.getState,
-    dispatch: (dispatchAction) => store.dispatch(dispatchAction),
-  }));
-  store.dispatch = compose(...initialized)(store.dispatch);
-  return {
-    ...store,
-    dispatch: store.dispatch,
+const myFunc = `() => {
+  const compose = (...args) => {
+    if (args.length === 0) return (...internalArgs) => internalArgs;
+    return (...internalArgs) => [...args].reverse().reduce((acc, fn) => {
+      if (acc) {
+        return fn(acc);
+      }
+      return fn(...internalArgs);
+    }, null);
   };
-};
 
-(() => {
+  const apply = (...middlewareArray) => (createStore) => (...createStoreArgs) => {
+    const store = createStore(...createStoreArgs);
+    const initialized = middlewareArray.map((middleware) => middleware({
+      getState: store.getState,
+      dispatch: (dispatchAction) => store.dispatch(dispatchAction),
+    }));
+    store.dispatch = compose(...initialized)(store.dispatch);
+    return {
+      ...store,
+      dispatch: store.dispatch,
+    };
+  };
+
   // Append our store to the window object
   window.ScratchStore = {};
 
   // eslint-disable-next-line no-underscore-dangle
   if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ !== undefined) {
-    postMessageToContentScript('errorLoadingRedux');
+    window.postMessage(
+      { 
+        targetDirection: 'from-et-plugin-page-script',
+        payload: { action: 'errorLoadingRedux'}
+      },
+      '*',
+    )
     return;
   }
 
@@ -47,7 +51,10 @@ const apply = (...middlewareArray) => (createStore) => (...createStoreArgs) => {
       };
     };
 
-    const newArgs = [...args, apply(middleware)];
+    const [first, ...rest] = args;
+    const newArgs = [first, apply(middleware), ...rest];
     return compose(...newArgs);
   };
-})();
+}`;
+
+export default myFunc;

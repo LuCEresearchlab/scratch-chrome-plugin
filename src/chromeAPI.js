@@ -25,56 +25,14 @@ export function getResourceURL(filename) {
  *  Icon
  *
  */
-export function setIconGreen(callback) {
+export function setIconColor(color, callback) {
   chrome.action.setIcon(
     {
       path: {
-        16: 'logos/logo16green.png',
-        32: 'logos/logo32green.png',
-        48: 'logos/logo48green.png',
-        128: 'logos/logo128green.png',
-      },
-    },
-    callback,
-  );
-}
-
-export function setIconRed(callback) {
-  chrome.action.setIcon(
-    {
-      path: {
-        16: 'logos/logo16red.png',
-        32: 'logos/logo32red.png',
-        48: 'logos/logo48red.png',
-        128: 'logos/logo128red.png',
-      },
-    },
-    callback,
-  );
-}
-
-export function setIconYellow(callback) {
-  chrome.action.setIcon(
-    {
-      path: {
-        16: 'logos/logo16yellow.png',
-        32: 'logos/logo32yellow.png',
-        48: 'logos/logo48yellow.png',
-        128: 'logos/logo128yellow.png',
-      },
-    },
-    callback,
-  );
-}
-
-export function setIconGray(callback) {
-  chrome.action.setIcon(
-    {
-      path: {
-        16: 'logos/logo16gray.png',
-        32: 'logos/logo32gray.png',
-        48: 'logos/logo48gray.png',
-        128: 'logos/logo128gray.png',
+        16: `logos/logo16${color}.png`,
+        32: `logos/logo32${color}.png`,
+        48: `logos/logo48${color}.png`,
+        128: `logos/logo128${color}.png`,
       },
     },
     callback,

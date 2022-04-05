@@ -20,7 +20,7 @@ export const injectScriptIntoTag = (fileName, tag, callback) => {
   node.appendChild(script);
 };
 
-export const injectScriptIntoDocument = (fileName, callback) => {
+export const injectScriptIntoDocumentBeforeAllOthers = (fileName, callback) => {
   const script = createScriptElement(fileName);
   script.onload = function remove() {
     this.remove();
@@ -28,5 +28,20 @@ export const injectScriptIntoDocument = (fileName, callback) => {
       callback();
     }
   };
-  (document.head || document.documentElement).appendChild(script);
+  (document.head || document.documentElement).prepend(script);
+};
+
+/**
+ * TODO, this is a 'hack':
+ * https://bugs.chromium.org/p/chromium/issues/detail?id=1207006
+ *
+ * Currently there isn't any other way to do it. Still waiting for the API.
+ */
+export const injectCodeBeforeAllOtherScripts = (code) => {
+  const executeCode = `(${code})();`;
+  const el = document.createElement('div');
+  el.setAttribute('onclick', executeCode);
+  (document.head || document.documentElement).appendChild(el);
+  el.click();
+  el.remove();
 };

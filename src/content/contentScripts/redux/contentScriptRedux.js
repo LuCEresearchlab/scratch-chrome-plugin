@@ -1,6 +1,7 @@
 import { setLocalStorage } from '../../../chromeAPI';
-import { injectScriptIntoDocument } from '../injectScript';
+import { injectCodeBeforeAllOtherScripts } from '../injectScript';
 import { handleMessageFromPageScript } from '../messages';
+import myFunc from './pageScriptRedux';
 
 handleMessageFromPageScript((payload) => {
   const { action, value } = payload;
@@ -15,5 +16,5 @@ handleMessageFromPageScript((payload) => {
 
 // Reset reduxError and inject script;
 setLocalStorage({ isReduxError: false }, () => {
-  injectScriptIntoDocument('pageScriptRedux.js');
+  injectCodeBeforeAllOtherScripts(myFunc);
 });
