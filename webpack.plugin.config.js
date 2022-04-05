@@ -15,18 +15,18 @@ const options = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
     // Background script
-    background: path.join(__dirname, 'src', 'pluginScripts', 'background.js'),
+    background: path.join(__dirname, 'src', 'background', 'background.js'),
 
     // Popup script
-    popup: path.join(__dirname, 'src', 'popupScripts', 'popup.js'),
+    popup: path.join(__dirname, 'src', 'popup', 'popup.js'),
 
     // Content and page script app
-    contentScriptApp: path.join(__dirname, 'src', 'pluginScripts', 'contentScripts', 'application', 'contentScriptApp.js'),
-    pageScriptApp: path.join(__dirname, 'src', 'pluginScripts', 'contentScripts', 'application', 'pageScriptApp.js'),
+    contentScriptApp: path.join(__dirname, 'src', 'content', 'contentScripts', 'application', 'contentScriptApp.js'),
+    pageScriptApp: path.join(__dirname, 'src', 'content', 'contentScripts', 'application', 'pageScriptApp.js'),
 
     // Content and page script redux
-    contentScriptRedux: path.join(__dirname, 'src', 'pluginScripts', 'contentScripts', 'redux', 'contentScriptRedux.js'),
-    pageScriptRedux: path.join(__dirname, 'src', 'pluginScripts', 'contentScripts', 'redux', 'pageScriptRedux.js'),
+    contentScriptRedux: path.join(__dirname, 'src', 'content', 'contentScripts', 'redux', 'contentScriptRedux.js'),
+    pageScriptRedux: path.join(__dirname, 'src', 'content', 'contentScripts', 'redux', 'pageScriptRedux.js'),
   },
   output: {
     path: path.join(__dirname, 'build'),
@@ -39,14 +39,14 @@ const options = {
     }),
     new webpack.ProgressPlugin(),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src', 'popupScripts', 'popup.html'),
+      template: path.join(__dirname, 'src', 'popup', 'popup.html'),
       filename: 'popup.html',
       chunks: ['popup'],
     }),
     new CopyPlugin({
       patterns: [
         { from: path.join(__dirname, 'src', 'assets', 'logos'), to: 'logos' },
-        path.join(__dirname, 'src', 'assets', 'manifest.json'),
+        path.join(__dirname, 'src', 'manifest.json'),
       ],
     }),
     new WriteFilePlugin(),

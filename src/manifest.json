@@ -27,6 +27,7 @@
 
   "action": {
     "default_popup": "popup.html",
+    "default_title": "Scratch Expression Tutor",
     "default_icon": {
       "16": "./logos/logo16green.png",
       "32": "./logos/logo32green.png",

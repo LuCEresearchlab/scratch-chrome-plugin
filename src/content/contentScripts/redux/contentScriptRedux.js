@@ -1,4 +1,4 @@
-import { setLocalStorage } from '../../utils/chromeAPI';
+import { setLocalStorage } from '../../../chromeAPI';
 import { injectScriptIntoDocument } from '../injectScript';
 import { handleMessageFromPageScript } from '../messages';
 

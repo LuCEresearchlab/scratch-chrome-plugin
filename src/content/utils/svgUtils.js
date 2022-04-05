@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import scratchExpBlocks from '../../data/scratch-expression-blocks';
+import scratchExpBlocks from '../../assets/data/scratch-expression-blocks';
 
 import ExpressionTutorLogo from '../components/ExpressionTutorLogo/ExpressionTutorLogo';
 
