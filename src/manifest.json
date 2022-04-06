@@ -1,8 +1,8 @@
 {
   "name": "Scratch Expression Tutor",
-  "description": "Find expressions in your Scratch workspace, analyze them, and learn!",
-  
-  "version": "0.1",
+  "description": "Find expressions in your Scratch workspace, analyze them, and learn.",
+  "version": "0.0.1",
+
   "manifest_version": 3,
 
   "icons": {
