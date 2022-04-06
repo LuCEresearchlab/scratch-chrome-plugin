@@ -1,4 +1,16 @@
 const myFunc = `() => {
+  // eslint-disable-next-line no-underscore-dangle
+  if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ !== undefined) {
+    window.postMessage(
+      { 
+        targetDirection: 'from-et-plugin-page-script',
+        payload: { action: 'errorLoadingRedux'}
+      },
+      '*',
+    )
+    return;
+  }
+  
   const compose = (...args) => {
     if (args.length === 0) return (...internalArgs) => internalArgs;
     return (...internalArgs) => [...args].reverse().reduce((acc, fn) => {
@@ -22,23 +34,10 @@ const myFunc = `() => {
     };
   };
 
-  // Append our store to the window object
-  window.ScratchStore = {};
-
-  // eslint-disable-next-line no-underscore-dangle
-  if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ !== undefined) {
-    window.postMessage(
-      { 
-        targetDirection: 'from-et-plugin-page-script',
-        payload: { action: 'errorLoadingRedux'}
-      },
-      '*',
-    )
-    return;
-  }
-
   // eslint-disable-next-line no-underscore-dangle
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ = (...args) => {
+    // Append our store to the window object
+    window.ScratchStore = {};
     const middleware = ({ getState, dispatch }) => {
       // get dispatch and getState from middleware
       window.ScratchStore.dispatch = dispatch;

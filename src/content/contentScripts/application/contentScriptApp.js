@@ -1,6 +1,7 @@
 import {
   getLocalStorage,
   observeLocalStorage,
+  setLocalStorage,
 } from '../../../chromeAPI';
 
 import {
@@ -13,11 +14,19 @@ import { injectScriptIntoTag } from '../injectScript';
 let reduxError;
 
 handleMessageFromPageScript((payload) => {
-  // const { action, value } = payload;
-  // switch (action) {
-  //   default:
-  //     break;
-  // }
+  const { action, value } = payload;
+  switch (action) {
+    case 'selectedNewDiagram':
+      setLocalStorage({ diagram: value }, () => {
+        postMessageToPageScript(
+          'selectedNewDiagram',
+          value,
+        );
+      });
+      break;
+    default:
+      break;
+  }
 });
 
 observeLocalStorage('isPluginEnabled', (isPluginEnabled) => {

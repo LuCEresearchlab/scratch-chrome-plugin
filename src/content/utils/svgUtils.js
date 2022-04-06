@@ -12,7 +12,7 @@ import createDiagram, { updateBeforePassing } from './diagramUtils';
 import {
   typeToDefaultValue,
 } from './scratchVmUtils';
-import renderInjectedApp from '../renderer/renderPageApp';
+import { postMessageToContentScript } from '../contentScripts/messages';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
@@ -174,7 +174,7 @@ const createSvgButtonEmptyListener = (type) => (e) => {
     edges: [],
     root: node,
   };
-  renderInjectedApp(d);
+  postMessageToContentScript('selectedNewDiagram', d);
 };
 
 const createSvgButtonExpressionListener = (blockId) => (e) => {
@@ -217,7 +217,7 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
 
     const workspace = getBlockly().getMainWorkspace();
     const d = createDiagram(workspace.getBlockById(blockId), newThreads[0]);
-    renderInjectedApp(d);
+    postMessageToContentScript('selectedNewDiagram', d);
   };
   runtime.addListener('PROJECT_RUN_STOP', listener);
 };

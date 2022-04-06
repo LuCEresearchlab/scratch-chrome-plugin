@@ -17,20 +17,29 @@ export const postMessageToContentScript = (action, data) => {
   });
 };
 
-const handler = (sourceDirection, callback) => window.addEventListener('message', (event) => {
-  const { source, data } = event;
-  if (source === window && data) {
-    const { targetDirection, payload } = data;
-    if (targetDirection === sourceDirection) {
-      callback(payload);
+const handler = (sourceDirection, callback) => {
+  const handlerFunction = (event) => {
+    const { source, data } = event;
+    if (source === window && data) {
+      const { targetDirection, payload } = data;
+      if (targetDirection === sourceDirection) {
+        callback(payload);
+      }
     }
-  }
-});
+  };
 
-export const handleMessageFromContentScript = (callback) => {
-  handler('from-et-plugin-content-script', callback);
+  window.addEventListener('message', handlerFunction);
+
+  // Return function for removing the listener
+  return () => window.removeEventListener('message', handlerFunction);
 };
 
-export const handleMessageFromPageScript = (callback) => {
-  handler('from-et-plugin-page-script', callback);
-};
+export const handleMessageFromContentScript = (callback) => handler(
+  'from-et-plugin-content-script',
+  callback,
+);
+
+export const handleMessageFromPageScript = (callback) => handler(
+  'from-et-plugin-page-script',
+  callback,
+);

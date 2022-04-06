@@ -3,12 +3,17 @@ import injectedAppInitialState from './initialStates/pageAppInitialState';
 import modalActions from './actions/modalActions';
 import modalReducers from './reducers/modalReducers';
 
+import diagramActions from './actions/diagramActions';
+import diagramReducers from './reducers/diagramReducers';
+
 export const reducers = {
   ...modalReducers,
+  ...diagramReducers,
 };
 
 export const actions = [
   ...modalActions,
+  ...diagramActions,
 ];
 
 export function reducer(state, action) {

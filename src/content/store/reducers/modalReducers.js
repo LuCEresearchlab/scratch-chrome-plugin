@@ -1,4 +1,4 @@
-const reducers = {
+const modalReducers = {
   setIsModalOpen: (state, payload) => {
     const { isModalOpen } = payload;
 
@@ -19,4 +19,4 @@ const reducers = {
   }),
 };
 
-export default reducers;
+export default modalReducers;

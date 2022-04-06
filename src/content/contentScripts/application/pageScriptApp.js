@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+import renderPageApp from '../../renderer/renderPageApp';
 import { getBlockly } from '../../utils/stateHandler';
 import {
   appendSvgButtonToBlock,
@@ -24,6 +25,8 @@ const startPluginApp = (isPluginEnabled) => {
   if (getBlockly()) {
     const workspace = getBlockly().getMainWorkspace();
     workspace.addChangeListener(onBlocklyEvent);
+
+    renderPageApp();
   }
 };
 

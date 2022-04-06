@@ -1,5 +1,9 @@
 const initialState = {
-  isModalOpen: true,
+  // modal
+  isModalOpen: false,
+
+  // diagram
+  diagram: { nodes: [], edges: [], root: undefined },
 };
 
 export default initialState;

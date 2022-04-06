@@ -1,5 +1,10 @@
-import React, { useReducer, useMemo } from 'react';
-import PropTypes from 'prop-types';
+import React, {
+  useReducer,
+  useMemo,
+  useEffect,
+  useCallback,
+} from 'react';
+// import PropTypes from 'prop-types';
 
 import { Modal } from '@material-ui/core';
 
@@ -11,24 +16,46 @@ import OpenModalButton from '../OpenModalButton/OpenModalButton';
 import { reducer, initialState, createDispatchActions } from '../../store/pageAppReducer';
 
 import theme from '../../../themes/pageTheme';
+import { handleMessageFromContentScript } from '../../contentScripts/messages';
 
-function PageApp({ diagram }) {
+function PageApp() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const {
     isModalOpen,
+    diagram,
   } = state;
 
   const {
     // setIsModalOpen,
     closeModal,
-    // openModal,
+    openModal,
+    setDiagram,
   } = useMemo(() => createDispatchActions(dispatch), [dispatch]);
+
+  const handleContentScriptMessage = useCallback((payload) => {
+    const { action, value } = payload;
+    switch (action) {
+      case 'selectedNewDiagram':
+        setDiagram(value);
+        break;
+      default:
+        break;
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    const removeEventListener = handleMessageFromContentScript(handleContentScriptMessage);
+
+    return () => removeEventListener();
+  }, []);
 
   return (
     <>
       <ThemeProvider theme={theme}>
-        <OpenModalButton />
+        <OpenModalButton
+          handleClick={openModal}
+        />
         <Modal
           open={isModalOpen}
           onClose={closeModal}
@@ -44,12 +71,8 @@ function PageApp({ diagram }) {
   );
 }
 
-PageApp.propTypes = {
-  diagram: PropTypes.shape({}),
-};
+PageApp.propTypes = {};
 
-PageApp.defaultProps = {
-  diagram: { nodes: [], edges: [], root: {} },
-};
+PageApp.defaultProps = {};
 
 export default PageApp;

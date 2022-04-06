@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 
 import PageApp from '../components/PageApp/PageApp';
 
-const renderPageApp = (diagram) => {
+const renderPageApp = () => {
   const injectedAppContainer = document.createElement('div');
   injectedAppContainer.id = 'my-expression-tutor-viewer';
   document.body.appendChild(injectedAppContainer);
 
-  ReactDOM.render(<PageApp diagram={diagram}/>, injectedAppContainer);
+  ReactDOM.render(<PageApp />, injectedAppContainer);
 };
 
 export default renderPageApp;

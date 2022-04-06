@@ -35,7 +35,10 @@ export const injectScriptIntoDocumentBeforeAllOthers = (fileName, callback) => {
  * TODO, this is a 'hack':
  * https://bugs.chromium.org/p/chromium/issues/detail?id=1207006
  *
- * Currently there isn't any other way to do it. Still waiting for the API.
+ * Currently in v3 there isn't any other way to do it. Still waiting for the API.
+ *
+ * Other possible solutions (that are not perfect):
+ * https://stackoverflow.com/questions/9515704/use-a-content-script-to-access-the-page-context-variables-and-functions/9517879#9517879
  */
 export const injectCodeBeforeAllOtherScripts = (code) => {
   const executeCode = `(${code})();`;
