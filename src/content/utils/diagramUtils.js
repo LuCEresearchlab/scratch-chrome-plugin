@@ -5,9 +5,6 @@ import {
   typeToDefaultValue,
 } from './scratchVmUtils';
 
-// true if parameters should be casted before function call
-export const updateBeforePassing = true;
-
 const createDiagram = (inputBlock, thread) => {
   let uuid = 0;
 
@@ -53,11 +50,6 @@ const createDiagram = (inputBlock, thread) => {
     if (text.length !== 0) {
       node.content.push({
         content: node.content.length === 0 ? text : ` ${text}`,
-      });
-    }
-    if (updateBeforePassing && node.content.length === 0) {
-      node.content.push({
-        content: typeToDefaultValue(node.type),
       });
     }
   }
@@ -122,10 +114,8 @@ const createDiagram = (inputBlock, thread) => {
           valB: i + 1,
         };
         node.content.push(plugA);
+        pushEdge(diagram, plugA, childId);
         // target connection example: the block in "_"
-        if (input.connection.targetConnection || updateBeforePassing) {
-          pushEdge(diagram, plugA, childId);
-        }
         if (input.connection.targetConnection) {
           traverseDiagram(
             input.connection.targetConnection.sourceBlock_,
@@ -134,7 +124,7 @@ const createDiagram = (inputBlock, thread) => {
             childId,
             emptyDropdownPlaceHolder,
           );
-        } else if (updateBeforePassing) {
+        } else {
           pushEmptyBlock(diagram, input.connection, childId);
         }
       });

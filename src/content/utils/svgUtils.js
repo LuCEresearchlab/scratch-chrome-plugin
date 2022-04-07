@@ -7,7 +7,7 @@ import scratchExpBlocks from '../../assets/data/scratch-expression-blocks';
 import ExpressionTutorLogo from '../components/ExpressionTutorLogo/ExpressionTutorLogo';
 
 import { getBlockly, getScratchVM } from './stateHandler';
-import createDiagram, { updateBeforePassing } from './diagramUtils';
+import createDiagram from './diagramUtils';
 
 import {
   typeToDefaultValue,
@@ -259,15 +259,13 @@ function appendSvgButtonsInsideNonExpressionBlock(block) {
     }
   });
 
-  if (updateBeforePassing) {
-    const emptyInfo = getEmptyBlockSvgElementsAndTypes(block);
-    emptyInfo.forEach(({ outlinePath, type }) => {
-      if (!blockHasSvgButton({ svgGroup_: outlinePath })) {
-        const onClickListener = createSvgButtonEmptyListener(type);
-        createSvgButton(outlinePath, onClickListener, true);
-      }
-    });
-  }
+  const emptyInfo = getEmptyBlockSvgElementsAndTypes(block);
+  emptyInfo.forEach(({ outlinePath, type }) => {
+    if (!blockHasSvgButton({ svgGroup_: outlinePath })) {
+      const onClickListener = createSvgButtonEmptyListener(type);
+      createSvgButton(outlinePath, onClickListener, true);
+    }
+  });
 }
 
 export const appendSvgButtonToBlock = (event, block) => {
