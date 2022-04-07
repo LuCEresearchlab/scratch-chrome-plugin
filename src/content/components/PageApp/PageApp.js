@@ -23,14 +23,15 @@ function PageApp() {
 
   const {
     isModalOpen,
+    autolayout,
     diagram,
   } = state;
 
   const {
-    // setIsModalOpen,
     closeModal,
     openModal,
     setDiagram,
+    setTemporaryDiagram,
   } = useMemo(() => createDispatchActions(dispatch), [dispatch]);
 
   const handleContentScriptMessage = useCallback((payload) => {
@@ -62,7 +63,9 @@ function PageApp() {
         >
           <>
             <Tree
+              autolayout={autolayout}
               diagram={diagram}
+              setTemporaryDiagram={setTemporaryDiagram}
             />
           </>
         </Modal>

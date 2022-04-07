@@ -13,6 +13,7 @@ import {
   typeToDefaultValue,
 } from './scratchVmUtils';
 import { postMessageToContentScript } from '../contentScripts/messages';
+import serviceToTutor from './serviceToTutor';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
@@ -174,7 +175,7 @@ const createSvgButtonEmptyListener = (type) => (e) => {
     edges: [],
     root: node,
   };
-  postMessageToContentScript('selectedNewDiagram', d);
+  postMessageToContentScript('selectedNewDiagram', serviceToTutor(d));
 };
 
 const createSvgButtonExpressionListener = (blockId) => (e) => {
@@ -217,7 +218,7 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
 
     const workspace = getBlockly().getMainWorkspace();
     const d = createDiagram(workspace.getBlockById(blockId), newThreads[0]);
-    postMessageToContentScript('selectedNewDiagram', d);
+    postMessageToContentScript('selectedNewDiagram', serviceToTutor(d));
   };
   runtime.addListener('PROJECT_RUN_STOP', listener);
 };

@@ -13,10 +13,16 @@ const modalReducers = {
     isModalOpen: true,
   }),
 
-  closeModal: (state) => ({
-    ...state,
-    isModalOpen: false,
-  }),
+  closeModal: (state) => {
+    const { temporaryDiagram } = state;
+
+    return {
+      ...state,
+      autolayout: false,
+      isModalOpen: false,
+      diagram: temporaryDiagram,
+    };
+  },
 };
 
 export default modalReducers;

@@ -6,6 +6,14 @@ const diagramActions = [
       payload: { diagram },
     }),
   },
+
+  {
+    name: 'setTemporaryDiagram',
+    action: (temporaryDiagram) => ({
+      type: 'setTemporaryDiagram',
+      payload: { temporaryDiagram },
+    }),
+  },
 ];
 
 export default diagramActions;

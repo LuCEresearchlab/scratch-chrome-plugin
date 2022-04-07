@@ -1,35 +1,59 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+
 import { ExpressionTreeEditor } from 'react-expression-tree';
 
-import serviceToTutor from '../../utils/serviceToTutor';
-
-function Tree({ diagram }) {
+function Tree({ autolayout, diagram, setTemporaryDiagram }) {
   const {
+    connectorPlaceholder,
+    stagePos,
+    stageScale,
     nodes,
     edges,
     selectedRootNode,
-  } = useMemo(() => serviceToTutor(diagram), [diagram]);
+  } = diagram;
+
   return (
     <>
       <ExpressionTreeEditor
-        autolayout={true}
-        connectorPlaceholder="{{}}"
         height={600}
+        autolayout={autolayout}
+        connectorPlaceholder={connectorPlaceholder}
+        stagePos={stagePos}
+        stageScale={stageScale}
         nodes={nodes}
         edges={edges}
         selectedRootNode={selectedRootNode}
+        onStateChange={setTemporaryDiagram}
       />
     </>
   );
 }
 
 Tree.propTypes = {
-  diagram: PropTypes.shape({}),
+  autolayout: PropTypes.bool,
+  diagram: PropTypes.shape({
+    connectorPlaceholder: PropTypes.string,
+    stagePos: PropTypes.shape({}),
+    stageScale: PropTypes.shape({}),
+    nodes: PropTypes.shape({}),
+    edges: PropTypes.shape({}),
+    selectedRootNode: PropTypes.string,
+  }),
+  setTemporaryDiagram: PropTypes.func,
 };
 
 Tree.defaultProps = {
-  diagram: { nodes: [], edges: [], root: {} },
+  autolayout: false,
+  diagram: {
+    connectorPlaceholder: '{{}}',
+    stagePos: { x: 0, y: 0 },
+    stageScale: { x: 1, y: 1 },
+    nodes: {},
+    edges: {},
+    selectedRootNode: undefined,
+  },
+  setTemporaryDiagram: () => {},
 };
 
 export default Tree;
