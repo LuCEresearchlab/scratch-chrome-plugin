@@ -20,20 +20,17 @@ export const typeToDefaultValue = (type) => {
 export const getCachedVmValue = (block, type, thread) => {
   const { runtime } = getScratchVM();
   const c = runtime._editingTarget.blocks._cache._executeCached[block.id];
-  if (c._isShadowBlock) {
-    if (!c._shadowValue) {
-      return typeToDefaultValue(type);
-    }
-    if (type === 'String') {
-      return `"${c._shadowValue}"`;
-    }
-    return String(c._shadowValue);
-  }
+  let val;
   if (c._parentKey) {
-    return String(c._parentValues[c._parentKey]);
+    val = String(c._parentValues[c._parentKey]);
+  } else {
+    if (thread.topBlock !== block.id) {
+      throw new Error('Invalid block being evaluated');
+    }
+    val = String(thread.justReported);
   }
-  if (thread.topBlock !== block.id) {
-    throw new Error('Invalid block being evaluated');
+  if (type === 'String') {
+    val = `"${val}"`;
   }
-  return String(thread.justReported);
+  return val;
 };
