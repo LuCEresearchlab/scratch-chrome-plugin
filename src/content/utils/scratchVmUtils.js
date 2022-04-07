@@ -10,11 +10,10 @@ export const connectionToType = (con) => {
 };
 
 export const typeToDefaultValue = (type) => {
-  switch (type) {
-    case 'Boolean': return 'false';
-    case 'Number': return '0';
-    default: return '""';
+  if (type === 'Boolean') {
+    return 'false';
   }
+  throw new Error(`Unknown default value for type ${type}`);
 };
 
 export const getCachedVmValue = (block, type, thread) => {
