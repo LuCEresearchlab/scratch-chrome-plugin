@@ -45,8 +45,14 @@ export default function serviceToTutor(
     const parentNodeId = `n${edge.plugA.valA}`;
     const childNodeId = `n${edge.plugB.valA}`;
     const parentPieceId = nodeHoles[parentNodeId][edge.plugA.valB - 1];
+    const { isHighlighted } = edge;
 
-    edges[key] = { parentNodeId, childNodeId, parentPieceId };
+    edges[key] = {
+      parentNodeId,
+      childNodeId,
+      parentPieceId,
+      isHighlighted,
+    };
   });
 
   return { nodes, edges, selectedRootNode };

@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+import expressionBlocks from '../../assets/data/scratch-blocks-map';
 import {
   connectionToType,
   getCachedVmValue,
@@ -78,6 +79,27 @@ const createDiagram = (inputBlock, thread) => {
     });
   }
 
+  function checkLastEdge(diagram, parentBlock, childBlock, childNum) {
+    if (childBlock.isShadow_) {
+      return;
+    }
+    const getBlockTypeInfo = (block) => {
+      const blockTypeInfo = expressionBlocks[block.type];
+      if (!blockTypeInfo) {
+        throw new Error(`cannot find opcode ${block.type} in opcode-to-type map`);
+      }
+      return blockTypeInfo;
+    };
+    const childTypeInfo = getBlockTypeInfo(parentBlock).children[childNum];
+    if (!childTypeInfo) {
+      throw new Error('number-of-arguments mismatch between opcode-to-type map and block');
+    }
+    if (childTypeInfo.type !== getBlockTypeInfo(childBlock).type) {
+      // eslint-disable-next-line no-param-reassign
+      diagram.edges[diagram.edges.length - 1].isHighlighted = true;
+    }
+  }
+
   function traverseDiagram(block, diagram, parentId, thisId, emptyDropdownPlaceHolder) {
     const type = connectionToType(block.outputConnection);
     const value = getCachedVmValue(block, type, thread);
@@ -117,8 +139,10 @@ const createDiagram = (inputBlock, thread) => {
         pushEdge(diagram, plugA, childId);
         // target connection example: the block in "_"
         if (input.connection.targetConnection) {
+          const childBlock = input.connection.targetConnection.sourceBlock_;
+          checkLastEdge(diagram, block, childBlock, i);
           traverseDiagram(
-            input.connection.targetConnection.sourceBlock_,
+            childBlock,
             diagram,
             thisId,
             childId,
