@@ -1,69 +1,67 @@
-export const expressionBlocks = {
-  operator_add: {
-    type: 'Number',
-    children: [
-      {
-        type: 'Number',
-      },
-      {
-        type: 'Number',
-      },
-    ],
-  },
-  operator_and: {
+const binaryArithmetic = {
+  type: 'Number',
+  children: [
+    {
+      type: 'Number',
+    },
+    {
+      type: 'Number',
+    },
+  ],
+};
+
+const inequality = {
+  type: 'Boolean',
+  children: [
+    {
+      type: 'Any',
+    },
+    {
+      type: 'Any',
+    },
+  ],
+};
+
+const binaryLogical = {
+  type: 'Boolean',
+  children: [
+    {
+      type: 'Boolean',
+    },
+    {
+      type: 'Boolean',
+    },
+  ],
+};
+
+const unaryArithmetic = {
+  type: 'Number',
+  children: [
+    {
+      type: 'Number',
+    },
+  ],
+};
+
+const expressionBlocks = {
+  operator_mathop: unaryArithmetic,
+  operator_round: unaryArithmetic,
+  operator_add: binaryArithmetic,
+  operator_subtract: binaryArithmetic,
+  operator_divide: binaryArithmetic,
+  operator_multiply: binaryArithmetic,
+  operator_mod: binaryArithmetic,
+  operator_random: binaryArithmetic,
+  operator_gt: inequality,
+  operator_lt: inequality,
+  operator_equals: inequality,
+  operator_and: binaryLogical,
+  operator_or: binaryLogical,
+  operator_not: {
     type: 'Boolean',
     children: [
       {
         type: 'Boolean',
-      },
-      {
-        type: 'Boolean',
-      },
-    ],
-  },
-  operator_contains: {
-    type: 'Boolean',
-    children: [
-      {
-        type: 'String',
-      },
-      {
-        type: 'String',
-      },
-    ],
-  },
-  operator_divide: {
-    type: 'Number',
-    children: [
-      {
-        type: 'Number',
-      },
-      {
-        type: 'Number',
-      },
-    ],
-  },
-  operator_equals: {
-    // TODO: 1e1 = 10 is a number comparison
-    type: 'Boolean',
-    children: [
-      {
-        type: 'String',
-      },
-      {
-        type: 'String',
-      },
-    ],
-  },
-  operator_gt: {
-    // TODO: 1e1 > 10 is a number comparison
-    type: 'Boolean',
-    children: [
-      {
-        type: 'String',
-      },
-      {
-        type: 'String',
       },
     ],
   },
@@ -78,18 +76,7 @@ export const expressionBlocks = {
       },
     ],
   },
-  operator_length: {
-    // Note: Integer here means non-negative integer
-    type: 'Integer',
-    children: [
-      {
-        type: 'String',
-      },
-    ],
-  },
   operator_letter_of: {
-    // Note: Number instead of Integer because
-    // block of type Number can be the first child
     type: 'String',
     children: [
       {
@@ -100,8 +87,15 @@ export const expressionBlocks = {
       },
     ],
   },
-  operator_lt: {
-    // TODO: 1e1 < 10 is a number comparison
+  operator_length: {
+    type: 'Number',
+    children: [
+      {
+        type: 'String',
+      },
+    ],
+  },
+  operator_contains: {
     type: 'Boolean',
     children: [
       {
@@ -109,94 +103,9 @@ export const expressionBlocks = {
       },
       {
         type: 'String',
-      },
-    ],
-  },
-  operator_mathop: {
-    type: 'Number',
-    children: [
-      {
-        type: 'Number',
-      },
-    ],
-  },
-  operator_mod: {
-    type: 'Number',
-    children: [
-      {
-        type: 'Number',
-      },
-      {
-        type: 'Number',
-      },
-    ],
-  },
-  operator_multiply: {
-    type: 'Number',
-    children: [
-      {
-        type: 'Number',
-      },
-      {
-        type: 'Number',
-      },
-    ],
-  },
-  operator_not: {
-    type: 'Boolean',
-    children: [
-      {
-        type: 'Boolean',
-      },
-    ],
-  },
-  operator_or: {
-    type: 'Boolean',
-    children: [
-      {
-        type: 'Boolean',
-      },
-      {
-        type: 'Boolean',
-      },
-    ],
-  },
-  operator_random: {
-    type: 'Number',
-    children: [
-      {
-        type: 'Number',
-      },
-      {
-        type: 'Number',
-      },
-    ],
-  },
-  operator_round: {
-    type: 'Integer',
-    children: [
-      {
-        type: 'Number',
-      },
-    ],
-  },
-  operator_subtract: {
-    type: 'Number',
-    children: [
-      {
-        type: 'Number',
-      },
-      {
-        type: 'Number',
       },
     ],
   },
 };
 
-export const nonExpressionBlocks = {
-  motion_movesteps: {
-    children: [{
-      type: 'Number',
-    }],
-  },
-};
+export default expressionBlocks;
