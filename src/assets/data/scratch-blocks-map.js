@@ -1,6 +1,6 @@
 const binaryArithmetic = {
   type: 'Number',
-  children: [
+  expectedArgs: [
     {
       type: 'Number',
     },
@@ -12,19 +12,12 @@ const binaryArithmetic = {
 
 const inequality = {
   type: 'Boolean',
-  children: [
-    {
-      type: 'Any',
-    },
-    {
-      type: 'Any',
-    },
-  ],
+  expectedArgs: [{}, {}],
 };
 
 const binaryLogical = {
   type: 'Boolean',
-  children: [
+  expectedArgs: [
     {
       type: 'Boolean',
     },
@@ -36,11 +29,26 @@ const binaryLogical = {
 
 const unaryArithmetic = {
   type: 'Number',
-  children: [
+  expectedArgs: [
     {
       type: 'Number',
     },
   ],
+};
+
+const leaf = (type) => ({
+  type,
+  expectedArgs: [],
+});
+const numberLeaf = leaf('Number');
+const stringLeaf = leaf('String');
+
+const looksNumberName = {
+  type: {
+    number: 'Number',
+    other: 'String',
+  },
+  expectedArgs: [],
 };
 
 const expressionBlocks = {
@@ -59,7 +67,7 @@ const expressionBlocks = {
   operator_or: binaryLogical,
   operator_not: {
     type: 'Boolean',
-    children: [
+    expectedArgs: [
       {
         type: 'Boolean',
       },
@@ -67,7 +75,7 @@ const expressionBlocks = {
   },
   operator_join: {
     type: 'String',
-    children: [
+    expectedArgs: [
       {
         type: 'String',
       },
@@ -78,7 +86,7 @@ const expressionBlocks = {
   },
   operator_letter_of: {
     type: 'String',
-    children: [
+    expectedArgs: [
       {
         type: 'Number',
       },
@@ -89,7 +97,7 @@ const expressionBlocks = {
   },
   operator_length: {
     type: 'Number',
-    children: [
+    expectedArgs: [
       {
         type: 'String',
       },
@@ -97,7 +105,7 @@ const expressionBlocks = {
   },
   operator_contains: {
     type: 'Boolean',
-    children: [
+    expectedArgs: [
       {
         type: 'String',
       },
@@ -106,6 +114,20 @@ const expressionBlocks = {
       },
     ],
   },
+  motion_direction: numberLeaf,
+  motion_xposition: numberLeaf,
+  motion_yposition: numberLeaf,
+  motion_glideto_menu: stringLeaf,
+  motion_goto_menu: stringLeaf,
+  motion_pointtowards_menu: stringLeaf,
+  looks_backdrops: stringLeaf,
+  looks_costume: stringLeaf,
+  looks_costumenumbername: looksNumberName,
+  looks_backdropnumbername: looksNumberName,
+  looks_size: numberLeaf,
+  sound_volume: numberLeaf,
+  sound_sounds_menu: stringLeaf,
+  control_create_clone_of_menu: stringLeaf,
 };
 
 export default expressionBlocks;

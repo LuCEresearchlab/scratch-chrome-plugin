@@ -90,11 +90,11 @@ const createDiagram = (inputBlock, thread) => {
       }
       return blockTypeInfo;
     };
-    const childTypeInfo = getBlockTypeInfo(parentBlock).children[childNum];
-    if (!childTypeInfo) {
+    const expectedChildTypeInfo = getBlockTypeInfo(parentBlock).expectedArgs[childNum];
+    if (!expectedChildTypeInfo) {
       throw new Error('number-of-arguments mismatch between opcode-to-type map and block');
     }
-    if (childTypeInfo.type !== getBlockTypeInfo(childBlock).type) {
+    if (expectedChildTypeInfo.type !== getBlockTypeInfo(childBlock).type) {
       // eslint-disable-next-line no-param-reassign
       diagram.edges[diagram.edges.length - 1].isHighlighted = true;
     }
