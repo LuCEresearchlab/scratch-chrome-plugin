@@ -2,7 +2,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import scratchExpBlocks from '../../assets/data/scratch-expression-blocks';
+// eslint-disable-next-line import/extensions
+import scratchExpBlocks from '../../assets/data/scratch-expression-blocks.mjs';
 
 import ExpressionTutorLogo from '../components/ExpressionTutorLogo/ExpressionTutorLogo';
 
@@ -22,7 +23,9 @@ const expressionButtonQuerySelector = `:scope > .${svgButtonClassName}`;
 
 let displaySvgButtons = true;
 
-const isExpressionBlock = (block) => scratchExpBlocks.includes(block.type) || block.isShadow_;
+const isLeafExpressionBlock = (block) => block.isShadow_ && block.type !== 'procedures_prototype';
+const isExpressionBlock = (block) => scratchExpBlocks.includes(block.type)
+  || isLeafExpressionBlock(block);
 const isRootExpressionBlock = (block) => isExpressionBlock(block)
   && (block.parentBlock_ === null || !isExpressionBlock(block.parentBlock_));
 
@@ -35,7 +38,7 @@ const getShadows = (block) => {
   const shadows = [];
   block.inputList.forEach((a) => {
     const tb = a.connection?.targetConnection;
-    if (tb && tb.sourceBlock_.isShadow_) {
+    if (tb && isLeafExpressionBlock(tb.sourceBlock_)) {
       shadows.push(tb.sourceBlock_);
     }
   });
@@ -100,7 +103,7 @@ const updateLeafButtonsVisibilityByEvent = (event) => {
  * @param {Boolean} isLeaf if the block has no children
  * @returns true if the block has an SVG button directly on it
  */
-const blockHasSvgButton = (block, isLeaf = block.isShadow_) => {
+const blockHasSvgButton = (block, isLeaf = isLeafExpressionBlock(block)) => {
   const { svgGroup_ } = block;
   if (!isLeaf) {
     return svgGroup_.querySelector(expressionButtonQuerySelector) !== null;
@@ -115,7 +118,7 @@ const blockHasSvgButton = (block, isLeaf = block.isShadow_) => {
  * @param {HTMLElement} block.svgGroup_ the top-level svg associated with the block
  * @param {Boolean} isLeaf if the block has no children
  */
-const removeSvgButtonFromBlock = (block, isLeaf = block.isShadow_) => {
+const removeSvgButtonFromBlock = (block, isLeaf = isLeafExpressionBlock(block)) => {
   const { svgGroup_ } = block;
   if (!isLeaf) {
     svgGroup_.querySelector(expressionButtonQuerySelector).remove();
@@ -248,7 +251,7 @@ const getEmptyBlockSvgElementsAndTypes = (block) => {
 export const appendSvgButtonToExpressionBlock = (block) => {
   const { id: blockId, svgGroup_ } = block;
   const onClickListener = createSvgButtonExpressionListener(blockId);
-  createSvgButton(svgGroup_, onClickListener, block.isShadow_, blockId);
+  createSvgButton(svgGroup_, onClickListener, isLeafExpressionBlock(block), blockId);
 };
 
 function appendSvgButtonsInsideNonExpressionBlock(block) {

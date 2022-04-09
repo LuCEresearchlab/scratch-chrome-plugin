@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-import expressionBlocks from '../../assets/data/scratch-blocks-map';
+// eslint-disable-next-line import/extensions
+import expressionBlocks from '../../assets/data/scratch-blocks-map.mjs';
 import {
   connectionToType,
   getCachedVmValue,
