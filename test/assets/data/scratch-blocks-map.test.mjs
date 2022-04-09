@@ -1,7 +1,7 @@
 /* eslint-disable import/extensions */
 import assert from 'assert';
-import expressionBlocks from '../../../src/assets/data/scratch-blocks-map.js';
-import scratchExpBlocks from '../../../src/assets/data/scratch-expression-blocks.js';
+import expressionBlocks from '../../../src/assets/data/scratch-blocks-map.mjs';
+import scratchExpBlocks from '../../../src/assets/data/scratch-expression-blocks.mjs';
 
 describe('blocks', () => {
   describe('expressionBlocks', () => {
