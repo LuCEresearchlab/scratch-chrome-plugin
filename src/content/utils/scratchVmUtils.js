@@ -1,12 +1,14 @@
 /* eslint-disable no-underscore-dangle */
+// eslint-disable-next-line import/extensions
+import { expressionBlocks } from '../../assets/data/scratch-blocks-map.mjs';
 import { getScratchVM } from './stateHandler';
 
-export const connectionToType = (con) => {
-  if (typeof con.check_[0] === 'boolean') {
-    return 'Any';
+export const opcodeToType = (opcode) => {
+  const blockTypeInfo = expressionBlocks[opcode];
+  if (!blockTypeInfo) {
+    throw new Error('Expected expression block, got non-expression block');
   }
-
-  return con.check_[0];
+  return blockTypeInfo.outputType;
 };
 
 const typeToDefaultRawValue = (type) => {

@@ -1,9 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 // eslint-disable-next-line import/extensions
-import expressionBlocks from '../../assets/data/scratch-blocks-map.mjs';
+import { expressionBlocks } from '../../assets/data/scratch-blocks-map.mjs';
 import {
-  connectionToType,
   getCachedVmValue,
+  opcodeToType,
   typeToDefaultValue,
 } from './scratchVmUtils';
 
@@ -67,8 +67,8 @@ const createDiagram = (inputBlock, thread) => {
     diagram.edges.push(edge);
   }
 
-  function pushEmptyBlock(diagram, connection, childId) {
-    const emptyType = connectionToType(connection);
+  function pushEmptyBlock(diagram, childId) {
+    const emptyType = opcodeToType('empty');
     const emptyValue = typeToDefaultValue(emptyType);
     diagram.nodes.push({
       nodePlug: { valA: childId, valB: 0 },
@@ -81,7 +81,7 @@ const createDiagram = (inputBlock, thread) => {
   }
 
   function checkLastEdge(diagram, parentBlock, childBlock, childNum) {
-    if (childBlock.isShadow_) {
+    if (childBlock.isShadow_) { // shadow blocks are always correctly placed
       return;
     }
     const getBlockTypeInfo = (block) => {
@@ -95,14 +95,14 @@ const createDiagram = (inputBlock, thread) => {
     if (!expectedChildTypeInfo) {
       throw new Error('number-of-arguments mismatch between opcode-to-type map and block');
     }
-    if (expectedChildTypeInfo.type !== getBlockTypeInfo(childBlock).type) {
+    if (expectedChildTypeInfo.type !== getBlockTypeInfo(childBlock).outputType) {
       // eslint-disable-next-line no-param-reassign
       diagram.edges[diagram.edges.length - 1].isHighlighted = true;
     }
   }
 
   function traverseDiagram(block, diagram, parentId, thisId, emptyDropdownPlaceHolder) {
-    const type = connectionToType(block.outputConnection);
+    const type = opcodeToType(block.type);
     const value = getCachedVmValue(block, type, thread);
     const node = {
       nodePlug: { valA: thisId, valB: 0 },
@@ -110,11 +110,7 @@ const createDiagram = (inputBlock, thread) => {
       type,
       value,
     };
-    if (block.isShadow_) {
-      node.content.push({
-        content: value,
-      });
-    } else if (block.collapsed_) {
+    if (block.collapsed_) {
       node.content.push({
         content: block.getInput('_TEMP_COLLAPSED_INPUT').fieldRow[0].text_.trim(),
       });
@@ -150,10 +146,15 @@ const createDiagram = (inputBlock, thread) => {
             emptyDropdownPlaceHolder,
           );
         } else {
-          pushEmptyBlock(diagram, input.connection, childId);
+          pushEmptyBlock(diagram, childId);
         }
       });
       addTrailingTextToNode(node, textsToAdd.join(' ').trim());
+    }
+    if (node.content.length === 0) {
+      node.content.push({
+        content: value,
+      });
     }
 
     diagram.nodes.push(node);
