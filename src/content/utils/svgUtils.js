@@ -22,9 +22,8 @@ const expressionButtonQuerySelector = `:scope > .${svgButtonClassName}`;
 
 let displaySvgButtons = true;
 
-const isLeafExpressionBlock = (block) => block.isShadow_ && block.type !== 'procedures_prototype';
-const isExpressionBlock = (block) => Object.keys(expressionBlocks).includes(block.type)
-  || isLeafExpressionBlock(block);
+const isExpressionBlock = (block) => Object.keys(expressionBlocks).includes(block.type);
+const isShadowExpressionBlock = (block) => block.isShadow_ && isExpressionBlock(block);
 const isRootExpressionBlock = (block) => isExpressionBlock(block)
   && (block.parentBlock_ === null || !isExpressionBlock(block.parentBlock_));
 
@@ -37,7 +36,7 @@ const getShadows = (block) => {
   const shadows = [];
   block.inputList.forEach((a) => {
     const tb = a.connection?.targetConnection;
-    if (tb && isLeafExpressionBlock(tb.sourceBlock_)) {
+    if (tb && isShadowExpressionBlock(tb.sourceBlock_)) {
       shadows.push(tb.sourceBlock_);
     }
   });
@@ -99,12 +98,12 @@ const updateLeafButtonsVisibilityByEvent = (event) => {
  * Check if the block has an SVG button directly on it.
  * @param {Object} block the block to check if has SVG button
  * @param {HTMLElement} block.svgGroup_ the top-level svg associated with the block
- * @param {Boolean} isLeaf if the block has no children
+ * @param {Boolean} isShadowExp if the block is a shadow and an expression
  * @returns true if the block has an SVG button directly on it
  */
-const blockHasSvgButton = (block, isLeaf = isLeafExpressionBlock(block)) => {
+const blockHasSvgButton = (block, isShadowExp = isShadowExpressionBlock(block)) => {
   const { svgGroup_ } = block;
-  if (!isLeaf) {
+  if (!isShadowExp) {
     return svgGroup_.querySelector(expressionButtonQuerySelector) !== null;
   }
   return [...svgGroup_.parentNode.querySelectorAll(expressionButtonQuerySelector)]
@@ -115,11 +114,11 @@ const blockHasSvgButton = (block, isLeaf = isLeafExpressionBlock(block)) => {
  * Remove SVG button from this block.
  * @param {Object} block the block of the button to remove
  * @param {HTMLElement} block.svgGroup_ the top-level svg associated with the block
- * @param {Boolean} isLeaf if the block has no children
+ * @param {Boolean} isShadowExp if the block is a shadow and an expression
  */
-const removeSvgButtonFromBlock = (block, isLeaf = isLeafExpressionBlock(block)) => {
+const removeSvgButtonFromBlock = (block, isShadowExp = isShadowExpressionBlock(block)) => {
   const { svgGroup_ } = block;
-  if (!isLeaf) {
+  if (!isShadowExp) {
     svgGroup_.querySelector(expressionButtonQuerySelector).remove();
     return;
   }
@@ -137,22 +136,22 @@ const removeSvgButtonFromBlock = (block, isLeaf = isLeafExpressionBlock(block)) 
  * Add an SVG button to this element and onclick listener
  * @param {HTMLElement} element the element to have a button
  * @param {Function} onClickListener the click listener for the new button
- * @param {Boolean} isLeaf if the block has no children
+ * @param {Boolean} isShadowExp if the block is a shadow and an expression
  * @param {String} blockId the block id
  */
-const createSvgButton = (element, onClickListener, isLeaf = false, blockId = '') => {
+const createSvgButton = (element, onClickListener, isShadowExp = false, blockId = '') => {
   const svgButton = document.createElementNS(svgNS, 'g');
   svgButton.classList.add(svgButtonClassName);
   svgButton.dataset.blockId = blockId;
   svgButton.style.cursor = 'pointer';
   svgButton.style.display = displaySvgButtons ? 'block' : 'none';
 
-  if (isLeaf) {
+  if (isShadowExp) {
     svgButton.setAttribute('transform', element.getAttribute('transform'));
     svgButton.style.visibility = element.style.visibility;
   }
   svgButton.addEventListener('mousedown', onClickListener);
-  if (isLeaf) {
+  if (isShadowExp) {
     element.parentNode.appendChild(svgButton);
   } else {
     element.appendChild(svgButton);
@@ -250,7 +249,7 @@ const getEmptyBlockSvgElementsAndTypes = (block) => {
 export const appendSvgButtonToExpressionBlock = (block) => {
   const { id: blockId, svgGroup_ } = block;
   const onClickListener = createSvgButtonExpressionListener(blockId);
-  createSvgButton(svgGroup_, onClickListener, isLeafExpressionBlock(block), blockId);
+  createSvgButton(svgGroup_, onClickListener, isShadowExpressionBlock(block), blockId);
 };
 
 function appendSvgButtonsInsideNonExpressionBlock(block) {
