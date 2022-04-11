@@ -27,7 +27,7 @@ const looksNumberName = nary({
   other: 'String',
 }, []);
 
-const expressionBlocks = {
+export const expressionBlocks = {
   motion_direction: numberLeaf,
   motion_xposition: numberLeaf,
   motion_yposition: numberLeaf,
@@ -170,7 +170,7 @@ const expressionBlocks = {
   argument_reporter_boolean: nary(bool, []), // TODO expression?
 };
 
-const nonExpressionBlocks = {
+export const nonExpressionBlocks = {
   motion_movesteps: [number],
   motion_turnright: [number],
   motion_turnleft: [number],
@@ -306,5 +306,3 @@ const nonExpressionBlocks = {
   // shadows
   procedures_prototype: [], // varies
 };
-
-export default expressionBlocks;

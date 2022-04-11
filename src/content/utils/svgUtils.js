@@ -2,9 +2,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-// eslint-disable-next-line import/extensions
-import scratchExpBlocks from '../../assets/data/scratch-expression-blocks.mjs';
-
 import ExpressionTutorLogo from '../components/ExpressionTutorLogo/ExpressionTutorLogo';
 
 import { getBlockly, getScratchVM } from './stateHandler';
@@ -15,6 +12,8 @@ import {
 } from './scratchVmUtils';
 import { postMessageToContentScript } from '../contentScripts/messages';
 import serviceToTutor from './serviceToTutor';
+// eslint-disable-next-line import/extensions
+import { expressionBlocks } from '../../assets/data/scratch-blocks-map.mjs';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
@@ -24,7 +23,7 @@ const expressionButtonQuerySelector = `:scope > .${svgButtonClassName}`;
 let displaySvgButtons = true;
 
 const isLeafExpressionBlock = (block) => block.isShadow_ && block.type !== 'procedures_prototype';
-const isExpressionBlock = (block) => scratchExpBlocks.includes(block.type)
+const isExpressionBlock = (block) => Object.keys(expressionBlocks).includes(block.type)
   || isLeafExpressionBlock(block);
 const isRootExpressionBlock = (block) => isExpressionBlock(block)
   && (block.parentBlock_ === null || !isExpressionBlock(block.parentBlock_));
