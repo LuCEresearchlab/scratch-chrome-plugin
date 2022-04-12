@@ -8,7 +8,7 @@ import { getBlockly, getScratchVM } from './stateHandler';
 import createDiagram from './diagramUtils';
 
 import {
-  opcodeToType,
+  opcodeToTypeInfo,
   typeToDefaultValue,
 } from './scratchVmUtils';
 import { postMessageToContentScript } from '../contentScripts/messages';
@@ -240,7 +240,7 @@ const getEmptyBlockSvgElementsAndTypes = (block) => {
     if (!tb && a.outlinePath) {
       emptyInfo.push({
         outlinePath: a.outlinePath,
-        type: opcodeToType('empty'),
+        type: opcodeToTypeInfo('empty').outputType,
       });
     }
   });

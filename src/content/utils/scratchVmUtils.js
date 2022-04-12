@@ -3,12 +3,12 @@
 import { expressionBlocks } from '../../assets/data/scratch-blocks-map.mjs';
 import { getScratchVM } from './stateHandler';
 
-export const opcodeToType = (opcode) => {
+export const opcodeToTypeInfo = (opcode) => {
   const blockTypeInfo = expressionBlocks[opcode];
   if (!blockTypeInfo) {
     throw new Error('Expected expression block, got non-expression block');
   }
-  return blockTypeInfo.outputType;
+  return blockTypeInfo;
 };
 
 const typeToDefaultRawValue = (type) => {

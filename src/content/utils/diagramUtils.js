@@ -1,9 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 // eslint-disable-next-line import/extensions
-import { expressionBlocks } from '../../assets/data/scratch-blocks-map.mjs';
 import {
   getCachedVmValue,
-  opcodeToType,
+  opcodeToTypeInfo,
   typeToDefaultValue,
 } from './scratchVmUtils';
 import { getBlockly } from './stateHandler';
@@ -73,7 +72,7 @@ const createDiagram = (inputBlock, thread) => {
   }
 
   function pushEmptyBlock(diagram, childId) {
-    const emptyType = opcodeToType('empty');
+    const emptyType = opcodeToTypeInfo('empty').outputType;
     const emptyValue = typeToDefaultValue(emptyType);
     diagram.nodes.push({
       nodePlug: { valA: childId, valB: 0 },
@@ -85,29 +84,44 @@ const createDiagram = (inputBlock, thread) => {
     });
   }
 
-  function checkLastEdge(diagram, parentBlock, childBlock, childNum) {
-    if (childBlock.isShadow_) { // shadow blocks are always correctly placed
+  function typeMatches(expectedType, actualType) {
+    return (Array.isArray(actualType) && actualType.includes(expectedType))
+      || (!Array.isArray(actualType) && expectedType === actualType);
+  }
+
+  function compareAndActTypes(edges, parentId, actualType) {
+    // if (!parentId) {
+    //   if (!block.parentBlock_) {
+    //     return;
+    //   }
+    //   const typeInfo = opcodeToTypeInfo(block.parentBlock_.type);
+
+    //   return;
+    // }
+    if (parentId === undefined) {
       return;
     }
-    const getBlockTypeInfo = (block) => {
-      const blockTypeInfo = expressionBlocks[block.type];
-      if (!blockTypeInfo) {
-        throw new Error(`cannot find opcode ${block.type} in opcode-to-type map`);
-      }
-      return blockTypeInfo;
-    };
-    const expectedChildTypeInfo = getBlockTypeInfo(parentBlock).expectedArgs[childNum];
+    const e = edges.find((edge) => edge.plugA.valA === parentId);
+    if (!e) {
+      throw new Error(`could not find edge with plugA.valA ${parentId}`);
+    }
+    if (typeMatches(e.plugA.type, actualType)) {
+      return;
+    }
+    // eslint-disable-next-line no-param-reassign
+    e.isHighlighted = true;
+  }
+
+  function getExpectedChildType(parentBlock, childNum) {
+    const expectedChildTypeInfo = opcodeToTypeInfo(parentBlock.type).expectedArgs[childNum];
     if (!expectedChildTypeInfo) {
       throw new Error('number-of-arguments mismatch between opcode-to-type map and block');
     }
-    if (expectedChildTypeInfo.type !== getBlockTypeInfo(childBlock).outputType) {
-      // eslint-disable-next-line no-param-reassign
-      diagram.edges[diagram.edges.length - 1].isHighlighted = true;
-    }
+    return expectedChildTypeInfo.type;
   }
 
   function getType(block, firstFieldDropdownText) {
-    const type = opcodeToType(block.type);
+    const type = opcodeToTypeInfo(block.type).outputType;
     if (!Array.isArray(type) && type instanceof Object) {
       if (firstFieldDropdownText) {
         return type[firstFieldDropdownText];
@@ -118,7 +132,13 @@ const createDiagram = (inputBlock, thread) => {
     }
   }
 
-  function traverseDiagram(block, diagram, parentId, thisId, emptyDropdownPlaceHolder) {
+  function traverseDiagram(
+    block,
+    diagram,
+    thisId,
+    parentId,
+    emptyDropdownPlaceHolder,
+  ) {
     const node = {
       nodePlug: { valA: thisId, valB: 0 },
       content: [],
@@ -148,18 +168,18 @@ const createDiagram = (inputBlock, thread) => {
         const plugA = {
           valA: thisId,
           valB: i + 1,
+          type: getExpectedChildType(block, i),
         };
         node.content.push(plugA);
         pushEdge(diagram, plugA, childId);
         // target connection example: the block in "_"
         if (input.connection.targetConnection) {
           const childBlock = input.connection.targetConnection.sourceBlock_;
-          checkLastEdge(diagram, block, childBlock, i);
           traverseDiagram(
             childBlock,
             diagram,
-            thisId,
             childId,
+            thisId,
             emptyDropdownPlaceHolder,
           );
         } else {
@@ -170,6 +190,11 @@ const createDiagram = (inputBlock, thread) => {
     }
     // reevaluate type if it depends on field dropdown text
     node.type = getType(block, firstFieldDropdownText);
+    compareAndActTypes(
+      diagram.edges,
+      parentId,
+      node.type,
+    );
     node.value = getCachedVmValue(block, node.type, thread);
     if (node.content.length === 0) {
       node.content.push({
@@ -178,13 +203,13 @@ const createDiagram = (inputBlock, thread) => {
     }
 
     diagram.nodes.push(node);
-    if (parentId < 0) {
+    if (parentId === undefined) {
       // eslint-disable-next-line no-param-reassign
       diagram.root = node;
     }
   }
 
-  traverseDiagram(inputBlock, diagramAccumulator, -1, newID());
+  traverseDiagram(inputBlock, diagramAccumulator, newID());
   return diagramAccumulator;
 };
 

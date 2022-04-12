@@ -4,7 +4,7 @@ const string = 'String';
 const bool = 'Boolean';
 const color = 'Colour';
 const any = '';
-const other = 'Other'; // not expression
+const other = 'Other'; // non-expression argument type
 
 /**
  * Returns a structured type information.
