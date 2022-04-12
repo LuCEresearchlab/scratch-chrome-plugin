@@ -22,17 +22,13 @@ const binaryLogical = nary(bool, [bool, bool]);
 const unaryArithmetic = nary(number, [number]);
 const numberLeaf = nary(number, []);
 const stringLeaf = nary(string, []);
-const looksNumberName = nary({
-  number: 'Number',
-  other: 'String',
-}, []);
 
 export const expressionBlocks = {
   motion_direction: numberLeaf,
   motion_xposition: numberLeaf,
   motion_yposition: numberLeaf,
-  looks_costumenumbername: looksNumberName,
-  looks_backdropnumbername: looksNumberName,
+  looks_costumenumbername: nary({ number, other: string }, []),
+  looks_backdropnumbername: nary({ number, other: string }, []),
   looks_size: numberLeaf,
   sound_volume: numberLeaf,
   sensing_answer: stringLeaf,

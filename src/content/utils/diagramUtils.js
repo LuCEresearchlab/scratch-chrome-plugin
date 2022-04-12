@@ -6,6 +6,7 @@ import {
   opcodeToType,
   typeToDefaultValue,
 } from './scratchVmUtils';
+import { getBlockly } from './stateHandler';
 
 const createDiagram = (inputBlock, thread) => {
   let uuid = 0;
@@ -21,11 +22,15 @@ const createDiagram = (inputBlock, thread) => {
     edges: [],
   };
 
+  function getFirstFieldDropdownText(fieldRow) {
+    const r = fieldRow.find((row) => row instanceof getBlockly().FieldDropdown && row.getValue());
+    return r.getText();
+  }
+
   function getTexts(fieldRow, emptyDropdownPlaceHolder) {
     const texts = [];
     fieldRow.forEach((row) => {
-      if (row.menuGenerator_ // if row instanceof Blockly.FieldDropdown
-        && !row.getValue()) {
+      if (row instanceof getBlockly().FieldDropdown && !row.getValue()) {
         texts.push(emptyDropdownPlaceHolder || '?');
       } else {
         texts.push(row.getText());
@@ -101,15 +106,24 @@ const createDiagram = (inputBlock, thread) => {
     }
   }
 
-  function traverseDiagram(block, diagram, parentId, thisId, emptyDropdownPlaceHolder) {
+  function getType(block, firstFieldDropdownText) {
     const type = opcodeToType(block.type);
-    const value = getCachedVmValue(block, type, thread);
+    if (type instanceof Object) {
+      if (firstFieldDropdownText) {
+        return type[firstFieldDropdownText];
+      }
+      throw new Error(`Could not determine type of block ${block.id}`);
+    } else {
+      return type;
+    }
+  }
+
+  function traverseDiagram(block, diagram, parentId, thisId, emptyDropdownPlaceHolder) {
     const node = {
       nodePlug: { valA: thisId, valB: 0 },
       content: [],
-      type,
-      value,
     };
+    let firstFieldDropdownText;
     if (block.collapsed_) {
       node.content.push({
         content: block.getInput('_TEMP_COLLAPSED_INPUT').fieldRow[0].text_.trim(),
@@ -121,6 +135,9 @@ const createDiagram = (inputBlock, thread) => {
       block.inputList.forEach((input, i) => {
         // field row example: "think"
         textsToAdd.push(getTexts(input.fieldRow, emptyDropdownPlaceHolder));
+        if (!firstFieldDropdownText) {
+          firstFieldDropdownText = getFirstFieldDropdownText(input.fieldRow);
+        }
         // connection example: "_"
         if (!input.connection) {
           return;
@@ -151,9 +168,12 @@ const createDiagram = (inputBlock, thread) => {
       });
       addTrailingTextToNode(node, textsToAdd.join(' ').trim());
     }
+    // reevaluate type if it depends on field dropdown text
+    node.type = getType(block, firstFieldDropdownText);
+    node.value = getCachedVmValue(block, node.type, thread);
     if (node.content.length === 0) {
       node.content.push({
-        content: value,
+        content: node.value,
       });
     }
 
