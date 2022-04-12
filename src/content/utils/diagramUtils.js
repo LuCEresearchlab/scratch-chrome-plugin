@@ -24,7 +24,7 @@ const createDiagram = (inputBlock, thread) => {
 
   function getFirstFieldDropdownText(fieldRow) {
     const r = fieldRow.find((row) => row instanceof getBlockly().FieldDropdown && row.getValue());
-    return r.getText();
+    return r?.getText();
   }
 
   function getTexts(fieldRow, emptyDropdownPlaceHolder) {
@@ -108,7 +108,7 @@ const createDiagram = (inputBlock, thread) => {
 
   function getType(block, firstFieldDropdownText) {
     const type = opcodeToType(block.type);
-    if (type instanceof Object) {
+    if (!Array.isArray(type) && type instanceof Object) {
       if (firstFieldDropdownText) {
         return type[firstFieldDropdownText];
       }
