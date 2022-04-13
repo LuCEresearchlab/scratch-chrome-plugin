@@ -85,31 +85,12 @@ const createDiagram = (inputBlock, thread) => {
   }
 
   function typeMatches(expectedType, actualType) {
-    return (Array.isArray(actualType) && actualType.includes(expectedType))
-      || (!Array.isArray(actualType) && expectedType === actualType);
-  }
-
-  function compareAndActTypes(edges, parentId, actualType) {
-    // if (!parentId) {
-    //   if (!block.parentBlock_) {
-    //     return;
-    //   }
-    //   const typeInfo = opcodeToTypeInfo(block.parentBlock_.type);
-
-    //   return;
-    // }
-    if (parentId === undefined) {
-      return;
+    const check = (et) => (Array.isArray(actualType) && actualType.includes(et))
+      || (!Array.isArray(actualType) && et === actualType);
+    if (Array.isArray(expectedType)) {
+      return expectedType.some(check);
     }
-    const e = edges.find((edge) => edge.plugA.valA === parentId);
-    if (!e) {
-      throw new Error(`could not find edge with plugA.valA ${parentId}`);
-    }
-    if (typeMatches(e.plugA.type, actualType)) {
-      return;
-    }
-    // eslint-disable-next-line no-param-reassign
-    e.isHighlighted = true;
+    return check(expectedType);
   }
 
   function getExpectedChildType(parentBlock, childNum) {
@@ -118,6 +99,52 @@ const createDiagram = (inputBlock, thread) => {
       throw new Error('number-of-arguments mismatch between opcode-to-type map and block');
     }
     return expectedChildTypeInfo.type;
+  }
+
+  function getChildIndex(parentBlock, childId) {
+    let index;
+    const found = parentBlock.inputList.some((input, i) => {
+      if (!input.connection) {
+        return false;
+      }
+      if (input.connection.targetConnection) {
+        const childBlock = input.connection.targetConnection.sourceBlock_;
+        if (childBlock.id === childId) {
+          index = i;
+          return true;
+        }
+      }
+      return false;
+    });
+    if (!found) {
+      throw new Error(`could not find child ${childId} for parent ${parentBlock.id}`);
+    }
+    return index;
+  }
+
+  function compareAndActTypes(node, edges, block, parentId, thisId, actualType) {
+    if (parentId === undefined) {
+      if (!block.parentBlock_) {
+        return;
+      }
+      const i = getChildIndex(block.parentBlock_, block.id);
+      const expectedType = opcodeToTypeInfo(block.parentBlock_.type, false)[i];
+      if (typeMatches(expectedType, actualType)) {
+        return;
+      }
+      // eslint-disable-next-line no-param-reassign
+      node.isHighlighted = true;
+      return;
+    }
+    const e = edges.find((edge) => edge.plugB.valA === thisId);
+    if (!e) {
+      throw new Error(`could not find edge connecting to node with id ${thisId}`);
+    }
+    if (typeMatches(e.plugA.type, actualType)) {
+      return;
+    }
+    // eslint-disable-next-line no-param-reassign
+    e.isHighlighted = true;
   }
 
   function getType(block, firstFieldDropdownText) {
@@ -191,8 +218,11 @@ const createDiagram = (inputBlock, thread) => {
     // reevaluate type if it depends on field dropdown text
     node.type = getType(block, firstFieldDropdownText);
     compareAndActTypes(
+      node,
       diagram.edges,
+      block,
       parentId,
+      thisId,
       node.type,
     );
     node.value = getCachedVmValue(block, node.type, thread);

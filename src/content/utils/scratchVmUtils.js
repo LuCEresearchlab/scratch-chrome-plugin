@@ -1,12 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 // eslint-disable-next-line import/extensions
-import { expressionBlocks } from '../../assets/data/scratch-blocks-map.mjs';
+import { expressionBlocks, nonExpressionBlocks } from '../../assets/data/scratch-blocks-map.mjs';
 import { getScratchVM } from './stateHandler';
 
-export const opcodeToTypeInfo = (opcode) => {
-  const blockTypeInfo = expressionBlocks[opcode];
+export const opcodeToTypeInfo = (opcode, isExpression = true) => {
+  const blockTypeInfo = isExpression ? expressionBlocks[opcode] : nonExpressionBlocks[opcode];
   if (!blockTypeInfo) {
-    throw new Error('Expected expression block, got non-expression block');
+    throw new Error(`could not find opcode ${opcode} in opcode-to-type map`);
   }
   return blockTypeInfo;
 };

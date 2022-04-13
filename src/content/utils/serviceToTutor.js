@@ -29,6 +29,7 @@ export default function serviceToTutor(
       holes.push(i);
       return connectorPlaceHolder;
     });
+    const { isHighlighted } = node;
 
     nodes[key] = {
       pieces,
@@ -36,6 +37,7 @@ export default function serviceToTutor(
       value,
       x: 0,
       y: 0,
+      isHighlighted,
     };
     nodeHoles[key] = holes;
   });
