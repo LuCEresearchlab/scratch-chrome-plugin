@@ -151,7 +151,7 @@ const createDiagram = (inputBlock, thread) => {
     const type = opcodeToTypeInfo(block.type).outputType;
     if (!Array.isArray(type) && type instanceof Object) {
       if (firstFieldDropdownText) {
-        return type[firstFieldDropdownText];
+        return type[firstFieldDropdownText] ?? type.other;
       }
       throw new Error(`Could not determine type of block ${block.id}`);
     } else {
