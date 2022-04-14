@@ -3,7 +3,7 @@ const number = 'Number';
 const string = 'String';
 const bool = 'Boolean';
 const color = 'Colour';
-const any = '';
+const any = [number, string, bool, color];
 const other = 'Other'; // non-expression argument type
 
 /**

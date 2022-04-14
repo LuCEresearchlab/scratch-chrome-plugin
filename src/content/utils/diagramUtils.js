@@ -84,13 +84,13 @@ const createDiagram = (inputBlock, thread) => {
     });
   }
 
+  function arrayIntersect(array1, array2) {
+    return array1.some((value) => array2.includes(value));
+  }
+
   function typeMatches(expectedType, actualType) {
-    const check = (et) => (Array.isArray(actualType) && actualType.includes(et))
-      || (!Array.isArray(actualType) && et === actualType);
-    if (Array.isArray(expectedType)) {
-      return expectedType.some(check);
-    }
-    return check(expectedType);
+    const toArray = (value) => (Array.isArray(value) ? value : [value]);
+    return arrayIntersect(toArray(expectedType), toArray(actualType));
   }
 
   function getExpectedChildType(parentBlock, childNum) {
