@@ -5,7 +5,7 @@ import { getScratchVM } from './stateHandler';
 
 export const opcodeToTypeInfo = (opcode, isExpression = true) => {
   const blockTypeInfo = isExpression ? expressionBlocks[opcode] : nonExpressionBlocks[opcode];
-  if (!blockTypeInfo) {
+  if (blockTypeInfo === undefined) {
     throw new Error(`could not find opcode ${opcode} in opcode-to-type map`);
   }
   return blockTypeInfo;
@@ -32,6 +32,12 @@ export const getCachedVmValue = (block, type, thread) => {
   const getRawValue = () => {
     const { runtime } = getScratchVM();
     const c = runtime._editingTarget.blocks._cache._executeCached[block.id];
+    if (c._isShadowBlock) {
+      if (!c._shadowValue) {
+        return '';
+      }
+      return String(c._shadowValue);
+    }
     if (c._parentKey) {
       return String(c._parentValues[c._parentKey]);
     }
