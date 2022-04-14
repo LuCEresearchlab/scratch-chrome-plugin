@@ -11,7 +11,7 @@ const handleEnabledChanged = (e) => updateDisplaySvgButtons(e);
 
 const moveEventListener = (event) => {
   const block = getBlockly().getMainWorkspace().getBlockById(event.blockId);
-  appendSvgButtonToBlock(event, block);
+  appendSvgButtonToBlock(block);
 };
 
 const onBlocklyEvent = (event) => {

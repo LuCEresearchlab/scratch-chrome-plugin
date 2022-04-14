@@ -58,44 +58,6 @@ const svgHasButton = (svg, button) => {
 };
 
 /**
- * Update SVG buttons on leaf blocks of direct parent block with id.
- * @param {String} blockId the id of the direct parent of leaf buttons to update
- */
-const updateLeafButtonsVisibilityById = (blockId) => {
-  const group = getBlockly().getMainWorkspace().getBlockById(blockId).svgGroup_;
-  const svgs = group.querySelectorAll(':scope > path, :scope > g');
-  const buttons = group.querySelectorAll(expressionButtonQuerySelector);
-  buttons.forEach((button) => {
-    if (svgHasButton(group, button)) return;
-    const leaf = [...svgs].find((svg) => svgHasButton(svg, button));
-    if (leaf) {
-      // eslint-disable-next-line no-param-reassign
-      button.style.visibility = leaf.style.visibility === undefined ? 'visible' : leaf.style.visibility;
-    } else {
-      // eslint-disable-next-line no-param-reassign
-      button.style.visibility = 'hidden';
-    }
-  });
-};
-
-/**
- * Update the visibility of SVG buttons on blocks with no children and
- * that have been affected by the event
- * @param {Object} event the event to handle
- * @param {String} event.newParentId the id of the new parent of the moved block
- * @param {String} event.oldParentId the id of the old parent of the moved block
- */
-const updateLeafButtonsVisibilityByEvent = (event) => {
-  const { newParentId, oldParentId } = event;
-  if (newParentId) {
-    updateLeafButtonsVisibilityById(newParentId);
-  }
-  if (oldParentId) {
-    updateLeafButtonsVisibilityById(oldParentId);
-  }
-};
-
-/**
  * Check if the SVG has an SVG button directly on it.
  * @param {HTMLElement} svg the top-level svg associated with the block
  * @returns true if the block has an SVG button directly on it
@@ -147,6 +109,7 @@ const createSvgButton = (element, onClickListener, blockId = '') => {
       mutations.forEach((mutation) => {
         if (mutation.type === 'attributes') {
           svgButton.setAttribute('transform', element.getAttribute('transform'));
+          svgButton.style.visibility = element.style.visibility === undefined ? 'visible' : element.style.visibility;
         }
       });
     });
@@ -274,14 +237,13 @@ function appendSvgButtonsInsideNonExpressionBlock(block) {
   });
 }
 
-export const appendSvgButtonToBlock = (event, block) => {
+export const appendSvgButtonToBlock = (block) => {
   if (!block) return;
 
   if (isRootExpressionBlock(block)) {
     if (!blockHasSvgButton(block.svgGroup_)) {
       appendSvgButtonToExpressionBlock(block);
     }
-    updateLeafButtonsVisibilityByEvent(event);
     return;
   }
 
