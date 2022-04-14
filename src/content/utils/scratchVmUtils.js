@@ -18,11 +18,14 @@ export const opcodeToTypeInfo = (opcode, isExpression = true) => {
  * @returns the corresponding human-readable value based on the type and value given
  */
 const unrawValue = (type, value) => {
+  if (value === null || value === undefined) {
+    throw new Error('evaluation cannot result in null');
+  }
   switch (type) {
-    case 'Boolean': return value.length === 0 ? 'false' : value;
-    case 'Number': return value.length === 0 ? '0' : value;
+    case 'Boolean': return !value ? 'false' : String(value);
+    case 'Number': return !value ? '0' : String(value);
     case 'String': return `"${value}"`;
-    default: return value;
+    default: return String(value);
   }
 };
 
@@ -36,15 +39,15 @@ export const getCachedVmValue = (block, type, thread) => {
       if (!c._shadowValue) {
         return '';
       }
-      return String(c._shadowValue);
+      return c._shadowValue;
     }
     if (c._parentKey) {
-      return String(c._parentValues[c._parentKey]);
+      return c._parentValues[c._parentKey];
     }
     if (thread.topBlock !== block.id) {
       throw new Error('Invalid block being evaluated');
     }
-    return String(thread.justReported);
+    return thread.justReported;
   };
 
   const raw = getRawValue();
