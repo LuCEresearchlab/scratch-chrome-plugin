@@ -11,32 +11,27 @@ export const opcodeToTypeInfo = (opcode, isExpression = true) => {
   return blockTypeInfo;
 };
 
-const typeToDefaultRawValue = (type) => {
+/**
+ * Returns the corresponding human-readable value based on the type and value given.
+ * @param {String} type the type of the value in the VM
+ * @param {String} value the value in the VM
+ * @returns the corresponding human-readable value based on the type and value given
+ */
+const unrawValue = (type, value) => {
   switch (type) {
-    case 'Boolean': return 'false';
-    case 'Number': return '0';
-    case 'String': return '';
-    default: throw new Error('Unknown type');
+    case 'Boolean': return value.length === 0 ? 'false' : value;
+    case 'Number': return value.length === 0 ? '0' : value;
+    case 'String': return `"${value}"`;
+    default: return value;
   }
 };
 
-const unrawValue = (type, value) => (type === 'String' ? `"${value}"` : value);
-
-export const typeToDefaultValue = (type) => {
-  const raw = typeToDefaultRawValue(type);
-  return unrawValue(type, raw);
-};
+export const typeToDefaultValue = (type) => unrawValue(type, '');
 
 export const getCachedVmValue = (block, type, thread) => {
   const getRawValue = () => {
     const { runtime } = getScratchVM();
     const c = runtime._editingTarget.blocks._cache._executeCached[block.id];
-    if (c._isShadowBlock) {
-      if (!c._shadowValue) {
-        return typeToDefaultRawValue(type);
-      }
-      return String(c._shadowValue);
-    }
     if (c._parentKey) {
       return String(c._parentValues[c._parentKey]);
     }
