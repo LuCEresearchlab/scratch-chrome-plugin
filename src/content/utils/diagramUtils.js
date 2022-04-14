@@ -102,18 +102,18 @@ const createDiagram = (inputBlock, thread) => {
   }
 
   function getChildIndex(parentBlock, childId) {
-    let index;
-    const found = parentBlock.inputList.some((input, i) => {
+    let index = 0;
+    const found = parentBlock.inputList.some((input) => {
       if (!input.connection) {
         return false;
       }
       if (input.connection.targetConnection) {
         const childBlock = input.connection.targetConnection.sourceBlock_;
         if (childBlock.id === childId) {
-          index = i;
           return true;
         }
       }
+      index += 1;
       return false;
     });
     if (!found) {
@@ -128,7 +128,13 @@ const createDiagram = (inputBlock, thread) => {
         return;
       }
       const i = getChildIndex(block.parentBlock_, block.id);
-      const expectedType = opcodeToTypeInfo(block.parentBlock_.type, false)[i];
+      let expectedTypes = opcodeToTypeInfo(block.parentBlock_.type, false);
+      if (!expectedTypes) {
+        // dynamically find expected type
+        const pc = block.parentBlock_.getProcCode();
+        expectedTypes = Array.from(pc.matchAll('%s|%b'), (m) => (m[0] === '%b' ? 'Boolean' : ['String', 'Number']));
+      }
+      const expectedType = expectedTypes[i];
       if (typeMatches(expectedType, actualType)) {
         return;
       }

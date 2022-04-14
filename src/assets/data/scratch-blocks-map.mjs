@@ -242,7 +242,7 @@ export const nonExpressionBlocks = {
   data_replaceitemoflist: [number, any],
   data_showlist: [],
   data_hidelist: [],
-  procedures_call: [], // varies
+  procedures_call: null, // varies
   music_playDrumForBeats: [number, number],
   music_restForBeats: [number],
   music_playNoteForBeats: [number, number],
@@ -302,5 +302,5 @@ export const nonExpressionBlocks = {
   gdxfor_whenForcePushedOrPulled: [string],
   gdxfor_whenTilted: [string],
   // shadows
-  procedures_prototype: [], // varies
+  procedures_prototype: null, // varies
 };
