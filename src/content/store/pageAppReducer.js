@@ -1,10 +1,10 @@
-import injectedAppInitialState from './initialStates/pageAppInitialState';
+import injectedAppInitialState from './initialStates/pageAppInitialState.js';
 
-import modalActions from './actions/modalActions';
-import modalReducers from './reducers/modalReducers';
+import modalActions from './actions/modalActions.js';
+import modalReducers from './reducers/modalReducers.js';
 
-import diagramActions from './actions/diagramActions';
-import diagramReducers from './reducers/diagramReducers';
+import diagramActions from './actions/diagramActions.js';
+import diagramReducers from './reducers/diagramReducers.js';
 
 export const reducers = {
   ...modalReducers,

@@ -1,9 +1,8 @@
-/* eslint-disable import/extensions */
 /* eslint-disable no-underscore-dangle */
 import {
   bool, color, expressionBlocks, nonExpressionBlocks, number, string,
-} from '../../assets/data/scratch-blocks-map.mjs';
-import { getScratchVM } from './stateHandler.mjs';
+} from '../../assets/data/scratch-blocks-map.js';
+import { getScratchVM } from './stateHandler.js';
 
 const opcodeToTypeInfo = (opcode, isExpression = true) => {
   const blockTypeInfo = isExpression ? expressionBlocks[opcode] : nonExpressionBlocks[opcode];

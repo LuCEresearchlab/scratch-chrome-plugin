@@ -2,14 +2,14 @@ import {
   getLocalStorage,
   observeLocalStorage,
   setLocalStorage,
-} from '../../../chromeAPI';
+} from '../../../chromeAPI.js';
 
 import {
   handleMessageFromPageScript,
   postMessageToPageScript,
-} from '../messages';
+} from '../messages.js';
 
-import { injectScriptIntoTag } from '../injectScript';
+import { injectScriptIntoTag } from '../injectScript.js';
 
 let reduxError;
 

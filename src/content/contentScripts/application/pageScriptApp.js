@@ -1,12 +1,11 @@
-/* eslint-disable import/extensions */
 /* eslint-disable no-underscore-dangle */
-import renderPageApp from '../../renderer/renderPageApp';
-import { getBlockly } from '../../utils/stateHandler.mjs';
+import renderPageApp from '../../renderer/renderPageApp.js';
+import { getBlockly } from '../../utils/stateHandler.js';
 import {
   appendSvgButtonToBlock,
   updateDisplaySvgButtons,
-} from '../../utils/svgUtils';
-import { handleMessageFromContentScript } from '../messages';
+} from '../../utils/svgUtils.js';
+import { handleMessageFromContentScript } from '../messages.js';
 
 const handleEnabledChanged = (e) => updateDisplaySvgButtons(e);
 

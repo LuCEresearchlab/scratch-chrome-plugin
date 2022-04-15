@@ -1,7 +1,7 @@
-import { setLocalStorage } from '../../../chromeAPI';
-import { injectCodeBeforeAllOtherScripts } from '../injectScript';
-import { handleMessageFromPageScript } from '../messages';
-import myFunc from './pageScriptRedux';
+import { setLocalStorage } from '../../../chromeAPI.js';
+import { injectCodeBeforeAllOtherScripts } from '../injectScript.js';
+import { handleMessageFromPageScript } from '../messages.js';
+import myFunc from './pageScriptRedux.js';
 
 handleMessageFromPageScript((payload) => {
   const { action, value } = payload;

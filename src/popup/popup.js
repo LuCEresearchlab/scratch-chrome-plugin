@@ -6,9 +6,9 @@ import {
   getLocalStorage,
   observeLocalStorage,
   setLocalStorage,
-} from '../chromeAPI';
+} from '../chromeAPI.js';
 
-import Popup from './components/Popup/Popup';
+import Popup from './components/Popup/Popup.js';
 
 const renderPopup = () => {
   const container = document.querySelector('#popup-container');

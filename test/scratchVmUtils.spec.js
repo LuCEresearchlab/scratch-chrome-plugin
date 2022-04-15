@@ -1,9 +1,8 @@
-/* eslint-disable import/extensions */
 import assert from 'assert';
 import {
   bool, color, number, string,
-} from '../src/assets/data/scratch-blocks-map.mjs';
-import { opcodeToExpressionTypeInfo, opcodeToNonExpressionTypeInfo, typeToDefaultValue } from '../src/content/utils/scratchVmUtils.mjs';
+} from '../src/assets/data/scratch-blocks-map.js';
+import { opcodeToExpressionTypeInfo, opcodeToNonExpressionTypeInfo, typeToDefaultValue } from '../src/content/utils/scratchVmUtils.js';
 
 describe('src/content/utils/scratchVmUtils', () => {
   describe('opcodeToExpressionTypeInfo(opcode)', () => {

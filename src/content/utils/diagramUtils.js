@@ -1,13 +1,11 @@
-/* eslint-disable import/extensions */
 /* eslint-disable no-underscore-dangle */
-// eslint-disable-next-line import/extensions
 import {
   getCachedVmValue,
   opcodeToExpressionTypeInfo,
   opcodeToNonExpressionTypeInfo,
   typeToDefaultValue,
-} from './scratchVmUtils.mjs';
-import { getBlockly } from './stateHandler.mjs';
+} from './scratchVmUtils.js';
+import { getBlockly } from './stateHandler.js';
 
 const createDiagram = (inputBlock, thread) => {
   let uuid = 0;

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import PageApp from '../components/PageApp/PageApp';
+import PageApp from '../components/PageApp/PageApp.js';
 
 const renderPageApp = () => {
   const injectedAppContainer = document.createElement('div');

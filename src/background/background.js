@@ -5,9 +5,9 @@ import {
   observeLocalStorage,
   clearBadge,
   setIconColor,
-} from '../chromeAPI';
+} from '../chromeAPI.js';
 
-import initialPluginState from './initialPluginState';
+import initialPluginState from './initialPluginState.js';
 
 onInstalled(() => {
   setLocalStorage(initialPluginState);

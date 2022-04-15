@@ -6,17 +6,17 @@ import React, {
 } from 'react';
 // import PropTypes from 'prop-types';
 
-import { Modal } from '@material-ui/core';
+import Modal from '@material-ui/core/Modal/Modal.js';
 
-import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/core/styles/index.js';
 
-import Tree from '../Tree/Tree';
-import OpenModalButton from '../OpenModalButton/OpenModalButton';
+import Tree from '../Tree/Tree.js';
+import OpenModalButton from '../OpenModalButton/OpenModalButton.js';
 
-import { reducer, initialState, createDispatchActions } from '../../store/pageAppReducer';
+import { reducer, initialState, createDispatchActions } from '../../store/pageAppReducer.js';
 
-import theme from '../../../themes/pageTheme';
-import { handleMessageFromContentScript } from '../../contentScripts/messages';
+import theme from '../../../themes/pageTheme.js';
+import { handleMessageFromContentScript } from '../../contentScripts/messages.js';
 
 function PageApp() {
   const [state, dispatch] = useReducer(reducer, initialState);

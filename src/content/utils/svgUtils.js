@@ -1,21 +1,19 @@
-/* eslint-disable import/extensions */
 /* eslint-disable no-underscore-dangle */
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import ExpressionTutorLogo from '../components/ExpressionTutorLogo/ExpressionTutorLogo';
+import ExpressionTutorLogo from '../components/ExpressionTutorLogo/ExpressionTutorLogo.js';
 
-import { getBlockly, getScratchVM } from './stateHandler.mjs';
-import createDiagram from './diagramUtils';
+import { getBlockly, getScratchVM } from './stateHandler.js';
+import createDiagram from './diagramUtils.js';
 
 import {
   opcodeToExpressionTypeInfo,
   typeToDefaultValue,
-} from './scratchVmUtils.mjs';
-import { postMessageToContentScript } from '../contentScripts/messages';
-import serviceToTutor from './serviceToTutor';
-// eslint-disable-next-line import/extensions
-import { expressionBlocks } from '../../assets/data/scratch-blocks-map.mjs';
+} from './scratchVmUtils.js';
+import { postMessageToContentScript } from '../contentScripts/messages.js';
+import serviceToTutor from './serviceToTutor.js';
+import { expressionBlocks } from '../../assets/data/scratch-blocks-map.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 

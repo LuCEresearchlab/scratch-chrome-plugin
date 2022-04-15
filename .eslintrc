@@ -17,5 +17,7 @@
     },
 		"ecmaVersion": 12
 	},
-	"rules": {}
+	"rules": {
+    "import/extensions": "off"
+  }
 }

@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/core/styles/index.js';
 
-import theme from '../../../themes/popupTheme';
+import theme from '../../../themes/popupTheme.js';
 
 function Popup() {
   return (
