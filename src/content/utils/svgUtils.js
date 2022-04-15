@@ -1,16 +1,17 @@
+/* eslint-disable import/extensions */
 /* eslint-disable no-underscore-dangle */
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import ExpressionTutorLogo from '../components/ExpressionTutorLogo/ExpressionTutorLogo';
 
-import { getBlockly, getScratchVM } from './stateHandler';
+import { getBlockly, getScratchVM } from './stateHandler.mjs';
 import createDiagram from './diagramUtils';
 
 import {
-  opcodeToTypeInfo,
+  opcodeToExpressionTypeInfo,
   typeToDefaultValue,
-} from './scratchVmUtils';
+} from './scratchVmUtils.mjs';
 import { postMessageToContentScript } from '../contentScripts/messages';
 import serviceToTutor from './serviceToTutor';
 // eslint-disable-next-line import/extensions
@@ -206,7 +207,7 @@ const getEmptyBlockSvgElementsAndTypes = (block) => {
     if (!tb && a.outlinePath) {
       emptyInfo.push({
         outlinePath: a.outlinePath,
-        type: opcodeToTypeInfo('empty').outputType,
+        type: opcodeToExpressionTypeInfo('empty').outputType,
       });
     }
   });

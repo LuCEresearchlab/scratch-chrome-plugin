@@ -1,11 +1,13 @@
+/* eslint-disable import/extensions */
 /* eslint-disable no-underscore-dangle */
 // eslint-disable-next-line import/extensions
 import {
   getCachedVmValue,
-  opcodeToTypeInfo,
+  opcodeToExpressionTypeInfo,
+  opcodeToNonExpressionTypeInfo,
   typeToDefaultValue,
-} from './scratchVmUtils';
-import { getBlockly } from './stateHandler';
+} from './scratchVmUtils.mjs';
+import { getBlockly } from './stateHandler.mjs';
 
 const createDiagram = (inputBlock, thread) => {
   let uuid = 0;
@@ -72,7 +74,7 @@ const createDiagram = (inputBlock, thread) => {
   }
 
   function pushEmptyBlock(diagram, childId) {
-    const emptyType = opcodeToTypeInfo('empty').outputType;
+    const emptyType = opcodeToExpressionTypeInfo('empty').outputType;
     const emptyValue = typeToDefaultValue(emptyType);
     diagram.nodes.push({
       nodePlug: { valA: childId, valB: 0 },
@@ -94,7 +96,8 @@ const createDiagram = (inputBlock, thread) => {
   }
 
   function getExpectedChildType(parentBlock, childNum) {
-    const expectedChildTypeInfo = opcodeToTypeInfo(parentBlock.type).expectedArgs[childNum];
+    const expectedChildTypeInfo = opcodeToExpressionTypeInfo(parentBlock.type)
+      .expectedArgs[childNum];
     if (!expectedChildTypeInfo) {
       throw new Error('number-of-arguments mismatch between opcode-to-type map and block');
     }
@@ -128,7 +131,7 @@ const createDiagram = (inputBlock, thread) => {
         return;
       }
       const i = getChildIndex(block.parentBlock_, block.id);
-      let expectedTypes = opcodeToTypeInfo(block.parentBlock_.type, false);
+      let expectedTypes = opcodeToNonExpressionTypeInfo(block.parentBlock_.type);
       if (!expectedTypes) {
         // dynamically find expected type
         const pc = block.parentBlock_.getProcCode();
@@ -154,7 +157,7 @@ const createDiagram = (inputBlock, thread) => {
   }
 
   function getType(block, firstFieldDropdownText) {
-    const type = opcodeToTypeInfo(block.type).outputType;
+    const type = opcodeToExpressionTypeInfo(block.type).outputType;
     if (!Array.isArray(type) && type instanceof Object) {
       if (firstFieldDropdownText) {
         return type[firstFieldDropdownText] ?? type.other;

@@ -1,8 +1,8 @@
 // from https://en.scratch-wiki.info/wiki/Argument#Argument_Types
-const number = 'Number';
-const string = 'String';
-const bool = 'Boolean';
-const color = 'Colour';
+export const number = 'Number';
+export const string = 'String';
+export const bool = 'Boolean';
+export const color = 'Colour';
 const any = [number, string, bool, color];
 const other = 'Other'; // non-expression argument type
 

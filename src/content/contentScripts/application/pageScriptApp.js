@@ -1,6 +1,7 @@
+/* eslint-disable import/extensions */
 /* eslint-disable no-underscore-dangle */
 import renderPageApp from '../../renderer/renderPageApp';
-import { getBlockly } from '../../utils/stateHandler';
+import { getBlockly } from '../../utils/stateHandler.mjs';
 import {
   appendSvgButtonToBlock,
   updateDisplaySvgButtons,
