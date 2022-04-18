@@ -6,9 +6,9 @@ import React, {
 } from 'react';
 // import PropTypes from 'prop-types';
 
-import Modal from '@material-ui/core/Modal/index.js';
+import { Modal } from '@material-ui/core/index.js';
 
-import { ThemeProvider } from '@material-ui/core/index.js';
+import { ThemeProvider } from '@material-ui/core/styles/index.js';
 
 import Tree from '../Tree/Tree.js';
 import OpenModalButton from '../OpenModalButton/OpenModalButton.js';

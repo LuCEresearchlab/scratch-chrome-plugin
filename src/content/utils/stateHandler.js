@@ -43,7 +43,6 @@ export const getScratchVM = () => {
 let blocklyInstance = null;
 export const getBlockly = () => {
   if (blocklyInstance) {
-    window.blockly = blocklyInstance;
     return blocklyInstance;
   }
 
@@ -74,8 +73,6 @@ export const getBlockly = () => {
     if (child && child.stateNode && child.stateNode.ScratchBlocks) {
       const { stateNode: { ScratchBlocks } } = child;
       blocklyInstance = ScratchBlocks;
-      window.blockly = blocklyInstance;
-
       return ScratchBlocks;
     }
 

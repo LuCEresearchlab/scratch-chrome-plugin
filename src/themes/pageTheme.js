@@ -1,13 +1,13 @@
-import { green, purple } from '@material-ui/core/colors/index.js';
-import { createTheme } from '@material-ui/core/index.js';
+import { colors } from '@material-ui/core/index.js';
+import { createTheme } from '@material-ui/core/styles/index.js';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: purple[500],
+      main: colors.purple[500],
     },
     secondary: {
-      main: green[500],
+      main: colors.green[500],
     },
   },
 });
