@@ -51,10 +51,10 @@ const unrawValue = (type, value) => {
  */
 export const typeToDefaultValue = (type) => unrawValue(type, '');
 
-export const getCachedVmValue = (block, type, thread) => {
+export const getCachedVmValue = (blockId, type, thread) => {
   const getRawValue = () => {
     const { runtime } = getScratchVM();
-    const c = runtime._editingTarget.blocks._cache._executeCached[block.id];
+    const c = runtime._editingTarget.blocks._cache._executeCached[blockId];
     if (c._isShadowBlock) {
       if (!c._shadowValue) {
         return '';
@@ -64,7 +64,7 @@ export const getCachedVmValue = (block, type, thread) => {
     if (c._parentKey) {
       return c._parentValues[c._parentKey];
     }
-    if (thread.topBlock !== block.id) {
+    if (thread.topBlock !== blockId) {
       throw new Error('Invalid block being evaluated');
     }
     return thread.justReported;

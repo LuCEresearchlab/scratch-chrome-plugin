@@ -232,7 +232,7 @@ const createDiagram = (inputBlock, thread) => {
       thisId,
       node.type,
     );
-    node.value = getCachedVmValue(block, node.type, thread);
+    node.value = getCachedVmValue(block.id, node.type, thread);
     if (node.content.length === 0) {
       node.content.push({
         content: node.value,

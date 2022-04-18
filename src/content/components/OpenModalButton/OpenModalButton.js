@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Fab } from '@material-ui/core/index.js';
-import { makeStyles } from '@material-ui/core/styles/index.js';
 import { School } from '@material-ui/icons/index.js';
+import { Fab, makeStyles } from '@material-ui/core/index.js';
 
 const useStyles = makeStyles((theme) => ({
   button: {
