@@ -5,7 +5,6 @@ import {
   opcodeToNonExpressionTypeInfo,
   typeToDefaultValue,
 } from './scratchVmUtils.js';
-import { getBlockly } from './stateHandler.js';
 
 const createDiagram = (inputBlock, thread) => {
   let uuid = 0;
@@ -22,14 +21,14 @@ const createDiagram = (inputBlock, thread) => {
   };
 
   function getFirstFieldDropdownText(fieldRow) {
-    const r = fieldRow.find((row) => row instanceof getBlockly().FieldDropdown && row.getValue());
+    const r = fieldRow.find((row) => row.menuGenerator_ && row.getValue());
     return r?.getText();
   }
 
   function getTexts(fieldRow, emptyDropdownPlaceHolder) {
     const texts = [];
     fieldRow.forEach((row) => {
-      if (row instanceof getBlockly().FieldDropdown && !row.getValue()) {
+      if (row.menuGenerator_ && !row.getValue()) {
         texts.push(emptyDropdownPlaceHolder || '?');
       } else {
         texts.push(row.getText());

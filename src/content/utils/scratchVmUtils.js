@@ -2,7 +2,6 @@
 import {
   bool, color, expressionBlocks, nonExpressionBlocks, number, string,
 } from '../../assets/data/scratch-blocks-map.js';
-import { getScratchVM } from './stateHandler.js';
 
 const opcodeToTypeInfo = (opcode, isExpression = true) => {
   const blockTypeInfo = isExpression ? expressionBlocks[opcode] : nonExpressionBlocks[opcode];
@@ -53,8 +52,7 @@ export const typeToDefaultValue = (type) => unrawValue(type, '');
 
 export const getCachedVmValue = (blockId, type, thread) => {
   const getRawValue = () => {
-    const { runtime } = getScratchVM();
-    const c = runtime._editingTarget.blocks._cache._executeCached[blockId];
+    const c = thread.blockContainer._cache._executeCached[blockId];
     if (c._isShadowBlock) {
       if (!c._shadowValue) {
         return '';
