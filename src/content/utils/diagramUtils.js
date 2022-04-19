@@ -177,50 +177,44 @@ const createDiagram = (inputBlock, thread) => {
       content: [],
     };
     let firstFieldDropdownText;
-    if (block.collapsed_) {
-      node.content.push({
-        content: block.getInput('_TEMP_COLLAPSED_INPUT').fieldRow[0].text_.trim(),
-      });
-    } else {
-      let textsToAdd = [];
-      // block example: think _ for _ seconds
-      // input list example: ["think _", "for _", "seconds"]
-      block.inputList.forEach((input, i) => {
-        // field row example: "think"
-        textsToAdd.push(getTexts(input.fieldRow, emptyDropdownPlaceHolder));
-        if (!firstFieldDropdownText) {
-          firstFieldDropdownText = getFirstFieldDropdownText(input.fieldRow);
-        }
-        // connection example: "_"
-        if (!input.connection) {
-          return;
-        }
-        addTextToNode(node, textsToAdd.join(' ').trim());
-        textsToAdd = [];
-        const childId = newID();
-        const plugA = {
-          valA: thisId,
-          valB: i + 1,
-          type: getExpectedChildType(block, i),
-        };
-        node.content.push(plugA);
-        pushEdge(diagram, plugA, childId);
-        // target connection example: the block in "_"
-        if (input.connection.targetConnection) {
-          const childBlock = input.connection.targetConnection.sourceBlock_;
-          traverseDiagram(
-            childBlock,
-            diagram,
-            childId,
-            thisId,
-            emptyDropdownPlaceHolder,
-          );
-        } else {
-          pushEmptyBlock(diagram, childId);
-        }
-      });
-      addTrailingTextToNode(node, textsToAdd.join(' ').trim());
-    }
+    let textsToAdd = [];
+    // block example: think _ for _ seconds
+    // input list example: ["think _", "for _", "seconds"]
+    block.inputList.forEach((input, i) => {
+      // field row example: "think"
+      textsToAdd.push(getTexts(input.fieldRow, emptyDropdownPlaceHolder));
+      if (!firstFieldDropdownText) {
+        firstFieldDropdownText = getFirstFieldDropdownText(input.fieldRow);
+      }
+      // connection example: "_"
+      if (!input.connection) {
+        return;
+      }
+      addTextToNode(node, textsToAdd.join(' ').trim());
+      textsToAdd = [];
+      const childId = newID();
+      const plugA = {
+        valA: thisId,
+        valB: i + 1,
+        type: getExpectedChildType(block, i),
+      };
+      node.content.push(plugA);
+      pushEdge(diagram, plugA, childId);
+      // target connection example: the block in "_"
+      if (input.connection.targetConnection) {
+        const childBlock = input.connection.targetConnection.sourceBlock_;
+        traverseDiagram(
+          childBlock,
+          diagram,
+          childId,
+          thisId,
+          emptyDropdownPlaceHolder,
+        );
+      } else {
+        pushEmptyBlock(diagram, childId);
+      }
+    });
+    addTrailingTextToNode(node, textsToAdd.join(' ').trim());
     // reevaluate type if it depends on field dropdown text
     node.type = getType(block, firstFieldDropdownText);
     compareAndActTypes(
