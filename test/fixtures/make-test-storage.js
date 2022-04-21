@@ -39,8 +39,8 @@ const getAssetUrl = (asset) => {
 const makeTestStorage = () => {
   const storage = new ScratchStorage();
   const { AssetType } = storage;
-  storage.addWebSource([AssetType.Project], getProjectUrl);
-  storage.addWebSource(
+  storage.addWebStore([AssetType.Project], getProjectUrl);
+  storage.addWebStore(
     [AssetType.ImageVector, AssetType.ImageBitmap, AssetType.Sound],
     getAssetUrl,
   );
