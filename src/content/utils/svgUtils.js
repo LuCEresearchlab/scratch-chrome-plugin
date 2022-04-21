@@ -212,7 +212,7 @@ const getEmptyBlockSvgElementsAndTypes = (block) => {
   return emptyInfo;
 };
 
-export const appendSvgButtonToExpressionBlock = (block) => {
+const appendSvgButtonToExpressionBlock = (block) => {
   const { id: blockId, svgGroup_ } = block;
   const onClickListener = createSvgButtonExpressionListener(blockId);
   createSvgButton(svgGroup_, onClickListener, blockId);
