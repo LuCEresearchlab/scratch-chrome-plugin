@@ -21,17 +21,17 @@ const createDiagram = (inputBlock, thread) => {
   };
 
   function getFirstFieldDropdownText(fieldRow) {
-    const r = fieldRow.find((row) => row.menuGenerator_ && row.getValue());
-    return r?.getText();
+    const r = fieldRow.find((row) => row.menuGenerator_ && row.text_);
+    return r?.text_;
   }
 
   function getTexts(fieldRow, emptyDropdownPlaceHolder) {
     const texts = [];
     fieldRow.forEach((row) => {
-      if (row.menuGenerator_ && !row.getValue()) {
+      if (row.menuGenerator_ && !row.text_) {
         texts.push(emptyDropdownPlaceHolder || '?');
       } else {
-        texts.push(row.getText());
+        texts.push(row.text_);
       }
     });
     return texts;
