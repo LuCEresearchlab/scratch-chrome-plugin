@@ -30,14 +30,16 @@ const getCircularReplacer = () => {
     'text_',
   ];
   return (key, value) => {
-    if (key && key.length !== 20 && Number.isNaN(parseInt(key, 10)) && !keys.includes(key)) {
-      return undefined;
-    }
     if (typeof value === 'object' && value !== null) {
-      if (seen.has(value)) {
-        return undefined;
+      if (key && key.length !== 20 && Number.isNaN(parseInt(key, 10)) && !keys.includes(key)) {
+        return { id: value.id };
       }
-      seen.add(value);
+      if (key !== '_parentValues') {
+        if (seen.has(value)) {
+          return { id: value.id };
+        }
+        seen.add(value);
+      }
     }
     return value;
   };
@@ -280,7 +282,10 @@ const createDiagram = (inputBlock, thread) => {
   if (process.env.NODE_ENV === 'development') {
     console.log(JSON.stringify(inputBlock, getCircularReplacer()));
     console.log(JSON.stringify(thread, getCircularReplacer()));
-    console.log(JSON.stringify(thread.blockContainer._cache._executeCached, getCircularReplacer()));
+    console.log(JSON.stringify(
+      { _cache: { _executeCached: thread.blockContainer._cache._executeCached } },
+      getCircularReplacer(),
+    ));
     console.log(JSON.stringify(diagramAccumulator));
   }
   return diagramAccumulator;
