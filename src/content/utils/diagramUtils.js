@@ -170,7 +170,7 @@ const createDiagram = (inputBlock, thread) => {
       let expectedTypes = opcodeToNonExpressionTypeInfo(block.parentBlock_.type);
       if (!expectedTypes) {
         // dynamically find expected type
-        const pc = block.parentBlock_.getProcCode();
+        const pc = block.parentBlock_.procCode_;
         expectedTypes = Array.from(pc.matchAll('%s|%b'), (m) => (m[0] === '%b' ? 'Boolean' : ['String', 'Number']));
       }
       const expectedType = expectedTypes[i];
