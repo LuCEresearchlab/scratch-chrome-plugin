@@ -6,6 +6,43 @@ import {
   typeToDefaultValue,
 } from './scratchVmUtils.js';
 
+const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  const keys = [
+    'blockContainer',
+    '_cache',
+    '_executeCached',
+    '_isShadowBlock',
+    '_shadowValue',
+    '_parentKey',
+    '_parentValues',
+    'topBlock',
+    'justReported',
+    'inputList',
+    'fieldRow',
+    'id',
+    'parentBlock_',
+    'type',
+    'connection',
+    'targetConnection',
+    'sourceBlock_',
+    'menuGenerator_',
+    'text_',
+  ];
+  return (key, value) => {
+    if (key && key.length !== 20 && Number.isNaN(parseInt(key, 10)) && !keys.includes(key)) {
+      return undefined;
+    }
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        return undefined;
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+};
+
 const createDiagram = (inputBlock, thread) => {
   let uuid = 0;
 
@@ -240,6 +277,12 @@ const createDiagram = (inputBlock, thread) => {
   }
 
   traverseDiagram(inputBlock, diagramAccumulator, newID());
+  if (process.env.NODE_ENV === 'development') {
+    console.log(JSON.stringify(inputBlock, getCircularReplacer()));
+    console.log(JSON.stringify(thread, getCircularReplacer()));
+    console.log(JSON.stringify(thread.blockContainer._cache._executeCached, getCircularReplacer()));
+    console.log(JSON.stringify(diagramAccumulator));
+  }
   return diagramAccumulator;
 };
 

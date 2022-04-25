@@ -3,7 +3,7 @@ import {
   bool, color, number, string,
 } from '../src/assets/data/scratch-blocks-map.js';
 import {
-  getCachedVmValue, opcodeToExpressionTypeInfo, opcodeToNonExpressionTypeInfo, typeToDefaultValue,
+  opcodeToExpressionTypeInfo, opcodeToNonExpressionTypeInfo, typeToDefaultValue,
 } from '../src/content/utils/scratchVmUtils.js';
 
 describe('src/content/utils/scratchVmUtils', () => {
@@ -46,12 +46,6 @@ describe('src/content/utils/scratchVmUtils', () => {
 
     it('should return empty string when type is not any of the four', () => {
       assert.equal(typeToDefaultValue([string, color]), '');
-    });
-  });
-
-  describe('getCachedVmValue(blockId, type, thread)', () => {
-    it('should throw when blockId not found', () => {
-      assert.throws(() => getCachedVmValue('random', string));
     });
   });
 });
