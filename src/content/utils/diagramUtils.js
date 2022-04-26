@@ -68,7 +68,7 @@ const createDiagram = (inputBlock, thread) => {
     const texts = [];
     fieldRow.forEach((row) => {
       if (row.menuGenerator_ && !row.text_) {
-        texts.push(emptyDropdownPlaceHolder || '?');
+        texts.push(emptyDropdownPlaceHolder || '');
       } else {
         texts.push(row.text_);
       }
@@ -189,13 +189,9 @@ const createDiagram = (inputBlock, thread) => {
   function getType(block, firstFieldDropdownText) {
     const type = opcodeToExpressionTypeInfo(block.type).outputType;
     if (!Array.isArray(type) && type instanceof Object) {
-      console.assert(firstFieldDropdownText, `Could not determine type of block ${block.id}`);
-      if (firstFieldDropdownText) {
-        return type[firstFieldDropdownText] ?? type.other;
-      }
-    } else {
-      return type;
+      return type[firstFieldDropdownText] ?? type.other;
     }
+    return type;
   }
 
   function traverseDiagram(
@@ -215,8 +211,8 @@ const createDiagram = (inputBlock, thread) => {
     // input list example: ["think _", "for _", "seconds"]
     block.inputList.forEach((input, i) => {
       // field row example: "think"
-      textsToAdd.push(getTexts(input.fieldRow, emptyDropdownPlaceHolder));
-      if (!firstFieldDropdownText) {
+      textsToAdd = textsToAdd.concat(getTexts(input.fieldRow, emptyDropdownPlaceHolder));
+      if (firstFieldDropdownText === undefined) {
         firstFieldDropdownText = getFirstFieldDropdownText(input.fieldRow);
       }
       // connection example: "_"
