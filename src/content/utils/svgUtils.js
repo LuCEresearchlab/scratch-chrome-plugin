@@ -172,9 +172,7 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
     if (pushedThread) return;
     newThreads.push(runtime._pushThread(topBlockId, target));
   }, currentTarget);
-  if (newThreads.length !== 1) {
-    throw new Error('Thread creation error');
-  }
+  console.assert(newThreads.length === 1, 'Thread creation error');
   const listener = () => {
     runtime.removeListener('PROJECT_RUN_STOP', listener);
 

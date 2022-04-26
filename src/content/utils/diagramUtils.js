@@ -134,9 +134,7 @@ const createDiagram = (inputBlock, thread) => {
   function getExpectedChildType(parentBlock, childNum) {
     const expectedChildTypeInfo = opcodeToExpressionTypeInfo(parentBlock.type)
       .expectedArgs[childNum];
-    if (!expectedChildTypeInfo) {
-      throw new Error('number-of-arguments mismatch between opcode-to-type map and block');
-    }
+    console.assert(expectedChildTypeInfo, 'number-of-arguments mismatch between opcode-to-type map and block');
     return expectedChildTypeInfo.type;
   }
 
@@ -155,9 +153,7 @@ const createDiagram = (inputBlock, thread) => {
       index += 1;
       return false;
     });
-    if (!found) {
-      throw new Error(`could not find child ${childId} for parent ${parentBlock.id}`);
-    }
+    console.assert(found, `could not find child ${childId} for parent ${parentBlock.id}`);
     return index;
   }
 
@@ -182,9 +178,7 @@ const createDiagram = (inputBlock, thread) => {
       return;
     }
     const e = edges.find((edge) => edge.plugB.valA === thisId);
-    if (!e) {
-      throw new Error(`could not find edge connecting to node with id ${thisId}`);
-    }
+    console.assert(e, `could not find edge connecting to node with id ${thisId}`);
     if (typeMatches(e.plugA.type, actualType)) {
       return;
     }
@@ -195,10 +189,10 @@ const createDiagram = (inputBlock, thread) => {
   function getType(block, firstFieldDropdownText) {
     const type = opcodeToExpressionTypeInfo(block.type).outputType;
     if (!Array.isArray(type) && type instanceof Object) {
+      console.assert(firstFieldDropdownText, `Could not determine type of block ${block.id}`);
       if (firstFieldDropdownText) {
         return type[firstFieldDropdownText] ?? type.other;
       }
-      throw new Error(`Could not determine type of block ${block.id}`);
     } else {
       return type;
     }
@@ -279,7 +273,7 @@ const createDiagram = (inputBlock, thread) => {
   }
 
   traverseDiagram(inputBlock, diagramAccumulator, newID());
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV !== 'production') {
     console.log(JSON.stringify(inputBlock, getCircularReplacer()));
     console.log(JSON.stringify(thread, getCircularReplacer()));
     console.log(JSON.stringify(
