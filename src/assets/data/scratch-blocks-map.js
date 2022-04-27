@@ -164,7 +164,7 @@ export const expressionBlocks = {
   // pseudo-shadows (sometimes not shadow)
   argument_reporter_string_number: nary([number, string], []), // TODO expression?
   argument_reporter_boolean: nary(bool, []), // TODO expression?
-  // imaginary block
+  // imaginary block (ex. empty holes in 'and' block)
   empty: nary(bool, []),
 };
 

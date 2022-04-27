@@ -2,7 +2,8 @@ import additionBasicTest from './cases/additionBasicTest.js';
 import additionTest from './cases/additionTest.js';
 import internalNonShadowBlockTest from './cases/internalNonShadowBlockTest.js';
 import dynamicallyTypedDropdownBlockTest from './cases/dynamicallyTypedDropdownBlockTest.js';
-import internalBlockTypeMismatchTest from './cases/internalBlockTypeMismatchTest.js';
+import internalBlockTypeMismatchNumberStringTest from './cases/internalBlockTypeMismatchNumberStringTest.js';
+import internalBlockTypeMismatchColorStringTest from './cases/internalBlockTypeMismatchColorStringTest.js';
 import rootBlockTypeMismatchTest from './cases/rootBlockTypeMismatchTest.js';
 import rootBlockTypeMatchTest from './cases/rootBlockTypeMatchTest.js';
 import emptyBlockTest from './cases/emptyBlockTest.js';
@@ -12,6 +13,7 @@ import emptyDropdownTest from './cases/emptyDropdownTest.js';
 import rootBlockTypeMatch2Test from './cases/rootBlockTypeMatch2Test.js';
 import sideBySideInternalBlocksTest from './cases/sideBySideInternalBlocksTest.js';
 import dynamicallyTypedChildBlockTest from './cases/dynamicallyTypedChildBlockTest.js';
+import rootDropdownTest from './cases/rootDropdownTest.js';
 
 const createDiagramTests = [
   additionBasicTest,
@@ -19,7 +21,8 @@ const createDiagramTests = [
   internalNonShadowBlockTest,
   dynamicallyTypedDropdownBlockTest,
   dynamicallyTypedChildBlockTest,
-  internalBlockTypeMismatchTest,
+  internalBlockTypeMismatchNumberStringTest,
+  internalBlockTypeMismatchColorStringTest,
   rootBlockTypeMismatchTest,
   rootBlockTypeMatchTest,
   rootBlockTypeMatch2Test,
@@ -28,6 +31,7 @@ const createDiagramTests = [
   colorBlockTest,
   emptyDropdownTest,
   sideBySideInternalBlocksTest,
+  rootDropdownTest,
 ];
 
 export default createDiagramTests;
