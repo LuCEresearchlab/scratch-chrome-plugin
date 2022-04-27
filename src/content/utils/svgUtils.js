@@ -23,24 +23,40 @@ const expressionButtonQuerySelector = `:scope > .${svgButtonClassName}`;
 let displaySvgButtons = true;
 
 const isExpressionBlock = (block) => Object.keys(expressionBlocks).includes(block.type);
-const isShadowExpressionBlock = (block) => block.isShadow_ && isExpressionBlock(block);
 const isRootExpressionBlock = (block) => isExpressionBlock(block)
   && (block.parentBlock_ === null || !isExpressionBlock(block.parentBlock_));
 
 /**
- * Returns all shadow blocks directly under this block.
- * @param {Object} block the parent block of the shadow blocks
- * @returns all shadow blocks directly under this block
+ * Returns all non-expression blocks directly under this block.
+ * @param {Object} block the parent block of the non-expression blocks
+ * @returns all non-expression blocks directly under this block
  */
-const getShadows = (block) => {
-  const shadows = [];
+const getNonExpressionBlocks = (block) => {
+  const nonExpBlocks = [];
+  let prevBlock = block;
+  let currBlock = block?.nextConnection?.targetConnection?.sourceBlock_;
+  while (currBlock && currBlock !== prevBlock) {
+    nonExpBlocks.push(currBlock);
+    prevBlock = currBlock;
+    currBlock = currBlock?.nextConnection?.targetConnection?.sourceBlock_;
+  }
+  return nonExpBlocks;
+};
+
+/**
+ * Returns all expression blocks directly under this block.
+ * @param {Object} block the parent block of the expression blocks
+ * @returns all expression blocks directly under this block
+ */
+const getExpressionBlocks = (block) => {
+  const expBlocks = [];
   block.inputList.forEach((a) => {
     const tb = a.connection?.targetConnection;
-    if (tb && isShadowExpressionBlock(tb.sourceBlock_)) {
-      shadows.push(tb.sourceBlock_);
+    if (tb && isExpressionBlock(tb.sourceBlock_)) {
+      expBlocks.push(tb.sourceBlock_);
     }
   });
-  return shadows;
+  return expBlocks;
 };
 
 /**
@@ -217,11 +233,13 @@ const appendSvgButtonToExpressionBlock = (block) => {
 };
 
 function appendSvgButtonsInsideNonExpressionBlock(block) {
-  // Shadows are shadowBlocks in Blockly
-  const shadows = getShadows(block);
-  shadows.forEach((shadow) => {
-    if (!blockHasSvgButton(shadow.svgGroup_)) {
-      appendSvgButtonToExpressionBlock(shadow);
+  const nonExpBlocks = getNonExpressionBlocks(block);
+  nonExpBlocks.forEach(appendSvgButtonsInsideNonExpressionBlock);
+
+  const expBlocks = getExpressionBlocks(block);
+  expBlocks.forEach((b) => {
+    if (!blockHasSvgButton(b.svgGroup_)) {
+      appendSvgButtonToExpressionBlock(b);
     }
   });
 
