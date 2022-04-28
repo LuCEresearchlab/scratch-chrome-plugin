@@ -1,5 +1,5 @@
 const test = {
-  it: 'create diagram for block (color "#61feff" is touching "#19577c"?): test for color blocks',
+  it: 'create diagram for block (color "#61feff" is touching "#19577c"?): test for color_picker blocks',
   args: [
     {
       svgGroup_: { id: '' },
