@@ -189,6 +189,10 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
     newThreads.push(runtime._pushThread(topBlockId, target));
   }, currentTarget);
   console.assert(newThreads.length === 1, 'Thread creation error');
+  const otherThreads = [];
+  while (runtime.threads.length > 1) {
+    otherThreads.push(runtime.threads.shift());
+  }
   const listener = () => {
     runtime.removeListener('PROJECT_RUN_STOP', listener);
 
@@ -200,6 +204,9 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
     const workspace = getBlockly().getMainWorkspace();
     const d = createDiagram(workspace.getBlockById(blockId), newThreads[0]);
     postMessageToContentScript('selectedNewDiagram', serviceToTutor(d));
+
+    // resume other threads
+    otherThreads.forEach((thread) => runtime.threads.push(thread));
   };
   runtime.addListener('PROJECT_RUN_STOP', listener);
 };
