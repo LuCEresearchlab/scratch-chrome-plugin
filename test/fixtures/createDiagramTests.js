@@ -14,6 +14,7 @@ import rootBlockTypeMatch2Test from './cases/rootBlockTypeMatch2Test.js';
 import sideBySideInternalBlocksTest from './cases/sideBySideInternalBlocksTest.js';
 import dynamicallyTypedChildBlockTest from './cases/dynamicallyTypedChildBlockTest.js';
 import rootDropdownTest from './cases/rootDropdownTest.js';
+import rootDropdownValueNotEqualToTextTest from './cases/rootDropdownValueNotEqualToTextTest.js'
 
 const createDiagramTests = [
   additionBasicTest,
@@ -32,6 +33,7 @@ const createDiagramTests = [
   emptyDropdownTest,
   sideBySideInternalBlocksTest,
   rootDropdownTest,
+  rootDropdownValueNotEqualToTextTest,
 ];
 
 export default createDiagramTests;
