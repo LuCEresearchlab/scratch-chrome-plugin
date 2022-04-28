@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import renderPageApp from '../../renderer/renderPageApp.js';
-import { getBlockly } from '../../utils/stateHandler.js';
+import { getBlockly, getScratchVM } from '../../utils/stateHandler.js';
 import {
   appendSvgButtonToBlock,
   updateDisplaySvgButtons,
@@ -22,9 +22,18 @@ const onBlocklyEvent = (event) => {
 
 const startPluginApp = (isPluginEnabled) => {
   handleEnabledChanged(isPluginEnabled);
-  if (getBlockly()) {
-    const workspace = getBlockly().getMainWorkspace();
+  const blockly = getBlockly();
+  if (blockly) {
+    // add listener to workspace
+    let workspace = blockly.getMainWorkspace();
     workspace.addChangeListener(onBlocklyEvent);
+    // make sure workspace always has listener
+    const vm = getScratchVM();
+    vm.addListener('workspaceUpdate', () => {
+      workspace = blockly.getMainWorkspace();
+      workspace.removeChangeListener(onBlocklyEvent);
+      workspace.addChangeListener(onBlocklyEvent);
+    });
 
     renderPageApp();
   }
