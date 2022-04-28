@@ -27,39 +27,6 @@ const isRootExpressionBlock = (block) => isExpressionBlock(block)
   && (block.parentBlock_ === null || !isExpressionBlock(block.parentBlock_));
 
 /**
- * Returns all non-expression blocks directly under this block.
- * @param {Object} block the parent block of the non-expression blocks
- * @returns all non-expression blocks directly under this block
- */
-const getNonExpressionBlocks = (block) => {
-  const nonExpBlocks = [];
-  let prevBlock = block;
-  let currBlock = block?.nextConnection?.targetConnection?.sourceBlock_;
-  while (currBlock && currBlock !== prevBlock) {
-    nonExpBlocks.push(currBlock);
-    prevBlock = currBlock;
-    currBlock = currBlock?.nextConnection?.targetConnection?.sourceBlock_;
-  }
-  return nonExpBlocks;
-};
-
-/**
- * Returns all expression blocks directly under this block.
- * @param {Object} block the parent block of the expression blocks
- * @returns all expression blocks directly under this block
- */
-const getExpressionBlocks = (block) => {
-  const expBlocks = [];
-  block.inputList.forEach((a) => {
-    const tb = a.connection?.targetConnection;
-    if (tb && isExpressionBlock(tb.sourceBlock_)) {
-      expBlocks.push(tb.sourceBlock_);
-    }
-  });
-  return expBlocks;
-};
-
-/**
  * Check if button is on svg.
  * @param {HTMLElement} svg the svg
  * @param {HTMLElement} button the button
@@ -239,26 +206,6 @@ const appendSvgButtonToExpressionBlock = (block) => {
   createSvgButton(svgGroup_, onClickListener, blockId);
 };
 
-function appendSvgButtonsInsideNonExpressionBlock(block) {
-  const nonExpBlocks = getNonExpressionBlocks(block);
-  nonExpBlocks.forEach(appendSvgButtonsInsideNonExpressionBlock);
-
-  const expBlocks = getExpressionBlocks(block);
-  expBlocks.forEach((b) => {
-    if (!blockHasSvgButton(b.svgGroup_)) {
-      appendSvgButtonToExpressionBlock(b);
-    }
-  });
-
-  const emptyInfo = getEmptyBlockSvgElementsAndTypes(block);
-  emptyInfo.forEach(({ outlinePath, type }) => {
-    if (!blockHasSvgButton(outlinePath)) {
-      const onClickListener = createSvgButtonEmptyListener(type);
-      createSvgButton(outlinePath, onClickListener);
-    }
-  });
-}
-
 export const appendSvgButtonToBlock = (block) => {
   if (!block) return;
 
@@ -270,6 +217,18 @@ export const appendSvgButtonToBlock = (block) => {
   }
 
   if (!isExpressionBlock(block)) {
+    const appendSvgButtonsInsideNonExpressionBlock = (b) => {
+      // append buttons to child blocks
+      b.childBlocks_.forEach(appendSvgButtonToBlock);
+      // append buttons to child empties
+      const emptyInfo = getEmptyBlockSvgElementsAndTypes(b);
+      emptyInfo.forEach(({ outlinePath, type }) => {
+        if (!blockHasSvgButton(outlinePath)) {
+          const onClickListener = createSvgButtonEmptyListener(type);
+          createSvgButton(outlinePath, onClickListener);
+        }
+      });
+    };
     appendSvgButtonsInsideNonExpressionBlock(block);
     return;
   }
