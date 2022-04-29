@@ -10,7 +10,8 @@ import { handleMessageFromContentScript } from '../messages.js';
 const handleEnabledChanged = (e) => updateDisplaySvgButtons(e);
 
 const moveEventListener = (event) => {
-  const block = getBlockly().getMainWorkspace().getBlockById(event.blockId);
+  const workspace = getBlockly().Workspace.getById(event.workspaceId);
+  const block = workspace.getBlockById(event.blockId);
   appendSvgButtonToBlock(block);
 };
 

@@ -128,7 +128,7 @@ const createSvgButtonEmptyListener = (type) => (e) => {
   postMessageToContentScript('selectedNewDiagram', serviceToTutor(d));
 };
 
-const createSvgButtonExpressionListener = (blockId) => (e) => {
+const createSvgButtonExpressionListener = (block) => (e) => {
   e.stopPropagation();
   e.preventDefault();
   const { runtime } = getScratchVM();
@@ -137,12 +137,12 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
 
   // We create an artificial script if the block is not a topLevel block
   let addedTemporaryScript = false;
-  if (!currentTarget.blocks.getScripts().includes(blockId)) {
-    currentTarget.blocks._addScript(blockId);
+  if (!currentTarget.blocks.getScripts().includes(block.id)) {
+    currentTarget.blocks._addScript(block.id);
     addedTemporaryScript = true;
   }
   runtime.allScriptsDo((topBlockId, target) => {
-    if (blockId !== topBlockId) return;
+    if (block.id !== topBlockId) return;
     const pushedThread = runtime.threads.some((t) => {
       if (t.target === target && t.topBlock === topBlockId
           // stack click threads and hat threads can coexist
@@ -165,11 +165,10 @@ const createSvgButtonExpressionListener = (blockId) => (e) => {
 
     // We remove our artificial script if we previously added it
     if (addedTemporaryScript) {
-      currentTarget.blocks._deleteScript(blockId);
+      currentTarget.blocks._deleteScript(block.id);
     }
 
-    const workspace = getBlockly().getMainWorkspace();
-    const d = createDiagram(workspace.getBlockById(blockId), newThreads[0]);
+    const d = createDiagram(block, newThreads[0]);
     postMessageToContentScript('selectedNewDiagram', serviceToTutor(d));
 
     // resume other threads
@@ -202,7 +201,7 @@ const getEmptyBlockSvgElementsAndTypes = (block) => {
 
 const appendSvgButtonToExpressionBlock = (block) => {
   const { id: blockId, svgGroup_ } = block;
-  const onClickListener = createSvgButtonExpressionListener(blockId);
+  const onClickListener = createSvgButtonExpressionListener(block);
   createSvgButton(svgGroup_, onClickListener, blockId);
 };
 
