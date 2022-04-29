@@ -16,6 +16,10 @@ import dynamicallyTypedChildBlockTest from './cases/dynamicallyTypedChildBlockTe
 import rootDropdownTest from './cases/rootDropdownTest.js';
 import rootDropdownValueNotEqualToTextTest from './cases/rootDropdownValueNotEqualToTextTest.js';
 import matrixBlockTest from './cases/matrixBlockTest.js';
+import argumentReporterStringNumberShadowBlockTest from './cases/argumentReporterStringNumberShadowBlockTest.js';
+import argumentReporterStringNumberBlockTest from './cases/argumentReporterStringNumberBlockTest.js';
+import argumentReporterBooleanShadowBlockTest from './cases/argumentReporterBooleanShadowBlockTest.js';
+import argumentReporterBooleanBlockTest from './cases/argumentReporterBooleanBlockTest.js';
 
 const createDiagramTests = [
   additionBasicTest,
@@ -36,6 +40,10 @@ const createDiagramTests = [
   rootDropdownTest,
   rootDropdownValueNotEqualToTextTest,
   matrixBlockTest,
+  argumentReporterStringNumberShadowBlockTest,
+  argumentReporterStringNumberBlockTest,
+  argumentReporterBooleanShadowBlockTest,
+  argumentReporterBooleanBlockTest,
 ];
 
 export default createDiagramTests;
