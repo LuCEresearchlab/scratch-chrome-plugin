@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import assert from 'assert';
 import createDiagramTests from './fixtures/createDiagramTests.js';
 import createDiagram from '../src/content/utils/diagramUtils.js';
