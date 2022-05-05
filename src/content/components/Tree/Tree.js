@@ -6,7 +6,7 @@ import { ExpressionTreeEditor } from 'react-expression-tree';
 import { tutorToService } from '../../utils/serviceToTutor.js';
 import typeToMsg, {
   argumentPlaceholder,
-  connectorPlaceholder,
+  holePlaceholder,
   listPlaceholder,
   shadowPlaceholder,
   variablePlaceholder,
@@ -17,7 +17,7 @@ function nodeToOpcode(node) {
   let str = '';
   node.content.forEach((part) => {
     if (part.type === 'hole') {
-      str += connectorPlaceholder;
+      str += holePlaceholder;
     } else {
       str += part.content;
     }
@@ -43,30 +43,19 @@ function nodeToOpcode(node) {
       }
       return msg;
     });
-    if (msgs.includes(shadowPlaceholder)
-        || msgs.includes(argumentPlaceholder)
-        || msgs.includes(str)) {
+    if (((msgs.includes(shadowPlaceholder) || msgs.includes(argumentPlaceholder))
+        && !str.includes(holePlaceholder)) || msgs.includes(str)) {
       opcodes.push(key);
     }
   });
   return opcodes;
 }
 
-function getChildNodes(node, diagram) {
-  const nodeId = node.nodePlug.valA;
-  const outEdges = diagram.edges.filter((edge) => edge.plugA.valA === nodeId);
-  const childIds = outEdges.map((edge) => edge.plugB.valA);
-  return diagram.nodes.filter((child) => childIds.includes(child.nodePlug.valA));
-}
-
 function labelDiagram(diagram) {
   const labelNode = (node) => {
-    node.type = nodeToOpcode(node);
-    getChildNodes(node, diagram).forEach((child) => {
-      labelNode(child);
-    });
+    node.opcode = nodeToOpcode(node);
   };
-  labelNode(diagram.root);
+  diagram.nodes.forEach(labelNode);
 }
 
 function Tree({ autolayout, diagram, setTemporaryDiagram }) {
@@ -80,9 +69,9 @@ function Tree({ autolayout, diagram, setTemporaryDiagram }) {
   } = diagram;
 
   const setTempDiagram = useCallback((state, payload) => {
-    const diagram = tutorToService(state);
-    labelDiagram(diagram);
-    console.log(diagram);
+    const d = tutorToService(state);
+    labelDiagram(d);
+    console.log(d);
     setTemporaryDiagram(state, payload);
   }, [setTemporaryDiagram]);
 
