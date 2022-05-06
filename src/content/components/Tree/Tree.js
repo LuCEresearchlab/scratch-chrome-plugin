@@ -12,6 +12,9 @@ import typeToMsg, {
   variablePlaceholder,
 } from '../../../assets/data/scratch_type_to_msg.js';
 import { getBlockly } from '../../utils/stateHandler.js';
+import { opcodeToShadowOpcode, shadowOpcodes } from '../../../assets/data/scratch_shadow_opcodes.js';
+
+window.showOptions = false;
 
 function nodeToOpcode(node) {
   let str = '';
@@ -51,11 +54,36 @@ function nodeToOpcode(node) {
   return opcodes;
 }
 
-function labelDiagram(diagram) {
+function getChildNodes(node, diagram) {
+  const nodeId = node.nodePlug.valA;
+  const outEdges = diagram.edges.filter((edge) => edge.plugA.valA === nodeId);
+  const childIds = outEdges.map((edge) => edge.plugB.valA);
+  return diagram.nodes.filter((child) => childIds.includes(child.nodePlug.valA));
+}
+
+function labelDiagramWithOpcodes(diagram) {
   const labelNode = (node) => {
     node.opcode = nodeToOpcode(node);
   };
+  const showOptionsForNode = (node, parentNode, num = 0) => {
+    if (parentNode) {
+      const parentOp = parentNode.opcode[0];
+      const shadowOp = opcodeToShadowOpcode[parentOp][num];
+      node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op) || op === shadowOp);
+    }
+    if (node.opcode.length > 1) {
+      let option = prompt(`Select one for ${node.content} in ${node.opcode}`, node.opcode[0]);
+      while (!node.opcode.includes(option)) {
+        option = prompt(`Please try again...\nSelect one for ${node.content} in ${node.opcode}`, node.opcode[0]);
+      }
+      node.opcode = [option];
+    }
+    getChildNodes(node, diagram).forEach((n, i) => showOptionsForNode(n, node, i));
+  };
   diagram.nodes.forEach(labelNode);
+  if (window.showOptions) {
+    showOptionsForNode(diagram.root, null);
+  }
 }
 
 function Tree({ autolayout, diagram, setTemporaryDiagram }) {
@@ -70,7 +98,7 @@ function Tree({ autolayout, diagram, setTemporaryDiagram }) {
 
   const setTempDiagram = useCallback((state, payload) => {
     const d = tutorToService(state);
-    labelDiagram(d);
+    labelDiagramWithOpcodes(d);
     console.log(d);
     setTemporaryDiagram(state, payload);
   }, [setTemporaryDiagram]);

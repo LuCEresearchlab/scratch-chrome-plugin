@@ -56,7 +56,7 @@ export const expressionBlocks = {
   sensing_keypressed: nary(bool, [string]),
   sensing_distanceto: nary(number, [string]),
   sensing_dayssince2000: numberLeaf,
-  sensing_current: nary(number, [string]),
+  sensing_current: nary(number, []),
   sensing_coloristouchingcolor: nary(bool, [color, color]),
   operator_mathop: unaryArithmetic,
   operator_round: unaryArithmetic,
