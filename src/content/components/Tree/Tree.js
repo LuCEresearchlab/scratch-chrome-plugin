@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { ExpressionTreeEditor } from 'react-expression-tree';
 
+import { getBlockly } from '../../utils/stateHandler.js';
 import { tutorToService } from '../../utils/serviceToTutor.js';
 import typeToMsg, {
   argumentPlaceholder,
@@ -11,8 +12,9 @@ import typeToMsg, {
   shadowPlaceholder,
   variablePlaceholder,
 } from '../../../assets/data/scratch_type_to_msg.js';
-import { getBlockly } from '../../utils/stateHandler.js';
 import { opcodeToShadowOpcode, shadowOpcodes } from '../../../assets/data/scratch_shadow_opcodes.js';
+
+import useContainerHeightOnWindowResize from '../hooks/useContainerHeightOnWindowResize.js';
 
 window.showOptions = false;
 
@@ -86,7 +88,12 @@ function labelDiagramWithOpcodes(diagram) {
   }
 }
 
-function Tree({ autolayout, diagram, setTemporaryDiagram }) {
+function Tree({
+  containerRef,
+  autolayout,
+  diagram,
+  setTemporaryDiagram,
+}) {
   const {
     connectorPlaceholder,
     stagePos,
@@ -95,6 +102,8 @@ function Tree({ autolayout, diagram, setTemporaryDiagram }) {
     edges,
     selectedRootNode,
   } = diagram;
+
+  const height = useContainerHeightOnWindowResize(containerRef);
 
   const setTempDiagram = useCallback((state, payload) => {
     const d = tutorToService(state);
@@ -106,7 +115,7 @@ function Tree({ autolayout, diagram, setTemporaryDiagram }) {
   return (
     <>
       <ExpressionTreeEditor
-        height={600}
+        height={height - 68}
         autolayout={autolayout}
         connectorPlaceholder={connectorPlaceholder}
         stagePos={stagePos}
@@ -121,6 +130,7 @@ function Tree({ autolayout, diagram, setTemporaryDiagram }) {
 }
 
 Tree.propTypes = {
+  containerRef: PropTypes.shape({}).isRequired,
   autolayout: PropTypes.bool,
   diagram: PropTypes.shape({
     connectorPlaceholder: PropTypes.string,
