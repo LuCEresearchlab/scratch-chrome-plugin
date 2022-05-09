@@ -6,17 +6,15 @@ import React, {
 } from 'react';
 // import PropTypes from 'prop-types';
 
-import { Modal } from '@material-ui/core/index.js';
-
 import { ThemeProvider } from '@material-ui/core/styles/index.js';
 
-import Tree from '../Tree/Tree.js';
 import OpenModalButton from '../OpenModalButton/OpenModalButton.js';
 
 import { reducer, initialState, createDispatchActions } from '../../store/pageAppReducer.js';
 
 import theme from '../../../themes/pageTheme.js';
 import { handleMessageFromContentScript } from '../../contentScripts/messages.js';
+import AppModal from '../AppModal/AppModal.js';
 
 function PageApp() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -57,18 +55,14 @@ function PageApp() {
         <OpenModalButton
           handleClick={openModal}
         />
-        <Modal
-          open={isModalOpen}
-          onClose={closeModal}
-        >
-          <>
-            <Tree
-              autolayout={autolayout}
-              diagram={diagram}
-              setTemporaryDiagram={setTemporaryDiagram}
-            />
-          </>
-        </Modal>
+        <AppModal
+          diagram={diagram}
+          isModalOpen={isModalOpen}
+          autolayout={autolayout}
+          closeModal={closeModal}
+          setTemporaryDiagram={setTemporaryDiagram}
+          exportHandler={() => {}} // TODO
+        />
       </ThemeProvider>
     </>
   );
