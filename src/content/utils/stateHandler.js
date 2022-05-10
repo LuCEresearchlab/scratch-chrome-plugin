@@ -23,6 +23,30 @@ export const getScratchVM = () => {
 };
 
 /**
+ * We also need to access the ScratchToolbox
+ */
+let scratchToolboxInstance = null;
+export const getScratchToolbox = () => {
+  if (scratchToolboxInstance) {
+    return scratchToolboxInstance;
+  }
+
+  // eslint-disable-next-line no-underscore-dangle
+  if (window && window.ScratchStore && window.ScratchStore.getState) {
+    // eslint-disable-next-line no-underscore-dangle
+    const state = window.ScratchStore.getState();
+
+    if (state && state.scratchGui && state.scratchGui.toolbox) {
+      const { scratchGui: { toolbox } } = state;
+      scratchToolboxInstance = toolbox;
+      return toolbox;
+    }
+  }
+
+  return undefined;
+};
+
+/**
  * We need the Blockly object to access the workspace.
  * The workspace is required in order to manipulate the svg nodes and add our own menus
  *
@@ -43,6 +67,7 @@ export const getScratchVM = () => {
 let blocklyInstance = null;
 export const getBlockly = () => {
   if (blocklyInstance) {
+    window.blockly = blocklyInstance;
     return blocklyInstance;
   }
 
@@ -73,6 +98,7 @@ export const getBlockly = () => {
     if (child && child.stateNode && child.stateNode.ScratchBlocks) {
       const { stateNode: { ScratchBlocks } } = child;
       blocklyInstance = ScratchBlocks;
+      window.blockly = blocklyInstance;
       return ScratchBlocks;
     }
 

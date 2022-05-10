@@ -11,8 +11,8 @@ import typeToMsg, {
   shadowPlaceholder,
   variablePlaceholder,
 } from '../../../assets/data/scratch_type_to_msg.js';
-import { getBlockly } from '../../utils/stateHandler.js';
-import { opcodeToShadowOpcode, shadowOpcodes } from '../../../assets/data/scratch_shadow_opcodes.js';
+import { getBlockly, getScratchToolbox, getScratchVM } from '../../utils/stateHandler.js';
+import { opcodeToShadowOpcode, pseudoShadowOpcodes, shadowOpcodes } from '../../../assets/data/scratch_shadow_opcodes.js';
 
 window.showOptions = false;
 
@@ -61,6 +61,79 @@ function getChildNodes(node, diagram) {
   return diagram.nodes.filter((child) => childIds.includes(child.nodePlug.valA));
 }
 
+function createBlockFromXml(xml, lastCreatedBlock, ws) {
+  const Blockly = getBlockly();
+  let newBlock = null;
+  // Disable events and manually emit events after the block has been
+  // positioned and has had its shadow IDs fixed (Scratch-specific).
+  Blockly.Events.disable();
+  try {
+    // Using domToBlock instead of domToWorkspace means that the new block
+    // will be placed at position (0, 0) in main workspace units.
+    newBlock = Blockly.Xml.domToBlock(xml, ws);
+
+    // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
+    Blockly.scratchBlocksUtils.changeObscuredShadowIds(newBlock);
+
+    const svgRootNew = newBlock.getSvgRoot();
+    if (!svgRootNew) {
+      throw new Error('newBlock is not rendered.');
+    }
+
+    if (lastCreatedBlock) {
+      // The position of the old block in workspace coordinates.
+      const oldBlockPosWs = lastCreatedBlock.getRelativeToSurfaceXY();
+
+      // Place the new block as the same position as the old block.
+      // TODO: Offset by the difference between the mouse position and the upper
+      // left corner of the block.
+      newBlock.moveBy(oldBlockPosWs.x, oldBlockPosWs.y);
+    }
+    const offsetX = ws.RTL ? -100 : 100;
+    const offsetY = 100;
+    newBlock.moveBy(offsetX, offsetY); // Just offset the block for touch.
+  } finally { 
+    Blockly.Events.enable();
+  }
+  if (Blockly.Events.isEnabled()) {
+    Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
+  }
+}
+
+function createBlocksFromLabeledDiagram(diagram) {
+  const nodeToDom = (node, xml, childNum = 0) => {
+    const opcode = node.opcode[0];
+    if (shadowOpcodes.includes(opcode)) {
+      const value = xml.children[childNum];
+      value.firstChild.firstChild.innerHTML = node.content[0].content; // shadow and field
+      return xml;
+    }
+    const toolbox = getScratchToolbox().toolboxXML;
+    const childXml = getBlockly().Xml.textToDom(toolbox).querySelector(`category > block[type=${opcode}]`);
+    if (!childXml) {
+      throw new Error('todo');
+    }
+    getChildNodes(node, diagram).forEach((n, i) => {
+      nodeToDom(n, childXml, i);
+    });
+    if (pseudoShadowOpcodes.includes(opcode)) {
+      childXml.firstChild.innerHTML = node.content[0].content;
+    }
+    if (xml) {
+      const value = xml.children[childNum];
+      value.appendChild(childXml);
+      return xml;
+    }
+    return childXml;
+  };
+  const roots = [diagram.root];
+  let prevBlock = null;
+  roots.forEach((root) => {
+    const xml = nodeToDom(root);
+    prevBlock = createBlockFromXml(xml, prevBlock, getBlockly().mainWorkspace);
+  });
+}
+
 function labelDiagramWithOpcodes(diagram) {
   const labelNode = (node) => {
     node.opcode = nodeToOpcode(node);
@@ -83,6 +156,7 @@ function labelDiagramWithOpcodes(diagram) {
   diagram.nodes.forEach(labelNode);
   if (window.showOptions) {
     showOptionsForNode(diagram.root, null);
+    createBlocksFromLabeledDiagram(diagram);
   }
 }
 

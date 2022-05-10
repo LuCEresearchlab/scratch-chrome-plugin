@@ -56,6 +56,11 @@ export const shadowOpcodes = [
   'wedo2_menu_TILT_DIRECTION_ANY',
 ];
 
+export const pseudoShadowOpcodes = [
+  'argument_reporter_string_number',
+  'argument_reporter_boolean',
+];
+
 // info from scratch-blocks
 export const opcodeToShadowOpcode = {
   sensing_touchingobject: ['sensing_touchingobjectmenu'],
