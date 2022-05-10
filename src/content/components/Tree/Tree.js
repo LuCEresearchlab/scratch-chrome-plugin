@@ -12,11 +12,16 @@ import typeToMsg, {
   variablePlaceholder,
 } from '../../../assets/data/scratch_type_to_msg.js';
 import { getBlockly, getScratchToolbox } from '../../utils/stateHandler.js';
-import { opcodeToShadowOpcode, pseudoShadowOpcodes, shadowOpcodes } from '../../../assets/data/scratch_shadow_opcodes.js';
+import { pseudoShadowOpcodes, shadowOpcodes } from '../../../assets/data/scratch_shadow_opcodes.js';
 
 import useContainerHeightOnWindowResize from '../hooks/useContainerHeightOnWindowResize.js';
 
 window.showOptions = false;
+
+function opcodeToXml(opcode) {
+  const toolbox = getScratchToolbox().toolboxXML;
+  return getBlockly().Xml.textToDom(toolbox).querySelector(`category > block[type=${opcode}]`);
+}
 
 function nodeToOpcode(node) {
   let str = '';
@@ -31,12 +36,17 @@ function nodeToOpcode(node) {
   Object.entries(typeToMsg).forEach((entry) => {
     const key = entry[0];
     const value = entry[1];
+    // check if block with opcode is available in toolbox. If not, we don't add to opcode list
+    if (!shadowOpcodes.includes(key) && !opcodeToXml(key)) {
+      return;
+    }
     let msgs;
     if (!Array.isArray(value)) {
       msgs = [value];
     } else {
       msgs = value;
     }
+    // update value/msgs containing variable and list placeholders
     msgs = msgs.flatMap((msg) => {
       // assume msg contains at most one placeholder
       if (msg.includes(variablePlaceholder)) {
@@ -48,6 +58,7 @@ function nodeToOpcode(node) {
       }
       return msg;
     });
+    // check if at least one msg matches the node string
     if (((msgs.includes(shadowPlaceholder) || msgs.includes(argumentPlaceholder))
         && !str.includes(holePlaceholder)) || msgs.includes(str)) {
       opcodes.push(key);
@@ -107,19 +118,18 @@ function createBlocksFromLabeledDiagram(diagram) {
     const opcode = node.opcode[0];
     if (shadowOpcodes.includes(opcode)) {
       const value = xml.children[childNum];
-      value.firstChild.firstChild.innerHTML = node.content[0].content; // shadow and field
+      value.children[0].children[0].innerHTML = node.content[0].content; // shadow and field
       return xml;
     }
-    const toolbox = getScratchToolbox().toolboxXML;
-    const childXml = getBlockly().Xml.textToDom(toolbox).querySelector(`category > block[type=${opcode}]`);
+    const childXml = opcodeToXml(opcode);
     if (!childXml) {
-      throw new Error('todo');
+      throw new Error(`could not create block of type ${opcode}`);
     }
     getChildNodes(node, diagram).forEach((n, i) => {
       nodeToDom(n, childXml, i);
     });
     if (pseudoShadowOpcodes.includes(opcode)) {
-      childXml.firstChild.innerHTML = node.content[0].content;
+      childXml.children[0].innerHTML = node.content[0].content;
     }
     if (xml) {
       const value = xml.children[childNum];
@@ -140,23 +150,25 @@ function labelDiagramWithOpcodes(diagram) {
   const labelNode = (node) => {
     node.opcode = nodeToOpcode(node);
   };
-  const showOptionsForNode = (node, parentNode, num = 0) => {
-    if (parentNode) {
-      const parentOp = parentNode.opcode[0];
-      const shadowOp = opcodeToShadowOpcode[parentOp][num];
-      node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op) || op === shadowOp);
-    }
-    if (node.opcode.length > 1) {
-      let option = prompt(`Select one for ${node.content} in ${node.opcode}`, node.opcode[0]);
-      while (!node.opcode.includes(option)) {
-        option = prompt(`Please try again...\nSelect one for ${node.content} in ${node.opcode}`, node.opcode[0]);
-      }
-      node.opcode = [option];
-    }
-    getChildNodes(node, diagram).forEach((n, i) => showOptionsForNode(n, node, i));
-  };
   diagram.nodes.forEach(labelNode);
   if (window.showOptions) {
+    // TODO: create block for all trees
+    const showOptionsForNode = (node, parentNode, num = 0) => {
+      if (parentNode) {
+        // filter opcode options based on parent block
+        const parentOp = parentNode.opcode[0];
+        const shadowOp = opcodeToXml(parentOp).querySelectorAll(':scope > value > shadow')[num].getAttribute('type');
+        node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op) || op === shadowOp);
+      }
+      if (node.opcode.length > 1) {
+        let option = prompt(`Select one for ${node.content} in ${node.opcode}`, node.opcode[0]);
+        while (!node.opcode.includes(option)) {
+          option = prompt(`Please try again...\nSelect one for ${node.content} in ${node.opcode}`, node.opcode[0]);
+        }
+        node.opcode = [option];
+      }
+      getChildNodes(node, diagram).forEach((n, i) => showOptionsForNode(n, node, i));
+    };
     showOptionsForNode(diagram.root, null);
     createBlocksFromLabeledDiagram(diagram);
   }

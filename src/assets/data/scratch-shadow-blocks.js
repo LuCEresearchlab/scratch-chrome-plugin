@@ -1,4 +1,4 @@
-// shadow blocks where its value needs to equal its text
+// shadow blocks whose value needs to equal its text
 const primitiveShadows = [
   'text',
   'colour_picker',
