@@ -11,8 +11,10 @@ import typeToMsg, {
   shadowPlaceholder,
   variablePlaceholder,
 } from '../../../assets/data/scratch_type_to_msg.js';
-import { getBlockly, getScratchToolbox, getScratchVM } from '../../utils/stateHandler.js';
+import { getBlockly, getScratchToolbox } from '../../utils/stateHandler.js';
 import { opcodeToShadowOpcode, pseudoShadowOpcodes, shadowOpcodes } from '../../../assets/data/scratch_shadow_opcodes.js';
+
+import useContainerHeightOnWindowResize from '../hooks/useContainerHeightOnWindowResize.js';
 
 window.showOptions = false;
 
@@ -92,7 +94,7 @@ function createBlockFromXml(xml, lastCreatedBlock, ws) {
     const offsetX = ws.RTL ? -100 : 100;
     const offsetY = 100;
     newBlock.moveBy(offsetX, offsetY); // Just offset the block for touch.
-  } finally { 
+  } finally {
     Blockly.Events.enable();
   }
   if (Blockly.Events.isEnabled()) {
@@ -160,7 +162,12 @@ function labelDiagramWithOpcodes(diagram) {
   }
 }
 
-function Tree({ autolayout, diagram, setTemporaryDiagram }) {
+function Tree({
+  containerRef,
+  autolayout,
+  diagram,
+  setTemporaryDiagram,
+}) {
   const {
     connectorPlaceholder,
     stagePos,
@@ -169,6 +176,8 @@ function Tree({ autolayout, diagram, setTemporaryDiagram }) {
     edges,
     selectedRootNode,
   } = diagram;
+
+  const height = useContainerHeightOnWindowResize(containerRef);
 
   const setTempDiagram = useCallback((state, payload) => {
     const d = tutorToService(state);
@@ -180,7 +189,7 @@ function Tree({ autolayout, diagram, setTemporaryDiagram }) {
   return (
     <>
       <ExpressionTreeEditor
-        height={600}
+        height={height - 68}
         autolayout={autolayout}
         connectorPlaceholder={connectorPlaceholder}
         stagePos={stagePos}
@@ -195,6 +204,7 @@ function Tree({ autolayout, diagram, setTemporaryDiagram }) {
 }
 
 Tree.propTypes = {
+  containerRef: PropTypes.shape({}).isRequired,
   autolayout: PropTypes.bool,
   diagram: PropTypes.shape({
     connectorPlaceholder: PropTypes.string,
