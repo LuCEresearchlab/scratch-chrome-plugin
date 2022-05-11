@@ -19,11 +19,26 @@ import useContainerHeightOnWindowResize from '../hooks/useContainerHeightOnWindo
 window.showOptions = false;
 
 function opcodeToXml(opcode) {
+  const blockly = getBlockly();
+  switch (opcode) {
+    case 'argument_reporter_boolean':
+      return blockly.Xml.textToDom('<block type="argument_reporter_boolean">'
+        + '<field name="VALUE"></field>'
+      + '</block>');
+
+    case 'argument_reporter_string_number':
+      return blockly.Xml.textToDom('<block type="argument_reporter_string_number">'
+      + '<field name="VALUE"></field>'
+    + '</block>');
+
+    default:
+  }
   const toolbox = getScratchToolbox().toolboxXML;
-  return getBlockly().Xml.textToDom(toolbox).querySelector(`category > block[type=${opcode}]`);
+  return blockly.Xml.textToDom(toolbox).querySelector(`category > block[type=${opcode}]`)
+    || blockly.DataCategory(blockly.mainWorkspace).find((xml) => xml.getAttribute('type') === opcode);
 }
 
-function nodeToOpcode(node) {
+function nodeToString(node) {
   let str = '';
   node.content.forEach((part) => {
     if (part.type === 'hole') {
@@ -32,6 +47,11 @@ function nodeToOpcode(node) {
       str += part.content;
     }
   });
+  return str;
+}
+
+function nodeToOpcode(node) {
+  const str = nodeToString(node);
   const opcodes = [];
   Object.entries(typeToMsg).forEach((entry) => {
     const key = entry[0];
@@ -74,6 +94,9 @@ function getChildNodes(node, diagram) {
   return diagram.nodes.filter((child) => childIds.includes(child.nodePlug.valA));
 }
 
+/**
+ * Inspired by scratch-blocks function Blockly.scratchBlocksUtils.duplicateAndDragCallback
+ */
 function createBlockFromXml(xml, lastCreatedBlock, ws) {
   const Blockly = getBlockly();
   let newBlock = null;
@@ -159,17 +182,23 @@ function labelDiagramWithOpcodes(diagram) {
         const parentOp = parentNode.opcode[0];
         const shadowOp = opcodeToXml(parentOp).querySelectorAll(':scope > value > shadow')[num].getAttribute('type');
         node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op) || op === shadowOp);
+      } else {
+        node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op));
+      }
+      if (node.opcode.length === 0) {
+        throw new Error('could not create block of the tree');
       }
       if (node.opcode.length > 1) {
-        let option = prompt(`Select one for ${node.content} in ${node.opcode}`, node.opcode[0]);
+        const str = nodeToString(node);
+        let option = prompt(`Select one for "${str}" in ${node.opcode}`, node.opcode[0]);
         while (!node.opcode.includes(option)) {
-          option = prompt(`Please try again...\nSelect one for ${node.content} in ${node.opcode}`, node.opcode[0]);
+          option = prompt(`Please try again...\nSelect one for "${str}"in ${node.opcode}`, node.opcode[0]);
         }
         node.opcode = [option];
       }
       getChildNodes(node, diagram).forEach((n, i) => showOptionsForNode(n, node, i));
     };
-    showOptionsForNode(diagram.root, null);
+    showOptionsForNode(diagram.root);
     createBlocksFromLabeledDiagram(diagram);
   }
 }
