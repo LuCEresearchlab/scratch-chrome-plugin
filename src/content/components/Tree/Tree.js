@@ -28,8 +28,8 @@ function opcodeToXml(opcode) {
 
     case 'argument_reporter_string_number':
       return blockly.Xml.textToDom('<block type="argument_reporter_string_number">'
-      + '<field name="VALUE"></field>'
-    + '</block>');
+        + '<field name="VALUE"></field>'
+      + '</block>');
 
     default:
   }
@@ -139,6 +139,10 @@ function createBlockFromXml(xml, lastCreatedBlock, ws) {
 function createBlocksFromLabeledDiagram(diagram) {
   const nodeToDom = (node, xml, childNum = 0) => {
     const opcode = node.opcode[0];
+    if (!opcode) {
+      // empty block
+      return;
+    }
     if (shadowOpcodes.includes(opcode)) {
       const value = xml.children[childNum];
       value.children[0].children[0].innerHTML = node.content[0].content; // shadow and field
@@ -180,7 +184,7 @@ function labelDiagramWithOpcodes(diagram) {
       if (parentNode) {
         // filter opcode options based on parent block
         const parentOp = parentNode.opcode[0];
-        const shadowOp = opcodeToXml(parentOp).querySelectorAll(':scope > value > shadow')[num].getAttribute('type');
+        const shadowOp = opcodeToXml(parentOp).querySelectorAll(':scope > value > shadow')[num]?.getAttribute('type');
         node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op) || op === shadowOp);
       } else {
         node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op));
@@ -191,7 +195,7 @@ function labelDiagramWithOpcodes(diagram) {
       if (node.opcode.length > 1) {
         const str = nodeToString(node);
         let option = prompt(`Select one for "${str}" in ${node.opcode}`, node.opcode[0]);
-        while (!node.opcode.includes(option)) {
+        while (option && !node.opcode.includes(option)) {
           option = prompt(`Please try again...\nSelect one for "${str}"in ${node.opcode}`, node.opcode[0]);
         }
         node.opcode = [option];
