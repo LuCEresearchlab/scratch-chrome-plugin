@@ -6,7 +6,7 @@ import { ExpressionTreeEditor } from 'react-expression-tree';
 import { tutorToService } from '../../utils/serviceToTutor.js';
 import typeToMsg, {
   argumentPlaceholder,
-  holePlaceholder,
+  holePlaceholderRegex,
   listPlaceholder,
   shadowPlaceholder,
   variablePlaceholder,
@@ -17,6 +17,8 @@ import { pseudoShadowOpcodes, shadowOpcodes } from '../../../assets/data/scratch
 import useContainerHeightOnWindowResize from '../hooks/useContainerHeightOnWindowResize.js';
 
 window.showOptions = false;
+
+const holePlaceholder = '{{}}';
 
 function opcodeToXml(opcode) {
   const blockly = getBlockly();
@@ -80,7 +82,8 @@ function nodeToOpcode(node) {
     });
     // check if at least one msg matches the node string
     if (((msgs.includes(shadowPlaceholder) || msgs.includes(argumentPlaceholder))
-        && !str.includes(holePlaceholder)) || msgs.includes(str)) {
+        && !str.includes(holePlaceholder))
+        || msgs.map((msg) => msg.replaceAll(holePlaceholderRegex, holePlaceholder)).includes(str)) {
       opcodes.push(key);
     }
   });
@@ -136,15 +139,29 @@ function createBlockFromXml(xml, lastCreatedBlock, ws) {
   }
 }
 
+function getValue(xml, childNum) {
+  const opcode = xml.getAttribute('type');
+  let msg = typeToMsg[opcode];
+  if (Array.isArray(msg)) {
+    [msg] = msg;
+  }
+  const matches = [...msg.matchAll(holePlaceholderRegex)];
+  if (matches.length === 0) {
+    return null;
+  }
+  const i = parseInt(matches[childNum][0][2], 10);
+  return xml.querySelectorAll(':scope > value')[i - 1];
+}
+
 function createBlocksFromLabeledDiagram(diagram) {
   const nodeToDom = (node, xml, childNum = 0) => {
     const opcode = node.opcode[0];
-    if (!opcode) {
+    if (opcode === '') {
       // empty block
-      return;
+      return xml;
     }
     if (shadowOpcodes.includes(opcode)) {
-      const value = xml.children[childNum];
+      const value = getValue(xml, childNum);
       value.children[0].children[0].innerHTML = node.content[0].content; // shadow and field
       return xml;
     }
@@ -159,7 +176,7 @@ function createBlocksFromLabeledDiagram(diagram) {
       childXml.children[0].innerHTML = node.content[0].content;
     }
     if (xml) {
-      const value = xml.children[childNum];
+      const value = getValue(xml, childNum);
       value.appendChild(childXml);
       return xml;
     }
@@ -184,7 +201,8 @@ function labelDiagramWithOpcodes(diagram) {
       if (parentNode) {
         // filter opcode options based on parent block
         const parentOp = parentNode.opcode[0];
-        const shadowOp = opcodeToXml(parentOp).querySelectorAll(':scope > value > shadow')[num]?.getAttribute('type');
+        const value = getValue(opcodeToXml(parentOp), num);
+        const shadowOp = value?.querySelector(':scope > shadow')?.getAttribute('type');
         node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op) || op === shadowOp);
       } else {
         node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op));
@@ -195,7 +213,7 @@ function labelDiagramWithOpcodes(diagram) {
       if (node.opcode.length > 1) {
         const str = nodeToString(node);
         let option = prompt(`Select one for "${str}" in ${node.opcode}`, node.opcode[0]);
-        while (option && !node.opcode.includes(option)) {
+        while ((!parentNode || option !== '') && !node.opcode.includes(option)) {
           option = prompt(`Please try again...\nSelect one for "${str}"in ${node.opcode}`, node.opcode[0]);
         }
         node.opcode = [option];
