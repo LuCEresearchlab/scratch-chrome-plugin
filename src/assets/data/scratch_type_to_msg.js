@@ -10,13 +10,13 @@ const typeToMsg = {
   motion_direction: ['direction'],
   motion_xposition: ['x position'],
   motion_yposition: ['y position'],
-  looks_costumenumbername: ['costume name', 'costume number'],
-  looks_backdropnumbername: ['backdrop name', 'backdrop number'],
+  looks_costumenumbername: ['costume name', 'costume number'], // LOOKS_NUMBERNAME_NUMBER LOOKS_NUMBERNAME_NAME
+  looks_backdropnumbername: ['backdrop name', 'backdrop number'], // LOOKS_NUMBERNAME_NUMBER LOOKS_NUMBERNAME_NAME
   looks_size: ['size'],
   sound_volume: ['volume'],
   sensing_answer: ['answer'],
   sensing_username: ['username'],
-  sensing_touchingobject: [`touching ${holePlaceholder(1)}?`],
+  sensing_touchingobject: [`touching ${holePlaceholder(1)}?`], // SENSING_TOUCHINGOBJECT_POINTER SENSING_TOUCHINGOBJECT_EDGE
   sensing_touchingcolor: [`touching color ${holePlaceholder(1)}?`],
   sensing_timer: ['timer'],
   sensing_of: [
@@ -31,7 +31,7 @@ const typeToMsg = {
     'costume name',
     'size',
     variablePlaceholder,
-  ].map((s) => `${s} of ${holePlaceholder(1)}`),
+  ].map((s) => `${s} of ${holePlaceholder(1)}`), // ?
   sensing_mousex: ['mouse x'],
   sensing_mousey: ['mouse y'],
   sensing_mousedown: 'mouse down?',
@@ -47,7 +47,7 @@ const typeToMsg = {
     'hour',
     'minute',
     'second',
-  ].map((s) => `current ${s}`),
+  ].map((s) => `current ${s}`), // SENSING_CURRENT_SECOND ...
   sensing_coloristouchingcolor: `color ${holePlaceholder(1)} is touching ${holePlaceholder(2)}?`,
   operator_mathop: [
     'abs',

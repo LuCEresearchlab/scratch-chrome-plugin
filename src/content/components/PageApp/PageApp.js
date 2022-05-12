@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 
 import { ThemeProvider } from '@material-ui/core/styles/index.js';
 
+import { tutorToService } from '../../utils/serviceToTutor.js';
+
 import OpenModalButton from '../OpenModalButton/OpenModalButton.js';
 
 import { reducer, initialState, createDispatchActions } from '../../store/pageAppReducer.js';
@@ -15,6 +17,7 @@ import { reducer, initialState, createDispatchActions } from '../../store/pageAp
 import theme from '../../../themes/pageTheme.js';
 import { handleMessageFromContentScript } from '../../contentScripts/messages.js';
 import AppModal from '../AppModal/AppModal.js';
+import labelDiagramWithOpcodes from '../../utils/tutorToBlock.js';
 
 function PageApp({ initialIsEnabled }) {
   const [state, dispatch] = useReducer(reducer, {
@@ -23,10 +26,12 @@ function PageApp({ initialIsEnabled }) {
   });
 
   const {
+    isBegginner,
     isEnabled,
     isModalOpen,
     autolayout,
     diagram,
+    temporaryDiagram,
   } = state;
 
   const {
@@ -57,6 +62,11 @@ function PageApp({ initialIsEnabled }) {
     return () => removeEventListener();
   }, []);
 
+  const exportHandler = useCallback(() => {
+    const d = tutorToService(temporaryDiagram);
+    labelDiagramWithOpcodes(d, isBegginner);
+  }, [temporaryDiagram]);
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -74,7 +84,7 @@ function PageApp({ initialIsEnabled }) {
             autolayout={autolayout}
             closeModal={closeModal}
             setTemporaryDiagram={setTemporaryDiagram}
-            exportHandler={() => {}} // TODO
+            exportHandler={exportHandler}
           />
         </div>
       </ThemeProvider>

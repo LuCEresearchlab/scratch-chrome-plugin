@@ -1,6 +1,7 @@
 const initialState = {
   // plugin
   isEnabled: false,
+  isBegginner: true,
 
   // modal
   isModalOpen: false,
