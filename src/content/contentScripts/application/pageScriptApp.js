@@ -36,7 +36,7 @@ const startPluginApp = (isPluginEnabled) => {
       workspace.addChangeListener(onBlocklyEvent);
     });
 
-    renderPageApp();
+    renderPageApp(isPluginEnabled);
   }
 };
 

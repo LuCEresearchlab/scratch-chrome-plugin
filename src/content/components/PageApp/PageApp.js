@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useCallback,
 } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 import { ThemeProvider } from '@material-ui/core/styles/index.js';
 
@@ -16,10 +16,14 @@ import theme from '../../../themes/pageTheme.js';
 import { handleMessageFromContentScript } from '../../contentScripts/messages.js';
 import AppModal from '../AppModal/AppModal.js';
 
-function PageApp() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+function PageApp({ initialIsEnabled }) {
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    isEnabled: initialIsEnabled,
+  });
 
   const {
+    isEnabled,
     isModalOpen,
     autolayout,
     diagram,
@@ -28,6 +32,7 @@ function PageApp() {
   const {
     closeModal,
     openModal,
+    setIsEnabled,
     setDiagram,
     setTemporaryDiagram,
   } = useMemo(() => createDispatchActions(dispatch), [dispatch]);
@@ -37,6 +42,9 @@ function PageApp() {
     switch (action) {
       case 'selectedNewDiagram':
         setDiagram(value);
+        break;
+      case 'isPluginEnabledChanged':
+        setIsEnabled(value);
         break;
       default:
         break;
@@ -52,24 +60,34 @@ function PageApp() {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <OpenModalButton
-          handleClick={openModal}
-        />
-        <AppModal
-          diagram={diagram}
-          isModalOpen={isModalOpen}
-          autolayout={autolayout}
-          closeModal={closeModal}
-          setTemporaryDiagram={setTemporaryDiagram}
-          exportHandler={() => {}} // TODO
-        />
+        <div
+          style={{
+            display: isEnabled ? 'block' : 'none',
+          }}
+        >
+          <OpenModalButton
+            handleClick={openModal}
+          />
+          <AppModal
+            diagram={diagram}
+            isModalOpen={isModalOpen}
+            autolayout={autolayout}
+            closeModal={closeModal}
+            setTemporaryDiagram={setTemporaryDiagram}
+            exportHandler={() => {}} // TODO
+          />
+        </div>
       </ThemeProvider>
     </>
   );
 }
 
-PageApp.propTypes = {};
+PageApp.propTypes = {
+  initialIsEnabled: PropTypes.bool,
+};
 
-PageApp.defaultProps = {};
+PageApp.defaultProps = {
+  initialIsEnabled: false,
+};
 
 export default PageApp;

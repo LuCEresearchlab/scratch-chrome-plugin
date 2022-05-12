@@ -3,16 +3,21 @@ import injectedAppInitialState from './initialStates/pageAppInitialState.js';
 import modalActions from './actions/modalActions.js';
 import modalReducers from './reducers/modalReducers.js';
 
+import pluginActions from './actions/pluginActions.js';
+import pluginReducers from './reducers/pluginReducers.js';
+
 import diagramActions from './actions/diagramActions.js';
 import diagramReducers from './reducers/diagramReducers.js';
 
 export const reducers = {
   ...modalReducers,
+  ...pluginReducers,
   ...diagramReducers,
 };
 
 export const actions = [
   ...modalActions,
+  ...pluginActions,
   ...diagramActions,
 ];
 
