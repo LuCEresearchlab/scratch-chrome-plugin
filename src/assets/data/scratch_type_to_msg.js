@@ -6,6 +6,12 @@ export const argumentPlaceholder = '{{a}}';
 
 const holePlaceholder = (i) => `{{${i}}}`;
 
+export const opcodesContainingEmpties = [
+  'operator_and',
+  'operator_or',
+  'operator_not',
+];
+
 const typeToMsg = {
   motion_direction: ['direction'],
   motion_xposition: ['x position'],
