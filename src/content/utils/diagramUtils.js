@@ -272,7 +272,7 @@ const createDiagram = (inputBlock, thread) => {
   }
 
   traverseDiagram(inputBlock, diagramAccumulator, newID());
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === 'testing') {
     console.log(JSON.stringify(inputBlock, getCircularReplacer()));
     console.log(JSON.stringify(thread, getCircularReplacer()));
     console.log(JSON.stringify(

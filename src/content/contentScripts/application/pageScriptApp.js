@@ -16,8 +16,6 @@ const moveEventListener = (event) => {
 };
 
 const onBlocklyEvent = (event) => {
-  console.log(event);
-  console.log(event.xml);
   if (event.type === 'move') {
     moveEventListener(event);
   }

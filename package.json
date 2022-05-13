@@ -4,7 +4,7 @@
   "description": "Source of Scratch expressions chrome plugin",
   "type": "module",
   "scripts": {
-    "test": "mocha 'test/**/*.spec.js'",
+    "test": "NODE_ENV=testing mocha 'test/**/*.spec.js'",
     "coverage": "c8 npm run test",
     "build:plugin": "NODE_ENV=development BABEL_ENV=development webpack --mode=development --watch --config ./webpack.plugin.config.cjs",
     "build:production": "NODE_ENV=production BABEL_ENV=production webpack --mode=production"

@@ -152,7 +152,6 @@ function createBlocksFromLabeledDiagram(diagram) {
     }
     if (shadowOpcodes.includes(opcode)) {
       const value = getValue(xml, childNum);
-      console.log(xml);
       value.children[0].children[0].innerHTML = node.content[0].content; // shadow and field
       return xml;
     }
