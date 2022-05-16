@@ -43,8 +43,6 @@ const unrawValue = (type, value) => {
   }
 };
 
-export const isDefaultValue = (value) => value === 'false' || value === '0' || value === '""';
-
 /**
  * Returns the default value corresponding to the given type(s).
  * @param {string|Array.<string>} type the type to consider
