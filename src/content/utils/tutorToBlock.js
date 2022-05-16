@@ -151,19 +151,25 @@ function getChildBlock(parentBlock, childNum) {
 }
 
 function createBlocksFromLabeledDiagram(diagram) {
-  const nodeToDom = (node) => {
+  const nodeToDom = (node, block) => {
     const opcode = node.opcode[0];
     if (opcode === '') {
       return; // empty block
     }
-    const xml = opcodeToXml(opcode);
-    if (!xml) {
-      throw new Error(`could not create block of type ${opcode}`);
+    if (!shadowOpcodes.includes(opcode)) {
+      const xml = opcodeToXml(opcode);
+      if (!xml) {
+        throw new Error(`could not create block of type ${opcode}`);
+      }
+      block = createBlockFromXml(xml, null, getBlockly().mainWorkspace);
     }
-    createBlockFromXml(xml, null, getBlockly().mainWorkspace);
-    getChildNodes(node, diagram).forEach(nodeToDom);
+    node.blockId = block.id;
+    getChildNodes(node, diagram).forEach((n, i) => {
+      nodeToDom(n, getChildBlock(block, i));
+    });
   };
-  const setValues = (node, block) => {
+  const setValues = (node) => {
+    const block = getBlockly().mainWorkspace.getBlockById(node.blockId);
     if (!block) {
       return; // empty block
     }
@@ -172,16 +178,12 @@ function createBlocksFromLabeledDiagram(diagram) {
       field.setValue(node.content[0].content);
       return;
     }
-    getChildNodes(node, diagram).forEach((n, i) => {
-      setValues(n, getChildBlock(block, i));
-    });
+    getChildNodes(node, diagram).forEach(setValues);
   };
   const roots = [diagram.root];
-  let prevBlock = null;
   roots.forEach((root) => {
     nodeToDom(root);
-    // prevBlock = createBlockFromXml(xml, prevBlock, getBlockly().mainWorkspace);
-    // setValues(root, prevBlock);
+    setValues(root);
   });
 }
 
