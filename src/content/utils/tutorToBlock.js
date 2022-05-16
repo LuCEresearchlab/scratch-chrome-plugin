@@ -1,7 +1,7 @@
-import { arrayOf } from 'prop-types';
 import { pseudoShadowOpcodes, shadowOpcodes } from '../../assets/data/scratch_shadow_opcodes.js';
 import typeToMsg, {
   argumentPlaceholder,
+  dropdownPlaceholder,
   holePlaceholderRegex,
   listPlaceholder,
   opcodesContainingEmpties,
@@ -53,6 +53,19 @@ function nodeToOpcode(node, parentOpcodes = []) {
     if (!shadowOpcodes.includes(key) && !opcodeToXml(key)) {
       return; // we don't add to opcode list if block with opcode is not available in toolbox
     }
+    if (!Array.isArray(value) && typeof value === 'object') {
+      value.options.some((option) => {
+        const message = value.message
+          .replaceAll(holePlaceholderRegex, holePlaceholder)
+          .replaceAll(dropdownPlaceholder, option);
+        if (message === str) {
+          opcodes.push([key, option]);
+          return true;
+        }
+        return false;
+      });
+      return;
+    }
     let msgs = Array.of(value);
     // update msgs containing variable and list placeholders
     msgs = msgs.flatMap((msg) => {
@@ -69,13 +82,13 @@ function nodeToOpcode(node, parentOpcodes = []) {
     });
     // add empty opcode
     if (opcodesContainingEmpties.includes(parentOpcodes[0]) && str === 'false') {
-      opcodes.push('');
+      opcodes.push(['']);
     }
     // check if at least one msg matches the node string
     if (((msgs.includes(shadowPlaceholder) || msgs.includes(argumentPlaceholder))
         && !str.includes(holePlaceholder))
         || msgs.map((msg) => msg.replaceAll(holePlaceholderRegex, holePlaceholder)).includes(str)) {
-      opcodes.push(key);
+      opcodes.push([key]);
     }
   });
   return opcodes;
@@ -135,6 +148,8 @@ function getChildIndex(opcode, childNum) {
   let msg = typeToMsg[opcode];
   if (Array.isArray(msg)) {
     [msg] = msg;
+  } else if (typeof msg === 'object') {
+    msg = msg.message;
   }
   const matches = [...msg.matchAll(holePlaceholderRegex)];
   return parseInt(matches[childNum][0][2], 10) - 1;
@@ -150,9 +165,24 @@ function getChildBlock(parentBlock, childNum) {
   return parentBlock.getChildren()[i];
 }
 
+function containsDropdown(block) {
+  return block.inputList
+    .some((input) => input.fieldRow
+      .find((field) => field instanceof getBlockly().FieldDropdown));
+}
+
+function getDropdown(block) {
+  let dropdown = null;
+  block.inputList.some((input) => {
+    dropdown = input.fieldRow.find((field) => field instanceof getBlockly().FieldDropdown);
+    return dropdown;
+  });
+  return dropdown;
+}
+
 function createBlocksFromLabeledDiagram(diagram) {
   const nodeToDom = (node, block) => {
-    const opcode = node.opcode[0];
+    const opcode = node.opcode[0][0];
     if (opcode === '') {
       return; // empty block
     }
@@ -178,6 +208,9 @@ function createBlocksFromLabeledDiagram(diagram) {
       field.setValue(node.content[0].content);
       return;
     }
+    if (containsDropdown(block)) {
+      getDropdown(block).setValue(node.opcode[0][1]);
+    }
     getChildNodes(node, diagram).forEach(setValues);
   };
   const roots = [diagram.root];
@@ -197,12 +230,13 @@ function labelDiagramWithOpcodes(diagram, isBeginner) {
   const showOptionsForNode = (node, parentNode, num = 0) => {
     if (parentNode) {
       // filter opcode options based on parent block
-      const parentOp = parentNode.opcode[0];
+      const parentOp = parentNode.opcode[0][0];
       const value = getValue(opcodeToXml(parentOp), num);
       const shadowOp = value?.querySelector(':scope > shadow')?.getAttribute('type') ?? '';
-      node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op) || op === shadowOp);
+      node.opcode = node.opcode
+        .filter((op) => !shadowOpcodes.includes(op[0]) || op[0] === shadowOp);
     } else {
-      node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op));
+      node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op[0]));
     }
     if (node.opcode.length === 0) {
       throw new Error('could not create block of the tree');
@@ -212,9 +246,9 @@ function labelDiagramWithOpcodes(diagram, isBeginner) {
         node.opcode = [node.opcode[0]];
       } else {
         const str = nodeToString(node);
-        let option = prompt(`Select one for "${str}" in ${node.opcode}`, node.opcode[0]);
+        let option = prompt(`Select one for "${str}" in ${node.opcode}`, node.opcode[0][0]);
         while ((!parentNode || option !== '') && !node.opcode.includes(option)) {
-          option = prompt(`Please try again...\nSelect one for "${str}"in ${node.opcode}`, node.opcode[0]);
+          option = prompt(`Please try again...\nSelect one for "${str}"in ${node.opcode}`, node.opcode[0][0]);
         }
         node.opcode = [option];
       }

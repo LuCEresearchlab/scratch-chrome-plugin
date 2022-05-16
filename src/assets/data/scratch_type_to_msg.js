@@ -3,6 +3,7 @@ export const variablePlaceholder = '{{v}}';
 export const listPlaceholder = '{{l}}';
 export const shadowPlaceholder = '{{s}}';
 export const argumentPlaceholder = '{{a}}';
+export const dropdownPlaceholder = '{{d}}';
 
 const holePlaceholder = (i) => `{{${i}}}`;
 
@@ -16,8 +17,14 @@ const typeToMsg = {
   motion_direction: ['direction'],
   motion_xposition: ['x position'],
   motion_yposition: ['y position'],
-  looks_costumenumbername: ['costume name', 'costume number'], // LOOKS_NUMBERNAME_NUMBER LOOKS_NUMBERNAME_NAME
-  looks_backdropnumbername: ['backdrop name', 'backdrop number'], // LOOKS_NUMBERNAME_NUMBER LOOKS_NUMBERNAME_NAME
+  looks_costumenumbername: {
+    options: ['name', 'number'],
+    message: `costume ${dropdownPlaceholder}`,
+  },
+  looks_backdropnumbername: {
+    options: ['name', 'number'],
+    message: `backdrop ${dropdownPlaceholder}`,
+  },
   looks_size: ['size'],
   sound_volume: ['volume'],
   sensing_answer: ['answer'],
@@ -25,19 +32,22 @@ const typeToMsg = {
   sensing_touchingobject: [`touching ${holePlaceholder(1)}?`], // SENSING_TOUCHINGOBJECT_POINTER SENSING_TOUCHINGOBJECT_EDGE
   sensing_touchingcolor: [`touching color ${holePlaceholder(1)}?`],
   sensing_timer: ['timer'],
-  sensing_of: [
-    'background #',
-    'backdrop #',
-    'backdrop name',
-    'volume',
-    'x position',
-    'y position',
-    'direction',
-    'costume #',
-    'costume name',
-    'size',
-    variablePlaceholder,
-  ].map((s) => `${s} of ${holePlaceholder(1)}`), // ?
+  sensing_of: {
+    options: [
+      'background #',
+      'backdrop #',
+      'backdrop name',
+      'volume',
+      'x position',
+      'y position',
+      'direction',
+      'costume #',
+      'costume name',
+      'size',
+      variablePlaceholder,
+    ],
+    message: `${dropdownPlaceholder} of ${holePlaceholder(1)}`,
+  },
   sensing_mousex: ['mouse x'],
   sensing_mousey: ['mouse y'],
   sensing_mousedown: 'mouse down?',
@@ -45,32 +55,38 @@ const typeToMsg = {
   sensing_keypressed: `key ${holePlaceholder(1)} pressed?`,
   sensing_distanceto: `distance to ${holePlaceholder(1)}`,
   sensing_dayssince2000: 'days since 2000',
-  sensing_current: [
-    'year',
-    'month',
-    'date',
-    'day of week',
-    'hour',
-    'minute',
-    'second',
-  ].map((s) => `current ${s}`), // SENSING_CURRENT_SECOND ...
+  sensing_current: {
+    options: [
+      'year',
+      'month',
+      'date',
+      'day of week',
+      'hour',
+      'minute',
+      'second',
+    ],
+    message: `current ${dropdownPlaceholder}`,
+  },
   sensing_coloristouchingcolor: `color ${holePlaceholder(1)} is touching ${holePlaceholder(2)}?`,
-  operator_mathop: [
-    'abs',
-    'floor',
-    'ceiling',
-    'sqrt',
-    'sin',
-    'cos',
-    'tan',
-    'asin',
-    'acos',
-    'atan',
-    'ln',
-    'log',
-    'e ^',
-    '10 ^',
-  ].map((s) => `${s} of ${holePlaceholder(1)}`),
+  operator_mathop: {
+    options: [
+      'abs',
+      'floor',
+      'ceiling',
+      'sqrt',
+      'sin',
+      'cos',
+      'tan',
+      'asin',
+      'acos',
+      'atan',
+      'ln',
+      'log',
+      'e ^',
+      '10 ^',
+    ],
+    message: `${dropdownPlaceholder} of ${holePlaceholder(1)}`,
+  },
   operator_round: `round ${holePlaceholder(1)}`,
   operator_add: `${holePlaceholder(1)} + ${holePlaceholder(2)}`,
   operator_subtract: `${holePlaceholder(1)} - ${holePlaceholder(2)}`,
