@@ -17,7 +17,7 @@ import { reducer, initialState, createDispatchActions } from '../../store/pageAp
 import theme from '../../../themes/pageTheme.js';
 import { handleMessageFromContentScript } from '../../contentScripts/messages.js';
 import AppModal from '../AppModal/AppModal.js';
-import labelDiagramWithOpcodes from '../../utils/tutorToBlock.js';
+import tutorToBlock from '../../utils/tutorToBlock.js';
 
 function PageApp({ initialIsEnabled }) {
   const [state, dispatch] = useReducer(reducer, {
@@ -64,7 +64,7 @@ function PageApp({ initialIsEnabled }) {
 
   const exportHandler = useCallback(() => {
     const d = tutorToService(temporaryDiagram);
-    labelDiagramWithOpcodes(d, isBegginner);
+    tutorToBlock(d, isBegginner);
   }, [temporaryDiagram]);
 
   return (

@@ -227,14 +227,14 @@ function createBlocksFromLabeledDiagram(diagram) {
   });
 }
 
-function labelDiagramWithOpcodes(diagram, isBeginner) {
+export function labelDiagramWithOpcodes(diagram) {
   const labelNode = (node, parentOpcodes) => {
     node.opcode = nodeToOpcode(node, parentOpcodes);
     getChildNodes(node, diagram).forEach((n) => {
       labelNode(n, node.opcode);
     });
   };
-  const showOptionsForNode = (node, parentNode, num = 0) => {
+  const filterOptionsForNode = (node, parentNode, num = 0) => {
     if (parentNode) {
       // filter opcode options based on parent block
       const parentOp = parentNode.opcode[0][0];
@@ -245,6 +245,14 @@ function labelDiagramWithOpcodes(diagram, isBeginner) {
     } else {
       node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op[0]));
     }
+    getChildNodes(node, diagram).forEach((n, i) => filterOptionsForNode(n, node, i));
+  };
+  labelNode(diagram.root);
+  filterOptionsForNode(diagram.root);
+}
+
+function pickOpcodesInDiagram(diagram, isBeginner) {
+  const pickOpcodeForNode = (node, parentNode) => {
     if (node.opcode.length === 0) {
       throw new Error('could not create block of the tree');
     }
@@ -260,11 +268,15 @@ function labelDiagramWithOpcodes(diagram, isBeginner) {
         node.opcode = [option];
       }
     }
-    getChildNodes(node, diagram).forEach((n, i) => showOptionsForNode(n, node, i));
+    getChildNodes(node, diagram).forEach((n) => pickOpcodeForNode(n, node));
   };
-  labelNode(diagram.root);
-  showOptionsForNode(diagram.root);
+  pickOpcodeForNode(diagram.root);
+}
+
+function tutorToBlock(diagram, isBeginner) {
+  labelDiagramWithOpcodes(diagram);
+  pickOpcodesInDiagram(diagram, isBeginner);
   createBlocksFromLabeledDiagram(diagram);
 }
 
-export default labelDiagramWithOpcodes;
+export default tutorToBlock;
