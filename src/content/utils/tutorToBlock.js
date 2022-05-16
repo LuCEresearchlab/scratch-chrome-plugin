@@ -12,8 +12,7 @@ import { getBlockly, getScratchToolbox } from './stateHandler.js';
 
 const holePlaceholder = '{{}}';
 
-function opcodeToXml(opcode) {
-  const blockly = getBlockly();
+function opcodeToXml(opcode, blockly) {
   switch (opcode) {
     case 'argument_reporter_boolean':
       return blockly.Xml.textToDom('<block type="argument_reporter_boolean">'
@@ -44,13 +43,13 @@ function nodeToString(node) {
   return str;
 }
 
-function nodeToOpcode(node, parentOpcodes = []) {
+function nodeToOpcode(node, blockly, parentOpcodes = []) {
   const str = nodeToString(node);
   const opcodes = [];
   Object.entries(typeToMsg).forEach((entry) => {
     const key = entry[0];
     const value = entry[1];
-    if (!shadowOpcodes.includes(key) && !opcodeToXml(key)) {
+    if (!shadowOpcodes.includes(key) && !opcodeToXml(key, blockly)) {
       return; // we don't add to opcode list if block with opcode is not available in toolbox
     }
     if (!Array.isArray(value) && typeof value === 'object') {
@@ -71,11 +70,11 @@ function nodeToOpcode(node, parentOpcodes = []) {
     msgs = msgs.flatMap((msg) => {
       // assume msg contains at most one placeholder
       if (msg.includes(variablePlaceholder)) {
-        const variableList = getBlockly().mainWorkspace.getVariablesOfType('');
+        const variableList = blockly.mainWorkspace.getVariablesOfType('');
         return variableList.map((v) => msg.replace(variablePlaceholder, v.name));
       }
       if (msg.includes(listPlaceholder)) {
-        const listList = getBlockly().mainWorkspace.getVariablesOfType('list');
+        const listList = blockly.mainWorkspace.getVariablesOfType('list');
         return listList.map((l) => msg.replace(listPlaceholder, l.name));
       }
       return msg;
@@ -165,6 +164,17 @@ function getChildBlock(parentBlock, childNum) {
   return parentBlock.getChildren()[i];
 }
 
+function getInputConnection(parentBlock, childNum) {
+  const i = getChildIndex(parentBlock.type, childNum);
+  const inputConnections = [];
+  parentBlock.inputList.forEach((input) => {
+    if (input.connection) {
+      inputConnections.push(input.connection);
+    }
+  });
+  return inputConnections[i];
+}
+
 function containsDropdown(block) {
   return block.inputList
     .some((input) => input.fieldRow
@@ -180,14 +190,14 @@ function getDropdown(block) {
   return dropdown;
 }
 
-function createBlocksFromLabeledDiagram(diagram) {
+function createBlocksFromLabeledDiagram(diagram, blockly) {
   const nodeToDom = (node, block) => {
     const opcode = node.opcode[0][0];
     if (opcode === '') {
       return; // empty block
     }
     if (!shadowOpcodes.includes(opcode)) {
-      const xml = opcodeToXml(opcode);
+      const xml = opcodeToXml(opcode, blockly);
       if (!xml) {
         throw new Error(`could not create block of type ${opcode}`);
       }
@@ -198,10 +208,13 @@ function createBlocksFromLabeledDiagram(diagram) {
       nodeToDom(n, getChildBlock(block, i));
     });
   };
-  const setValues = (node) => {
+  const setValues = (node, inputConnection) => {
     const block = getBlockly().mainWorkspace.getBlockById(node.blockId);
     if (!block) {
       return; // empty block
+    }
+    if (inputConnection) {
+      block.outputConnection.connect(inputConnection);
     }
     if (block.isShadow() || pseudoShadowOpcodes.includes(block.type)) {
       const field = block.inputList[0].fieldRow[0];
@@ -218,7 +231,7 @@ function createBlocksFromLabeledDiagram(diagram) {
     if (containsDropdown(block)) {
       getDropdown(block).setValue(node.opcode[0][1]);
     }
-    getChildNodes(node, diagram).forEach(setValues);
+    getChildNodes(node, diagram).forEach((n, i) => setValues(n, getInputConnection(block, i)));
   };
   const roots = [diagram.root];
   roots.forEach((root) => {
@@ -227,9 +240,9 @@ function createBlocksFromLabeledDiagram(diagram) {
   });
 }
 
-export function labelDiagramWithOpcodes(diagram) {
+export function labelDiagramWithOpcodes(diagram, blockly) {
   const labelNode = (node, parentOpcodes) => {
-    node.opcode = nodeToOpcode(node, parentOpcodes);
+    node.opcode = nodeToOpcode(node, blockly, parentOpcodes);
     getChildNodes(node, diagram).forEach((n) => {
       labelNode(n, node.opcode);
     });
@@ -238,7 +251,7 @@ export function labelDiagramWithOpcodes(diagram) {
     if (parentNode) {
       // filter opcode options based on parent block
       const parentOp = parentNode.opcode[0][0];
-      const value = getValue(opcodeToXml(parentOp), num);
+      const value = getValue(opcodeToXml(parentOp, blockly), num);
       const shadowOp = value?.querySelector(':scope > shadow')?.getAttribute('type') ?? '';
       node.opcode = node.opcode
         .filter((op) => !shadowOpcodes.includes(op[0]) || op[0] === shadowOp);
@@ -249,6 +262,7 @@ export function labelDiagramWithOpcodes(diagram) {
   };
   labelNode(diagram.root);
   filterOptionsForNode(diagram.root);
+  return diagram;
 }
 
 function pickOpcodesInDiagram(diagram, isBeginner) {
@@ -274,9 +288,9 @@ function pickOpcodesInDiagram(diagram, isBeginner) {
 }
 
 function tutorToBlock(diagram, isBeginner) {
-  labelDiagramWithOpcodes(diagram);
+  labelDiagramWithOpcodes(diagram, getBlockly());
   pickOpcodesInDiagram(diagram, isBeginner);
-  createBlocksFromLabeledDiagram(diagram);
+  createBlocksFromLabeledDiagram(diagram, getBlockly());
 }
 
 export default tutorToBlock;
