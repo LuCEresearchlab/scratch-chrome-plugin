@@ -80,7 +80,7 @@ function nodeToOpcode(node, blockly, parentOpcodes = []) {
       return msg;
     });
     // add empty opcode
-    if (opcodesContainingEmpties.includes(parentOpcodes[0]) && str === 'false') {
+    if (parentOpcodes.length > 0 && opcodesContainingEmpties.includes(parentOpcodes[0][0]) && str === 'false') {
       opcodes.push(['']);
     }
     // check if at least one msg matches the node string
@@ -193,9 +193,11 @@ function getDropdown(block) {
 function createBlocksFromLabeledDiagram(diagram, blockly) {
   const nodeToDom = (node, block) => {
     const opcode = node.opcode[0][0];
+    
     if (opcode === '') {
       return; // empty block
     }
+    
     if (!shadowOpcodes.includes(opcode)) {
       const xml = opcodeToXml(opcode, blockly);
       if (!xml) {
@@ -235,6 +237,7 @@ function createBlocksFromLabeledDiagram(diagram, blockly) {
   };
   const roots = [diagram.root];
   roots.forEach((root) => {
+    console.log(diagram);
     nodeToDom(root);
     setValues(root);
   });
