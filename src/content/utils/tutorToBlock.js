@@ -122,6 +122,11 @@ function createBlockFromXml(xml, lastCreatedBlock, ws) {
     if (!svgRootNew) {
       throw new Error('newBlock is not rendered.');
     }
+  } finally {
+    Blockly.Events.enable();
+  }
+  if (Blockly.Events.isEnabled()) {
+    Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
 
     if (lastCreatedBlock) {
       // The position of the old block in workspace coordinates.
@@ -135,11 +140,6 @@ function createBlockFromXml(xml, lastCreatedBlock, ws) {
     const offsetX = ws.RTL ? -100 : 100;
     const offsetY = 100;
     newBlock.moveBy(offsetX, offsetY); // Just offset the block for touch.
-  } finally {
-    Blockly.Events.enable();
-  }
-  if (Blockly.Events.isEnabled()) {
-    Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
   }
   return newBlock;
 }
