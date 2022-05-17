@@ -332,7 +332,7 @@ const test = {
     nodes: [
       {
         nodePlug: { valA: 0, valB: 0 },
-        content: [{ content: 'random position' }],
+        content: [{ content: '"_random_"' }],
         type: 'String',
         value: '"_random_"',
       },
@@ -340,7 +340,7 @@ const test = {
     edges: [],
     root: {
       nodePlug: { valA: 0, valB: 0 },
-      content: [{ content: 'random position' }],
+      content: [{ content: '"_random_"' }],
       type: 'String',
       value: '"_random_"',
     },

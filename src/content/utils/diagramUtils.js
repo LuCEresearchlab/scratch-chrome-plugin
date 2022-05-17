@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import primitiveShadows from '../../assets/data/scratch-shadow-blocks.js';
+import { shadowOpcodes } from '../../assets/data/scratch_shadow_opcodes.js';
 import {
   getCachedVmValue,
   opcodeToExpressionTypeInfo,
@@ -207,7 +207,7 @@ const createDiagram = (inputBlock, thread) => {
       content: [],
     };
     let firstFieldDropdownText;
-    if (!primitiveShadows.includes(block.type)) {
+    if (!shadowOpcodes.includes(block.type)) {
       let textsToAdd = [];
       // block example: think _ for _ seconds
       // input list example: ["think _", "for _", "seconds"]
