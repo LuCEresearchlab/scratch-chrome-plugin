@@ -1,4 +1,7 @@
-import { pseudoShadowOpcodes, shadowOpcodes } from '../../assets/data/scratch_shadow_opcodes.js';
+import {
+  pseudoShadowOpcodes,
+  shadowOpcodes,
+} from '../../assets/data/scratch_shadow_opcodes.js';
 import typeToMsg, {
   argumentPlaceholder,
   dropdownPlaceholder,
@@ -12,23 +15,33 @@ import { getBlockly, getScratchToolbox } from './stateHandler.js';
 
 const holePlaceholder = '{{}}';
 
-function opcodeToXml(opcode, blockly) {
+function opcodeToXml(opcode, blockly, scratchTB) {
   switch (opcode) {
     case 'argument_reporter_boolean':
-      return blockly.Xml.textToDom('<block type="argument_reporter_boolean">'
-        + '<field name="VALUE"></field>'
-      + '</block>');
+      return blockly.Xml.textToDom(
+        '<block type="argument_reporter_boolean">'
+          + '<field name="VALUE"></field>'
+          + '</block>',
+      );
 
     case 'argument_reporter_string_number':
-      return blockly.Xml.textToDom('<block type="argument_reporter_string_number">'
-        + '<field name="VALUE"></field>'
-      + '</block>');
+      return blockly.Xml.textToDom(
+        '<block type="argument_reporter_string_number">'
+          + '<field name="VALUE"></field>'
+          + '</block>',
+      );
 
     default:
   }
-  const toolbox = getScratchToolbox().toolboxXML;
-  return blockly.Xml.textToDom(toolbox).querySelector(`category > block[type=${opcode}]`)
-    || blockly.DataCategory(blockly.mainWorkspace).find((xml) => xml.getAttribute('type') === opcode);
+  const toolbox = scratchTB.toolboxXML;
+  return (
+    blockly.Xml.textToDom(toolbox).querySelector(
+      `category > block[type=${opcode}]`,
+    )
+    || blockly
+      .DataCategory(blockly.mainWorkspace)
+      .find((xml) => xml.getAttribute('type') === opcode)
+  );
 }
 
 function nodeToString(node) {
@@ -43,13 +56,13 @@ function nodeToString(node) {
   return str;
 }
 
-function nodeToOpcode(node, blockly, parentOpcodes = []) {
+function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
   const str = nodeToString(node);
   const opcodes = [];
   Object.entries(typeToMsg).forEach((entry) => {
     const key = entry[0];
     const value = entry[1];
-    if (!shadowOpcodes.includes(key) && !opcodeToXml(key, blockly)) {
+    if (!shadowOpcodes.includes(key) && !opcodeToXml(key, blockly, scratchTB)) {
       return; // we don't add to opcode list if block with opcode is not available in toolbox
     }
     if (!Array.isArray(value) && typeof value === 'object') {
@@ -80,13 +93,22 @@ function nodeToOpcode(node, blockly, parentOpcodes = []) {
       return msg;
     });
     // add empty opcode
-    if (parentOpcodes.length > 0 && opcodesContainingEmpties.includes(parentOpcodes[0][0]) && str === 'false') {
+    if (
+      parentOpcodes.length > 0
+      && opcodesContainingEmpties.includes(parentOpcodes[0][0])
+      && str === 'false'
+    ) {
       opcodes.push(['']);
     }
     // check if at least one msg matches the node string
-    if (((msgs.includes(shadowPlaceholder) || msgs.includes(argumentPlaceholder))
+    if (
+      ((msgs.includes(shadowPlaceholder)
+        || msgs.includes(argumentPlaceholder))
         && !str.includes(holePlaceholder))
-        || msgs.map((msg) => msg.replaceAll(holePlaceholderRegex, holePlaceholder)).includes(str)) {
+      || msgs
+        .map((msg) => msg.replaceAll(holePlaceholderRegex, holePlaceholder))
+        .includes(str)
+    ) {
       opcodes.push([key]);
     }
   });
@@ -103,29 +125,28 @@ function getChildNodes(node, diagram) {
 /**
  * Inspired by scratch-blocks function Blockly.scratchBlocksUtils.duplicateAndDragCallback
  */
-function createBlockFromXml(xml, lastCreatedBlock, ws) {
-  const Blockly = getBlockly();
+function createBlockFromXml(xml, lastCreatedBlock, blockly) {
   let newBlock = null;
   // Disable events and manually emit events after the block has been
   // positioned and has had its shadow IDs fixed (Scratch-specific).
-  Blockly.Events.disable();
+  blockly.Events.disable();
   try {
     // Using domToBlock instead of domToWorkspace means that the new block
     // will be placed at position (0, 0) in main workspace units.
-    newBlock = Blockly.Xml.domToBlock(xml, ws);
+    newBlock = blockly.Xml.domToBlock(xml, blockly.mainWorkspace);
 
     // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
-    Blockly.scratchBlocksUtils.changeObscuredShadowIds(newBlock);
+    blockly.scratchBlocksUtils.changeObscuredShadowIds(newBlock);
 
     const svgRootNew = newBlock.getSvgRoot();
     if (!svgRootNew) {
       throw new Error('newBlock is not rendered.');
     }
   } finally {
-    Blockly.Events.enable();
+    blockly.Events.enable();
   }
-  if (Blockly.Events.isEnabled()) {
-    Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
+  if (blockly.Events.isEnabled()) {
+    blockly.Events.fire(new blockly.Events.BlockCreate(newBlock));
 
     if (lastCreatedBlock) {
       // The position of the old block in workspace coordinates.
@@ -136,7 +157,7 @@ function createBlockFromXml(xml, lastCreatedBlock, ws) {
       // left corner of the block.
       newBlock.moveBy(oldBlockPosWs.x, oldBlockPosWs.y);
     }
-    const offsetX = ws.RTL ? -100 : 100;
+    const offsetX = blockly.mainWorkspace.RTL ? -100 : 100;
     const offsetY = 100;
     newBlock.moveBy(offsetX, offsetY); // Just offset the block for touch.
   }
@@ -184,24 +205,26 @@ function containsDropdown(block) {
 function getDropdown(block) {
   let dropdown = null;
   block.inputList.some((input) => {
-    dropdown = input.fieldRow.find((field) => field instanceof getBlockly().FieldDropdown);
+    dropdown = input.fieldRow.find(
+      (field) => field instanceof getBlockly().FieldDropdown,
+    );
     return dropdown;
   });
   return dropdown;
 }
 
-function createBlocksFromLabeledDiagram(diagram, blockly) {
+function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
   const nodeToDom = (node, block) => {
     const opcode = node.opcode[0][0];
     if (opcode === '') {
       return; // empty block
     }
     if (!shadowOpcodes.includes(opcode)) {
-      const xml = opcodeToXml(opcode, blockly);
+      const xml = opcodeToXml(opcode, blockly, scratchTB);
       if (!xml) {
         throw new Error(`could not create block of type ${opcode}`);
       }
-      block = createBlockFromXml(xml, null, getBlockly().mainWorkspace);
+      block = createBlockFromXml(xml, null, blockly);
     }
     node.blockId = block.id;
     getChildNodes(node, diagram).forEach((n, i) => {
@@ -209,7 +232,7 @@ function createBlocksFromLabeledDiagram(diagram, blockly) {
     });
   };
   const setValues = (node, dropdownInfoList, inputConnection) => {
-    const block = getBlockly().mainWorkspace.getBlockById(node.blockId);
+    const block = blockly.mainWorkspace.getBlockById(node.blockId);
     if (!block) {
       return; // empty block
     }
@@ -255,9 +278,9 @@ function createBlocksFromLabeledDiagram(diagram, blockly) {
   });
 }
 
-export function labelDiagramWithOpcodes(diagram, blockly) {
+export function labelDiagramWithOpcodes(diagram, blockly, scratchTB) {
   const labelNode = (node, parentOpcodes) => {
-    node.opcode = nodeToOpcode(node, blockly, parentOpcodes);
+    node.opcode = nodeToOpcode(node, blockly, scratchTB, parentOpcodes);
     getChildNodes(node, diagram).forEach((n) => {
       labelNode(n, node.opcode);
     });
@@ -266,10 +289,11 @@ export function labelDiagramWithOpcodes(diagram, blockly) {
     if (parentNode) {
       // filter opcode options based on parent block
       const parentOp = parentNode.opcode[0][0];
-      const value = getValue(opcodeToXml(parentOp, blockly), num);
+      const value = getValue(opcodeToXml(parentOp, blockly, scratchTB), num);
       const shadowOp = value?.querySelector(':scope > shadow')?.getAttribute('type') ?? '';
-      node.opcode = node.opcode
-        .filter((op) => !shadowOpcodes.includes(op[0]) || op[0] === shadowOp);
+      node.opcode = node.opcode.filter(
+        (op) => !shadowOpcodes.includes(op[0]) || op[0] === shadowOp,
+      );
     } else {
       node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op[0]));
     }
@@ -290,9 +314,18 @@ function pickOpcodesInDiagram(diagram, isBeginner) {
         node.opcode = [node.opcode[0]];
       } else {
         const str = nodeToString(node);
-        let option = prompt(`Select one for "${str}" in ${node.opcode}`, node.opcode[0][0]);
-        while ((!parentNode || option !== '') && !node.opcode.includes(option)) {
-          option = prompt(`Please try again...\nSelect one for "${str}"in ${node.opcode}`, node.opcode[0][0]);
+        let option = prompt(
+          `Select one for "${str}" in ${node.opcode}`,
+          node.opcode[0][0],
+        );
+        while (
+          (!parentNode || option !== '')
+          && !node.opcode.includes(option)
+        ) {
+          option = prompt(
+            `Please try again...\nSelect one for "${str}"in ${node.opcode}`,
+            node.opcode[0][0],
+          );
         }
         node.opcode = [option];
       }
@@ -303,9 +336,9 @@ function pickOpcodesInDiagram(diagram, isBeginner) {
 }
 
 function tutorToBlock(diagram, isBeginner) {
-  labelDiagramWithOpcodes(diagram, getBlockly());
+  labelDiagramWithOpcodes(diagram, getBlockly(), getScratchToolbox());
   pickOpcodesInDiagram(diagram, isBeginner);
-  createBlocksFromLabeledDiagram(diagram, getBlockly());
+  createBlocksFromLabeledDiagram(diagram, getBlockly(), getScratchToolbox());
 }
 
 export default tutorToBlock;
