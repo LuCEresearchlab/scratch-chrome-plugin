@@ -193,11 +193,9 @@ function getDropdown(block) {
 function createBlocksFromLabeledDiagram(diagram, blockly) {
   const nodeToDom = (node, block) => {
     const opcode = node.opcode[0][0];
-    
     if (opcode === '') {
       return; // empty block
     }
-    
     if (!shadowOpcodes.includes(opcode)) {
       const xml = opcodeToXml(opcode, blockly);
       if (!xml) {
@@ -210,7 +208,7 @@ function createBlocksFromLabeledDiagram(diagram, blockly) {
       nodeToDom(n, getChildBlock(block, i));
     });
   };
-  const setValues = (node, inputConnection) => {
+  const setValues = (node, dropdownInfoList, inputConnection) => {
     const block = getBlockly().mainWorkspace.getBlockById(node.blockId);
     if (!block) {
       return; // empty block
@@ -220,7 +218,10 @@ function createBlocksFromLabeledDiagram(diagram, blockly) {
     }
     if (block.isShadow() || pseudoShadowOpcodes.includes(block.type)) {
       const field = block.inputList[0].fieldRow[0];
-      const newValue = node.content[0].content;
+      const newValue = node.value;
+      if (!newValue) {
+        throw new Error('missing value');
+      }
       if (node.type === 'Number') {
         field.setValue(newValue.replace(/^0$/, ''));
       } else if (node.type === 'String') {
@@ -231,15 +232,29 @@ function createBlocksFromLabeledDiagram(diagram, blockly) {
       return;
     }
     if (containsDropdown(block)) {
-      getDropdown(block).setValue(node.opcode[0][1]);
+      dropdownInfoList.push([getDropdown(block), node.opcode[0][1]]);
     }
-    getChildNodes(node, diagram).forEach((n, i) => setValues(n, getInputConnection(block, i)));
+    getChildNodes(node, diagram)
+      .forEach((n, i) => setValues(n, dropdownInfoList, getInputConnection(block, i)));
+  };
+  const setDropdownValues = (dropdownInfoList) => {
+    dropdownInfoList.forEach((dropdownInfo) => {
+      const [dropdown, text] = dropdownInfo;
+      const options = dropdown.getOptions();
+      const pickedOption = options.find((option) => option[0] === text);
+      if (!pickedOption) {
+        throw new Error(`no option of ${text}`);
+      }
+      dropdown.setValue(pickedOption[1]);
+    });
   };
   const roots = [diagram.root];
   roots.forEach((root) => {
-    console.log(diagram);
     nodeToDom(root);
-    setValues(root);
+    const dropdownInfoList = [];
+    setValues(root, dropdownInfoList);
+    /* set dropdown values after all others to ensure their options are correctly set */
+    setDropdownValues(dropdownInfoList);
   });
 }
 
