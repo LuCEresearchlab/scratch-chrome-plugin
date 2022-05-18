@@ -63,8 +63,9 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
     const key = entry[0];
     const value = entry[1];
     if (!shadowOpcodes.includes(key) && !opcodeToXml(key, blockly, scratchTB)) {
-      return; // we don't add to opcode list if block with opcode is not available in toolbox
+      return; // we don't add to opcode list if block with opcode `key` is not available in toolbox
     }
+    /* Push pair (opcode, dropdown-option) for messages containing dropdown placeholders */
     if (!Array.isArray(value) && typeof value === 'object') {
       value.options.some((option) => {
         const message = value.message
@@ -79,7 +80,7 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
       return;
     }
     let msgs = Array.of(value);
-    // update msgs containing variable and list placeholders
+    /* update msgs containing variable and list placeholders */
     msgs = msgs.flatMap((msg) => {
       // assume msg contains at most one placeholder
       if (msg.includes(variablePlaceholder)) {
@@ -278,6 +279,12 @@ function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
   });
 }
 
+/**
+ * Labels the diagram with blockly opcode fields based on nodes' strings.
+ * @param {Object} diagram the tutor diagram to label with opcode fields
+ * @param {Object} blockly the instance of Blockly to be used
+ * @param {Object} scratchTB the instance of ScratchToolbox to be used
+ */
 export function labelDiagramWithOpcodes(diagram, blockly, scratchTB) {
   const labelNode = (node, parentOpcodes) => {
     node.opcode = nodeToOpcode(node, blockly, scratchTB, parentOpcodes);
@@ -287,6 +294,9 @@ export function labelDiagramWithOpcodes(diagram, blockly, scratchTB) {
   };
   const filterOptionsForNode = (node, parentNode, num = 0) => {
     if (parentNode) {
+      if (parentNode.opcode.length > 1) {
+        throw new Error('found multiple blocks corresponding to non-leaf node');
+      }
       // filter opcode options based on parent block
       const parentOp = parentNode.opcode[0][0];
       const value = getValue(opcodeToXml(parentOp, blockly, scratchTB), num);
@@ -297,18 +307,22 @@ export function labelDiagramWithOpcodes(diagram, blockly, scratchTB) {
     } else {
       node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op[0]));
     }
+    if (node.opcode.length === 0) {
+      throw new Error('could not find block corresponding to node');
+    }
     getChildNodes(node, diagram).forEach((n, i) => filterOptionsForNode(n, node, i));
   };
   labelNode(diagram.root);
   filterOptionsForNode(diagram.root);
-  return diagram;
 }
 
+/**
+ * Selects one opcode for each node in the diagram.
+ * @param {Object} diagram the labeled tutor diagram to pick from
+ * @param {boolean} isBeginner whether the user is a beginner or not
+ */
 export function pickOpcodesInDiagram(diagram, isBeginner) {
   const pickOpcodeForNode = (node, parentNode) => {
-    if (node.opcode.length === 0) {
-      throw new Error('could not create block of the tree');
-    }
     if (node.opcode.length > 1) {
       if (isBeginner) {
         node.opcode = [node.opcode[0]];
