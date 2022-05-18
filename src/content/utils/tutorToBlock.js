@@ -304,7 +304,7 @@ export function labelDiagramWithOpcodes(diagram, blockly, scratchTB) {
   return diagram;
 }
 
-function pickOpcodesInDiagram(diagram, isBeginner) {
+export function pickOpcodesInDiagram(diagram, isBeginner) {
   const pickOpcodeForNode = (node, parentNode) => {
     if (node.opcode.length === 0) {
       throw new Error('could not create block of the tree');
@@ -336,8 +336,11 @@ function pickOpcodesInDiagram(diagram, isBeginner) {
 }
 
 function tutorToBlock(diagram, isBeginner) {
+  console.log(JSON.parse(JSON.stringify(diagram)));
   labelDiagramWithOpcodes(diagram, getBlockly(), getScratchToolbox());
+  console.log(JSON.parse(JSON.stringify(diagram)));
   pickOpcodesInDiagram(diagram, isBeginner);
+  console.log(JSON.parse(JSON.stringify(diagram)));
   createBlocksFromLabeledDiagram(diagram, getBlockly(), getScratchToolbox());
 }
 

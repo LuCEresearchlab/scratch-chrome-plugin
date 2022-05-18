@@ -2,8 +2,9 @@ import assert from 'assert';
 import ScratchVM from 'scratch-vm';
 import jsdomGlobal from 'jsdom-global';
 
-import { labelDiagramWithOpcodes } from '../src/content/utils/tutorToBlock.js';
-import labelDiagramWithOpcodesTests from './fixtures/tutorToBlock/labelDiagramWithOpcodesTests.js';
+import { labelDiagramWithOpcodes, pickOpcodesInDiagram } from '../src/content/utils/tutorToBlock.js';
+import labelDiagramWithOpcodesTests from './fixtures/tutorToBlock/label/labelDiagramWithOpcodesTests.js';
+import pickOpcodesInDiagramTests from './fixtures/tutorToBlock/pick/pickOpcodesInDiagramTests.js';
 
 const getNewScratchVM = () => {
   const vm = new ScratchVM();
@@ -724,16 +725,29 @@ const scratchTB = {
 };
 
 describe('src/content/utils/tutorToBlock', () => {
-  describe('labelDiagramWithOpcodes(diagram)', () => {
-    it('setup', () => {
-      jsdomGlobal();
-      global.DOMParser = window.DOMParser;
-    });
+  it('setup', () => {
+    jsdomGlobal();
+    global.DOMParser = window.DOMParser;
+  });
 
+  describe('labelDiagramWithOpcodes(diagram)', () => {
     labelDiagramWithOpcodesTests.forEach((test) => {
       it(test.it, () => {
         const diagram = test.args[0];
         labelDiagramWithOpcodes(diagram, blockly, scratchTB);
+        assert.deepEqual(
+          diagram,
+          test.expected,
+        );
+      });
+    });
+  });
+
+  describe('pickOpcodesInDiagram(diagram, true)', () => {
+    pickOpcodesInDiagramTests.forEach((test) => {
+      it(test.it, () => {
+        const diagram = test.args[0];
+        pickOpcodesInDiagram(diagram, true);
         assert.deepEqual(
           diagram,
           test.expected,

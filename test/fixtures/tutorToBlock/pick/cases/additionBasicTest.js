@@ -1,5 +1,5 @@
 const test = {
-  it: 'create diagram for block (""+""): simple test',
+  it: 'picks opcodes in diagram of block (""+""): simple test',
   args: [
     {
       nodes: [
@@ -16,6 +16,17 @@ const test = {
           ],
           type: 'Number',
           value: '0',
+          opcode: [
+            [
+              'math_number',
+            ],
+            [
+              'argument_reporter_string_number',
+            ],
+            [
+              'argument_reporter_boolean',
+            ],
+          ],
         },
         {
           nodePlug: {
@@ -30,6 +41,17 @@ const test = {
           ],
           type: 'Number',
           value: '0',
+          opcode: [
+            [
+              'math_number',
+            ],
+            [
+              'argument_reporter_string_number',
+            ],
+            [
+              'argument_reporter_boolean',
+            ],
+          ],
         },
         {
           nodePlug: {
@@ -58,6 +80,11 @@ const test = {
           ],
           type: 'Number',
           value: '0',
+          opcode: [
+            [
+              'operator_add',
+            ],
+          ],
         },
       ],
       edges: [
@@ -109,6 +136,11 @@ const test = {
         ],
         type: 'Number',
         value: '0',
+        opcode: [
+          [
+            'operator_add',
+          ],
+        ],
       },
     },
   ],
@@ -131,12 +163,6 @@ const test = {
           [
             'math_number',
           ],
-          [
-            'argument_reporter_string_number',
-          ],
-          [
-            'argument_reporter_boolean',
-          ],
         ],
       },
       {
@@ -155,12 +181,6 @@ const test = {
         opcode: [
           [
             'math_number',
-          ],
-          [
-            'argument_reporter_string_number',
-          ],
-          [
-            'argument_reporter_boolean',
           ],
         ],
       },
@@ -191,6 +211,11 @@ const test = {
         ],
         type: 'Number',
         value: '0',
+        opcode: [
+          [
+            'operator_add',
+          ],
+        ],
       },
     ],
     edges: [
