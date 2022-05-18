@@ -1,5 +1,5 @@
 import assert from 'assert';
-import createDiagramTests from './fixtures/createDiagramTests.js';
+import createDiagramTests from './fixtures/diagramUtils/createDiagramTests.js';
 import createDiagram from '../src/content/utils/diagramUtils.js';
 
 describe('src/content/utils/diagramUtils', () => {
