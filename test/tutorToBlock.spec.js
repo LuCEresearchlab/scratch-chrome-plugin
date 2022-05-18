@@ -77,7 +77,7 @@ const blockly = {
 
 const scratchTB = {
   toolboxXML: `
-  <xml style="display: none">
+<xml style="display: none">
 
     <category name="%{BKY_CATEGORY_MOTION}" id="motion" colour="#4C97FF" secondaryColour="#3373CC">
         
@@ -732,8 +732,10 @@ describe('src/content/utils/tutorToBlock', () => {
 
     labelDiagramWithOpcodesTests.forEach((test) => {
       it(test.it, () => {
+        const diagram = test.args[0];
+        labelDiagramWithOpcodes(diagram, blockly, scratchTB);
         assert.deepEqual(
-          labelDiagramWithOpcodes(...test.args, blockly, scratchTB),
+          diagram,
           test.expected,
         );
       });
