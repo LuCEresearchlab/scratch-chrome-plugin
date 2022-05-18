@@ -734,11 +734,15 @@ describe('src/content/utils/tutorToBlock', () => {
     labelDiagramWithOpcodesTests.forEach((test) => {
       it(test.it, () => {
         const diagram = test.args[0];
-        labelDiagramWithOpcodes(diagram, blockly, scratchTB);
-        assert.deepEqual(
-          diagram,
-          test.expected,
-        );
+        if (test.expected) {
+          labelDiagramWithOpcodes(diagram, blockly, scratchTB);
+          assert.deepEqual(
+            diagram,
+            test.expected,
+          );
+        } else {
+          assert.throws(labelDiagramWithOpcodes(diagram, blockly, scratchTB));
+        }
       });
     });
   });
@@ -747,7 +751,7 @@ describe('src/content/utils/tutorToBlock', () => {
     pickOpcodesInDiagramTests.forEach((test) => {
       it(test.it, () => {
         const diagram = test.args[0];
-        pickOpcodesInDiagram(diagram, true);
+        pickOpcodesInDiagram(diagram, blockly, scratchTB, true);
         assert.deepEqual(
           diagram,
           test.expected,

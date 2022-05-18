@@ -65,34 +65,16 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
     if (!shadowOpcodes.includes(key) && !opcodeToXml(key, blockly, scratchTB)) {
       return; // we don't add to opcode list if block with opcode `key` is not available in toolbox
     }
-    /* Push pair (opcode, dropdown-option) for messages containing dropdown placeholders */
-    if (!Array.isArray(value) && typeof value === 'object') {
-      value.options.some((option) => {
-        const message = value.message
-          .replaceAll(holePlaceholderRegex, holePlaceholder)
-          .replaceAll(dropdownPlaceholder, option);
-        if (message === str) {
-          opcodes.push([key, option]);
-          return true;
-        }
-        return false;
-      });
-      return;
+    let msgs = [value];
+    /* update msg containing variable and list placeholders
+       assuming msg contains at most one placeholder */
+    if (value.includes(variablePlaceholder)) {
+      const variableList = blockly.mainWorkspace.getVariablesOfType('');
+      msgs = variableList.map((v) => value.replace(variablePlaceholder, v.name));
+    } else if (value.includes(listPlaceholder)) {
+      const listList = blockly.mainWorkspace.getVariablesOfType('list');
+      msgs = listList.map((l) => value.replace(listPlaceholder, l.name));
     }
-    let msgs = Array.of(value);
-    /* update msgs containing variable and list placeholders */
-    msgs = msgs.flatMap((msg) => {
-      // assume msg contains at most one placeholder
-      if (msg.includes(variablePlaceholder)) {
-        const variableList = blockly.mainWorkspace.getVariablesOfType('');
-        return variableList.map((v) => msg.replace(variablePlaceholder, v.name));
-      }
-      if (msg.includes(listPlaceholder)) {
-        const listList = blockly.mainWorkspace.getVariablesOfType('list');
-        return listList.map((l) => msg.replace(listPlaceholder, l.name));
-      }
-      return msg;
-    });
     // add empty opcode
     if (
       parentOpcodes.length > 0
@@ -101,16 +83,32 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
     ) {
       opcodes.push(['']);
     }
-    // check if at least one msg matches the node string
+    /* turn msgs into regexps */
+    msgs = msgs.map((msg) => new RegExp(msg
+      .replaceAll(dropdownPlaceholder, '(.*)')
+      .replaceAll(holePlaceholderRegex, holePlaceholder)));
+    /* check if at least one msg matches the node string
+       and push pair (opcode, dropdown-option) for messages containing dropdown placeholders */
+    let option = null;
     if (
-      ((msgs.includes(shadowPlaceholder)
-        || msgs.includes(argumentPlaceholder))
+      ((msgs.some((msg) => {
+        const res = shadowPlaceholder.match(msg);
+        return res ? res[0] === res.input : res; // match entire string
+      })
+        || msgs.some((msg) => {
+          const res = argumentPlaceholder.match(msg);
+          return res ? res[0] === res.input : res; // match entire string
+        }))
         && !str.includes(holePlaceholder))
-      || msgs
-        .map((msg) => msg.replaceAll(holePlaceholderRegex, holePlaceholder))
-        .includes(str)
+      || msgs.some((msg) => {
+        const res = str.match(msg);
+        if (res) {
+          [, option] = res;
+        }
+        return res ? res[0] === res.input : res; // match entire string
+      })
     ) {
-      opcodes.push([key]);
+      opcodes.push([key, option]);
     }
   });
   return opcodes;
@@ -292,11 +290,19 @@ export function labelDiagramWithOpcodes(diagram, blockly, scratchTB) {
       labelNode(n, node.opcode);
     });
   };
-  const filterOptionsForNode = (node, parentNode, num = 0) => {
+  labelNode(diagram.root);
+}
+
+/**
+ * Selects one opcode for each node in the diagram.
+ * @param {Object} diagram the labeled tutor diagram to pick from
+ * @param {Object} blockly the instance of Blockly to be used
+ * @param {Object} scratchTB the instance of ScratchToolbox to be used
+ * @param {boolean} isBeginner whether the user is a beginner or not
+ */
+export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
+  const pickOpcodeForNode = (node, parentNode, num) => {
     if (parentNode) {
-      if (parentNode.opcode.length > 1) {
-        throw new Error('found multiple blocks corresponding to non-leaf node');
-      }
       // filter opcode options based on parent block
       const parentOp = parentNode.opcode[0][0];
       const value = getValue(opcodeToXml(parentOp, blockly, scratchTB), num);
@@ -309,21 +315,7 @@ export function labelDiagramWithOpcodes(diagram, blockly, scratchTB) {
     }
     if (node.opcode.length === 0) {
       throw new Error('could not find block corresponding to node');
-    }
-    getChildNodes(node, diagram).forEach((n, i) => filterOptionsForNode(n, node, i));
-  };
-  labelNode(diagram.root);
-  filterOptionsForNode(diagram.root);
-}
-
-/**
- * Selects one opcode for each node in the diagram.
- * @param {Object} diagram the labeled tutor diagram to pick from
- * @param {boolean} isBeginner whether the user is a beginner or not
- */
-export function pickOpcodesInDiagram(diagram, isBeginner) {
-  const pickOpcodeForNode = (node, parentNode) => {
-    if (node.opcode.length > 1) {
+    } else if (node.opcode.length > 1) {
       if (isBeginner) {
         node.opcode = [node.opcode[0]];
       } else {
@@ -344,7 +336,7 @@ export function pickOpcodesInDiagram(diagram, isBeginner) {
         node.opcode = [option];
       }
     }
-    getChildNodes(node, diagram).forEach((n) => pickOpcodeForNode(n, node));
+    getChildNodes(node, diagram).forEach((n, i) => pickOpcodeForNode(n, node, i));
   };
   pickOpcodeForNode(diagram.root);
 }
@@ -353,7 +345,7 @@ function tutorToBlock(diagram, isBeginner) {
   console.log(JSON.parse(JSON.stringify(diagram)));
   labelDiagramWithOpcodes(diagram, getBlockly(), getScratchToolbox());
   console.log(JSON.parse(JSON.stringify(diagram)));
-  pickOpcodesInDiagram(diagram, isBeginner);
+  pickOpcodesInDiagram(diagram, getBlockly(), getScratchToolbox(), isBeginner);
   console.log(JSON.parse(JSON.stringify(diagram)));
   createBlocksFromLabeledDiagram(diagram, getBlockly(), getScratchToolbox());
 }
