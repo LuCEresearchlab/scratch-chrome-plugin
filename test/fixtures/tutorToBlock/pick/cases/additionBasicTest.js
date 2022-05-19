@@ -1,5 +1,5 @@
 const test = {
-  it: 'picks opcodes in diagram of block (""+""): simple test',
+  it: 'pick opcodes in diagram of block (""+""): simple test',
   args: [
     {
       nodes: [

@@ -59,6 +59,14 @@ function nodeToString(node) {
 function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
   const str = nodeToString(node);
   const opcodes = [];
+  // add empty opcode
+  if (
+    parentOpcodes.length > 0
+    && opcodesContainingEmpties.includes(parentOpcodes[0][0])
+    && str === 'false'
+  ) {
+    opcodes.push(['']);
+  }
   Object.entries(typeToMsg).forEach((entry) => {
     const key = entry[0];
     const value = entry[1];
@@ -74,14 +82,6 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
     } else if (value.includes(listPlaceholder)) {
       const listList = blockly.mainWorkspace.getVariablesOfType('list');
       msgs = listList.map((l) => value.replace(listPlaceholder, l.name));
-    }
-    // add empty opcode
-    if (
-      parentOpcodes.length > 0
-      && opcodesContainingEmpties.includes(parentOpcodes[0][0])
-      && str === 'false'
-    ) {
-      opcodes.push(['']);
     }
     /* turn msgs into regexps */
     msgs = msgs.map((msg) => new RegExp(msg
