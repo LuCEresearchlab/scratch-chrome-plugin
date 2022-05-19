@@ -106,7 +106,9 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
         if (res) {
           [, option] = res;
         }
-        return res ? res[0] === res.input : res; // match entire string
+        return res
+          ? (!option || !option.includes(holePlaceholder)) && res[0] === res.input
+          : res; // match entire string
       })
     ) {
       opcodes.push([key, option]);

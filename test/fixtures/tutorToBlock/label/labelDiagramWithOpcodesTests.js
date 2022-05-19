@@ -6,6 +6,7 @@ import matchingNonShadowBlockContainsDropdownTest from './cases/matchingNonShado
 import matchingBlockContainsListTest from './cases/matchingBlockContainsListTest.js';
 import matchingBlockIsListTest from './cases/matchingBlockIsListTest.js';
 import matchingBlockIsVariableTest from './cases/matchingBlockIsVariableTest.js';
+import notMatchingBlockWithOptionContainingHoleTest from './cases/notMatchingBlockWithOptionContainingHoleTest.js';
 
 const labelDiagramWithOpcodesTests = [
   additionBasicTest,
@@ -16,6 +17,7 @@ const labelDiagramWithOpcodesTests = [
   matchingBlockContainsListTest,
   matchingBlockIsListTest,
   matchingBlockIsVariableTest,
+  notMatchingBlockWithOptionContainingHoleTest,
 ];
 
 export default labelDiagramWithOpcodesTests;
