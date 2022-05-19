@@ -85,8 +85,9 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
     }
     /* turn msgs into regexps */
     msgs = msgs.map((msg) => new RegExp(msg
-      .replaceAll(dropdownPlaceholder, '(.*)')
-      .replaceAll(holePlaceholderRegex, holePlaceholder)));
+      .replaceAll(holePlaceholderRegex, holePlaceholder)
+      .replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&') // escape regexp https://stackoverflow.com/a/6969486/17160612
+      .replaceAll(dropdownPlaceholder.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&'), '(.*)')));
     /* check if at least one msg matches the node string
        and push pair (opcode, dropdown-option) for messages containing dropdown placeholders */
     let option = null;
