@@ -347,12 +347,16 @@ export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
 }
 
 function tutorToBlock(diagram, isBeginner) {
-  console.log(JSON.parse(JSON.stringify(diagram)));
+  if (process.env.NODE_ENV === 'testing') console.log(JSON.parse(JSON.stringify(diagram)));
   labelDiagramWithOpcodes(diagram, getBlockly(), getScratchToolbox());
-  console.log(JSON.parse(JSON.stringify(diagram)));
-  pickOpcodesInDiagram(diagram, getBlockly(), getScratchToolbox(), isBeginner);
-  console.log(JSON.parse(JSON.stringify(diagram)));
-  createBlocksFromLabeledDiagram(diagram, getBlockly(), getScratchToolbox());
+  if (process.env.NODE_ENV === 'testing') console.log(JSON.parse(JSON.stringify(diagram)));
+  try {
+    pickOpcodesInDiagram(diagram, getBlockly(), getScratchToolbox(), isBeginner);
+    if (process.env.NODE_ENV === 'testing') console.log(JSON.parse(JSON.stringify(diagram)));
+    createBlocksFromLabeledDiagram(diagram, getBlockly(), getScratchToolbox());
+  } catch (e) {
+    alert('Sorry, the block could not be created. Please try again.');
+  }
 }
 
 export default tutorToBlock;
