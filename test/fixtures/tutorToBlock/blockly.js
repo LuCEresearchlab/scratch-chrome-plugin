@@ -10,6 +10,9 @@ const blockly = {
   scratchBlocksUtils: {
     changeObscuredShadowIds: () => {},
   },
+  ScratchMsgs: {
+    currentLocale_: 'en',
+  },
   Events: {
     disable: () => {},
     BlockCreate: () => {},

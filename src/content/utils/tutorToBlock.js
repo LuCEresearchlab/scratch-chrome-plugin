@@ -67,7 +67,8 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
   ) {
     opcodes.push(['']);
   }
-  Object.entries(typeToMsg).forEach((entry) => {
+  // eslint-disable-next-line no-underscore-dangle
+  Object.entries(typeToMsg[blockly.ScratchMsgs.currentLocale_]).forEach((entry) => {
     const key = entry[0];
     const value = entry[1];
     if (!shadowOpcodes.includes(key) && !opcodeToXml(key, blockly, scratchTB)) {
@@ -166,8 +167,9 @@ function createBlockFromXml(xml, lastCreatedBlock, blockly) {
   return newBlock;
 }
 
-function getChildIndex(opcode, childNum) {
-  let msg = typeToMsg[opcode];
+function getChildIndex(opcode, childNum, blockly) {
+  // eslint-disable-next-line no-underscore-dangle
+  let msg = typeToMsg[blockly.ScratchMsgs.currentLocale_][opcode];
   if (Array.isArray(msg)) {
     [msg] = msg;
   } else if (typeof msg === 'object') {
@@ -177,18 +179,18 @@ function getChildIndex(opcode, childNum) {
   return parseInt(matches[childNum][0][2], 10) - 1;
 }
 
-function getValue(xml, childNum) {
-  const i = getChildIndex(xml.getAttribute('type'), childNum);
+function getValue(xml, childNum, blockly) {
+  const i = getChildIndex(xml.getAttribute('type'), childNum, blockly);
   return xml.querySelectorAll(':scope > value')[i];
 }
 
-function getChildBlock(parentBlock, childNum) {
-  const i = getChildIndex(parentBlock.type, childNum);
+function getChildBlock(parentBlock, childNum, blockly) {
+  const i = getChildIndex(parentBlock.type, childNum, blockly);
   return parentBlock.getChildren()[i];
 }
 
-function getInputConnection(parentBlock, childNum) {
-  const i = getChildIndex(parentBlock.type, childNum);
+function getInputConnection(parentBlock, childNum, blockly) {
+  const i = getChildIndex(parentBlock.type, childNum, blockly);
   const inputConnections = [];
   parentBlock.inputList.forEach((input) => {
     if (input.connection) {
@@ -230,7 +232,7 @@ function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
     }
     node.blockId = block.id;
     getChildNodes(node, diagram).forEach((n, i) => {
-      nodeToDom(n, getChildBlock(block, i));
+      nodeToDom(n, getChildBlock(block, i, blockly));
     });
   };
   const setValues = (node, dropdownInfoList, inputConnection) => {
@@ -257,7 +259,7 @@ function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
       dropdownInfoList.push([getDropdown(block), node.opcode[0][1]]);
     }
     getChildNodes(node, diagram)
-      .forEach((n, i) => setValues(n, dropdownInfoList, getInputConnection(block, i)));
+      .forEach((n, i) => setValues(n, dropdownInfoList, getInputConnection(block, i, blockly)));
   };
   const setDropdownValues = (dropdownInfoList) => {
     dropdownInfoList.forEach((dropdownInfo) => {
@@ -308,7 +310,7 @@ export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
     if (parentNode) {
       // filter opcode options based on parent block
       const parentOp = parentNode.opcode[0][0];
-      const value = getValue(opcodeToXml(parentOp, blockly, scratchTB), num);
+      const value = getValue(opcodeToXml(parentOp, blockly, scratchTB), num, blockly);
       const shadowOp = value?.querySelector(':scope > shadow')?.getAttribute('type') ?? '';
       node.opcode = node.opcode.filter(
         (op) => !shadowOpcodes.includes(op[0]) || op[0] === shadowOp,

@@ -1,3 +1,6 @@
+import extensionsMsgs from './locales/extensions-msgs.js';
+import { getBlockly } from '../../content/utils/stateHandler.js';
+
 export const holePlaceholderRegex = /{{[1-9]}}/g;
 export const variablePlaceholder = '{{v}}';
 export const listPlaceholder = '{{l}}';
@@ -13,7 +16,7 @@ export const opcodesContainingEmpties = [
   'operator_not',
 ];
 
-const typeToMsg = {
+const typeToMsgEn = {
   motion_direction: 'direction',
   motion_xposition: 'x position',
   motion_yposition: 'y position',
@@ -143,5 +146,71 @@ const typeToMsg = {
   argument_reporter_string_number: argumentPlaceholder,
   argument_reporter_boolean: argumentPlaceholder,
 };
+
+const typeToMsg = {};
+
+function setupTypeToMsg(blockly) {
+  Object.entries(blockly.ScratchMsgs.locales).forEach((e1) => {
+    const [locale, info] = e1;
+    if (locale === 'en') {
+      typeToMsg[locale] = typeToMsgEn;
+      return;
+    }
+    typeToMsg[locale] = {};
+    Object.entries(typeToMsgEn).forEach((e2) => {
+      const [type, msg] = e2;
+      if (
+        [
+          shadowPlaceholder,
+          variablePlaceholder,
+          argumentPlaceholder,
+          listPlaceholder,
+        ].includes(msg)
+      ) {
+        typeToMsg[locale][type] = msg;
+        return;
+      }
+      let newValue = info[type
+        .replace('operator', 'operators')
+        .replace('letter_of', 'letterof')
+        .toUpperCase()];
+      if (newValue) {
+        newValue = newValue.replaceAll(/%([1-9])/g, '{{$1}}');
+      } else {
+        newValue = extensionsMsgs[locale][type
+          .replaceAll('_', '.')
+          .replace('getTranslate', 'translateBlock')
+          .replace('getViewerLanguage', 'viewerLanguage')
+          .replace('microbit.getTiltAngle', 'microbit.tiltAngle')
+          .replace('Speed', '')];
+        let count = 0;
+        newValue = newValue.replaceAll(/\[[_A-Z]+\]/g, () => {
+          count += 1;
+          return `{{${count}}}`;
+        });
+      }
+      if (msg.includes(dropdownPlaceholder)) {
+        const i = msg.indexOf('{{1}}');
+        if (i >= 0) {
+          if (msg.indexOf(dropdownPlaceholder) < i) {
+            newValue = newValue.replace('{{1}}', dropdownPlaceholder);
+            newValue = newValue.replace('{{2}}', '{{1}}');
+          } else {
+            newValue = newValue.replace('{{2}}', dropdownPlaceholder);
+          }
+        } else {
+          newValue = newValue.replace('{{1}}', dropdownPlaceholder);
+        }
+      }
+      typeToMsg[locale][type] = newValue;
+    });
+  });
+}
+
+if (process.env.NODE_ENV === 'testing') {
+  typeToMsg.en = typeToMsgEn;
+} else {
+  setupTypeToMsg(getBlockly());
+}
 
 export default typeToMsg;
