@@ -21,10 +21,10 @@ const test = {
               'math_number',
             ],
             [
-              'argument_reporter_string_number',
+              'argument_reporter_boolean',
             ],
             [
-              'argument_reporter_boolean',
+              'argument_reporter_string_number',
             ],
           ],
         },
@@ -46,10 +46,10 @@ const test = {
               'math_number',
             ],
             [
-              'argument_reporter_string_number',
+              'argument_reporter_boolean',
             ],
             [
-              'argument_reporter_boolean',
+              'argument_reporter_string_number',
             ],
           ],
         },

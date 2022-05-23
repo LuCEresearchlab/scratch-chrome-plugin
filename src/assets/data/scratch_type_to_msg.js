@@ -143,8 +143,8 @@ const typeToMsgEn = {
   wedo2_menu_TILT_DIRECTION: shadowPlaceholder,
   wedo2_menu_TILT_DIRECTION_ANY: shadowPlaceholder,
   // pseudo-shadows (sometimes not shadow) but always not shadow inside expressions
-  argument_reporter_string_number: argumentPlaceholder,
   argument_reporter_boolean: argumentPlaceholder,
+  argument_reporter_string_number: argumentPlaceholder,
 };
 
 const typeToMsg = {};

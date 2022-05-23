@@ -1,5 +1,5 @@
 const test = {
-  it: 'pick opcodes in diagram of block (_ and _): matching block with empty hole',
+  it: 'pick opcodes in diagram of block (_ and (random)): pick argument_reporter_boolean instead of argument_reporter_string_number',
   args: [
     {
       nodes: [
@@ -258,15 +258,12 @@ const test = {
           content: [
             {
               type: 'other',
-              content: 'false',
+              content: 'random',
             },
           ],
           type: 'Boolean',
           value: 'false',
           opcode: [
-            [
-              '',
-            ],
             [
               'event_broadcast_menu',
               null,
@@ -619,14 +616,15 @@ const test = {
         content: [
           {
             type: 'other',
-            content: 'false',
+            content: 'random',
           },
         ],
         type: 'Boolean',
         value: 'false',
         opcode: [
           [
-            '',
+            'argument_reporter_boolean',
+            null,
           ],
         ],
       },

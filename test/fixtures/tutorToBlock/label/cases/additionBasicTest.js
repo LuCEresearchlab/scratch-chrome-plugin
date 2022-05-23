@@ -349,11 +349,11 @@ const test = {
             null,
           ],
           [
-            'argument_reporter_string_number',
+            'argument_reporter_boolean',
             null,
           ],
           [
-            'argument_reporter_boolean',
+            'argument_reporter_string_number',
             null,
           ],
         ],
@@ -593,11 +593,11 @@ const test = {
             null,
           ],
           [
-            'argument_reporter_string_number',
+            'argument_reporter_boolean',
             null,
           ],
           [
-            'argument_reporter_boolean',
+            'argument_reporter_string_number',
             null,
           ],
         ],
