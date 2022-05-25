@@ -15,18 +15,19 @@ const renderPopup = () => {
   ReactDOM.render(<Popup/>, container);
 };
 
-const toggleElement = document.getElementById('toggle');
-const updateToggleText = (isPluginEnabled) => {
-  toggleElement.textContent = isPluginEnabled ? 'Disable' : 'Enable';
+const updateToggleText = (buttonId, isEnabled) => {
+  document.getElementById(buttonId).textContent = `${isEnabled ? 'Disable' : 'Enable'} ${buttonId}`;
 };
-
-toggleElement.onclick = () => {
-  getLocalStorage('isPluginEnabled', (data) => {
-    const { isPluginEnabled } = data;
-    setLocalStorage({ isPluginEnabled: !isPluginEnabled }, () => {
-      updateToggleText(!isPluginEnabled);
+const setToggleOnclick = (buttonId) => {
+  const toggleElement = document.getElementById(buttonId);
+  toggleElement.onclick = () => {
+    getLocalStorage(buttonId, (data) => {
+      const isEnabled = data[buttonId];
+      setLocalStorage({ [buttonId]: !isEnabled }, () => {
+        updateToggleText(buttonId, !isEnabled);
+      });
     });
-  });
+  };
 };
 
 const errorMessageElement = document.getElementById('errorMessage');
@@ -34,18 +35,31 @@ const updateErrorMessage = () => {
   errorMessageElement.innerHTML = 'Redux error please disable redux-devTools and refresh';
 };
 
-getLocalStorage(['isPluginEnabled', 'isReduxError'], (data) => {
-  const { isPluginEnabled, isReduxError } = data;
+const buttonIds = [
+  'isPluginEnabled',
+  'showEdges',
+  'showTypes',
+  'showValues',
+  'showSelectedRootNode',
+];
+buttonIds.forEach(setToggleOnclick);
+
+getLocalStorage([...buttonIds, 'isReduxError'], (data) => {
+  const { isReduxError } = data;
   if (isReduxError) {
     updateErrorMessage();
   }
 
-  updateToggleText(isPluginEnabled);
+  buttonIds.forEach((id) => {
+    updateToggleText(id, data[id]);
+  });
   renderPopup();
 });
 
-observeLocalStorage('isPluginEnabled', (newValue) => {
-  updateToggleText(newValue);
+buttonIds.forEach((id) => {
+  observeLocalStorage(id, (newValue) => {
+    updateToggleText(id, newValue);
+  });
 });
 
 clearBadge();

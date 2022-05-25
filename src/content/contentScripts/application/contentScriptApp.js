@@ -38,6 +38,42 @@ observeLocalStorage('isPluginEnabled', (isPluginEnabled) => {
   }
 });
 
+observeLocalStorage('showEdges', (showEdges) => {
+  if (!reduxError) {
+    postMessageToPageScript(
+      'setShowEdges',
+      showEdges,
+    );
+  }
+});
+
+observeLocalStorage('showTypes', (showTypes) => {
+  if (!reduxError) {
+    postMessageToPageScript(
+      'setShowTypes',
+      showTypes,
+    );
+  }
+});
+
+observeLocalStorage('showValues', (showValues) => {
+  if (!reduxError) {
+    postMessageToPageScript(
+      'setShowValues',
+      showValues,
+    );
+  }
+});
+
+observeLocalStorage('showSelectedRootNode', (showSelectedRootNode) => {
+  if (!reduxError) {
+    postMessageToPageScript(
+      'setShowSelectedRootNode',
+      showSelectedRootNode,
+    );
+  }
+});
+
 injectScriptIntoTag('pageScriptApp.js', 'body', () => {
   getLocalStorage(['isPluginEnabled', 'isReduxError'], (data) => {
     const { isPluginEnabled, isReduxError } = data;

@@ -32,6 +32,10 @@ function PageApp({ initialIsEnabled }) {
     autolayout,
     diagram,
     temporaryDiagram,
+    showEdges,
+    showTypes,
+    showValues,
+    showSelectedRootNode,
   } = state;
 
   const {
@@ -40,6 +44,10 @@ function PageApp({ initialIsEnabled }) {
     setIsEnabled,
     setDiagram,
     setTemporaryDiagram,
+    setShowEdges,
+    setShowTypes,
+    setShowValues,
+    setShowSelectedRootNode,
   } = useMemo(() => createDispatchActions(dispatch), [dispatch]);
 
   const handleContentScriptMessage = useCallback((payload) => {
@@ -50,6 +58,18 @@ function PageApp({ initialIsEnabled }) {
         break;
       case 'isPluginEnabledChanged':
         setIsEnabled(value);
+        break;
+      case 'setShowEdges':
+        setShowEdges(value);
+        break;
+      case 'setShowTypes':
+        setShowTypes(value);
+        break;
+      case 'setShowValues':
+        setShowValues(value);
+        break;
+      case 'setShowSelectedRootNode':
+        setShowSelectedRootNode(value);
         break;
       default:
         break;
@@ -66,6 +86,25 @@ function PageApp({ initialIsEnabled }) {
     const d = tutorToService(temporaryDiagram);
     tutorToBlock(d, isBegginner);
   }, [temporaryDiagram]);
+
+  useEffect(() => {
+    if (!showEdges) {
+      diagram.edges = {};
+    }
+    if (!showTypes) {
+      Object.values(diagram.nodes).forEach((node) => {
+        node.type = undefined;
+      });
+    }
+    if (!showValues) {
+      Object.values(diagram.nodes).forEach((node) => {
+        node.value = undefined;
+      });
+    }
+    if (!showSelectedRootNode) {
+      diagram.selectedRootNode = undefined;
+    }
+  }, [showEdges, showTypes, showValues, showSelectedRootNode, diagram]);
 
   return (
     <>

@@ -2,6 +2,10 @@ const initialState = {
   // plugin
   isEnabled: false,
   isBegginner: true,
+  showEdges: true,
+  showTypes: true,
+  showValues: true,
+  showSelectedRootNode: true,
 
   // modal
   isModalOpen: false,

@@ -355,7 +355,7 @@ function tutorToBlock(diagram, isBeginner) {
     if (process.env.NODE_ENV === 'testing') console.log(JSON.parse(JSON.stringify(diagram)));
     createBlocksFromLabeledDiagram(diagram, getBlockly(), getScratchToolbox());
   } catch (e) {
-    alert('Sorry, something went wrong doing the export. The blocks created (if any) may not be created correctly. Please try again.');
+    alert('Sorry, something went wrong doing the export. The created blocks (if any) may be incorrect. Please try again.');
   }
 }
 
