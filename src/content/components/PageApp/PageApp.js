@@ -19,10 +19,20 @@ import { handleMessageFromContentScript } from '../../contentScripts/messages.js
 import AppModal from '../AppModal/AppModal.js';
 import tutorToBlock from '../../utils/tutorToBlock.js';
 
-function PageApp({ initialIsEnabled }) {
+function PageApp({
+  initialIsEnabled,
+  initialShowEdges,
+  initialShowTypes,
+  initialShowValues,
+  initialShowSelectedRootNode,
+}) {
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
     isEnabled: initialIsEnabled,
+    showEdges: initialShowEdges,
+    showTypes: initialShowTypes,
+    showValues: initialShowValues,
+    showSelectedRootNode: initialShowSelectedRootNode,
   });
 
   const {
@@ -133,10 +143,18 @@ function PageApp({ initialIsEnabled }) {
 
 PageApp.propTypes = {
   initialIsEnabled: PropTypes.bool,
+  initialShowEdges: PropTypes.bool,
+  initialShowTypes: PropTypes.bool,
+  initialShowValues: PropTypes.bool,
+  initialShowSelectedRootNode: PropTypes.bool,
 };
 
 PageApp.defaultProps = {
   initialIsEnabled: false,
+  initialShowEdges: true,
+  initialShowTypes: true,
+  initialShowValues: true,
+  initialShowSelectedRootNode: true,
 };
 
 export default PageApp;

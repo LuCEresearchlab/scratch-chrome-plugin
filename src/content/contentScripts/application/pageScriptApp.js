@@ -21,7 +21,10 @@ const onBlocklyEvent = (event) => {
   }
 };
 
-const startPluginApp = (isPluginEnabled) => {
+const startPluginApp = (data) => {
+  const {
+    isPluginEnabled,
+  } = data;
   handleEnabledChanged(isPluginEnabled);
   const blockly = getBlockly();
   if (blockly) {
@@ -36,7 +39,7 @@ const startPluginApp = (isPluginEnabled) => {
       workspace.addChangeListener(onBlocklyEvent);
     });
 
-    renderPageApp(isPluginEnabled);
+    renderPageApp(data);
   }
 };
 

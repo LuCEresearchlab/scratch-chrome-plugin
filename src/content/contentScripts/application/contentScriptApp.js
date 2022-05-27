@@ -75,14 +75,34 @@ observeLocalStorage('showSelectedRootNode', (showSelectedRootNode) => {
 });
 
 injectScriptIntoTag('pageScriptApp.js', 'body', () => {
-  getLocalStorage(['isPluginEnabled', 'isReduxError'], (data) => {
-    const { isPluginEnabled, isReduxError } = data;
+  getLocalStorage([
+    'isPluginEnabled',
+    'showEdges',
+    'showTypes',
+    'showValues',
+    'showSelectedRootNode',
+    'isReduxError',
+  ], (data) => {
+    const {
+      isPluginEnabled,
+      isReduxError,
+      showEdges,
+      showTypes,
+      showValues,
+      showSelectedRootNode,
+    } = data;
     reduxError = isReduxError;
 
     if (!isReduxError) {
       postMessageToPageScript(
         'startPluginApp',
-        isPluginEnabled,
+        {
+          isPluginEnabled,
+          showEdges,
+          showTypes,
+          showValues,
+          showSelectedRootNode,
+        },
       );
     }
   });
