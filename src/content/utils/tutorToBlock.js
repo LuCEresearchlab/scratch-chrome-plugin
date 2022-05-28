@@ -44,7 +44,7 @@ function opcodeToXml(opcode, blockly, scratchTB) {
   );
 }
 
-function nodeToString(node) {
+export function nodeToString(node) {
   let str = '';
   node.content.forEach((part) => {
     if (part.type === 'hole') {
@@ -118,7 +118,7 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
   return opcodes;
 }
 
-function getChildNodes(node, diagram) {
+export function getChildNodes(node, diagram) {
   const nodeId = node.nodePlug.valA;
   const outEdges = diagram.edges.filter((edge) => edge.plugA.valA === nodeId);
   const childIds = outEdges.map((edge) => edge.plugB.valA);
