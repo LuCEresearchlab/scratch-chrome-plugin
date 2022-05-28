@@ -246,13 +246,7 @@ function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
     if (block.isShadow() || pseudoShadowOpcodes.includes(block.type)) {
       const field = block.inputList[0].fieldRow[0];
       const newValue = node.content[0].content;
-      if (node.type === 'Number') {
-        field.setValue(newValue.replace(/^0$/, ''));
-      } else if (node.type === 'String') {
-        field.setValue(newValue.replace(/^"(.*)"$/, '$1'));
-      } else {
-        field.setValue(newValue);
-      }
+      field.setValue(newValue);
       return;
     }
     if (containsDropdown(block)) {
