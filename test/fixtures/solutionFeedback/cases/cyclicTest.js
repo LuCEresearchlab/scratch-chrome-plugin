@@ -1,5 +1,5 @@
 const test = {
-  it: 'bad content in actual diagram',
+  it: 'cycle in actual diagram',
   args: [
     {
       nodes: [
@@ -135,7 +135,18 @@ const test = {
           content: [
             {
               type: 'other',
-              content: '3456',
+              content: '',
+            },
+            {
+              type: 'hole',
+              plug: {
+                valA: 2,
+                valB: 1,
+              },
+            },
+            {
+              type: 'other',
+              content: '',
             },
           ],
           type: 'Number',
@@ -188,6 +199,16 @@ const test = {
           },
           plugB: {
             valA: 2,
+            valB: 0,
+          },
+        },
+        {
+          plugA: {
+            valA: 2,
+            valB: 1,
+          },
+          plugB: {
+            valA: 0,
             valB: 0,
           },
         },

@@ -1,5 +1,3 @@
-import { getChildNodes, nodeToString } from './tutorToBlock.js';
-
 function getNumHoles(node) {
   let count = 0;
   node.content.forEach((part) => {
@@ -10,7 +8,28 @@ function getNumHoles(node) {
   return count;
 }
 
-function isTree(diagram) {
+export const holePlaceholder = '{{}}';
+
+export function nodeToString(node) {
+  let str = '';
+  node.content.forEach((part) => {
+    if (part.type === 'hole') {
+      str += holePlaceholder;
+    } else {
+      str += part.content;
+    }
+  });
+  return str;
+}
+
+export function getChildNodes(node, diagram) {
+  const nodeId = node.nodePlug.valA;
+  const outEdges = diagram.edges.filter((edge) => edge.plugA.valA === nodeId);
+  const childIds = outEdges.map((edge) => edge.plugB.valA);
+  return diagram.nodes.filter((child) => childIds.includes(child.nodePlug.valA));
+}
+
+export function isTree(diagram) {
   if (!diagram.root) {
     return false;
   }
@@ -46,9 +65,7 @@ function getFeedback(expectedDiagram, actualDiagram) {
     }
     const ns1 = getChildNodes(n1, expectedDiagram);
     const ns2 = getChildNodes(n2, actualDiagram);
-    if (ns1.length !== ns2.length) {
-      return false;
-    }
+    console.assert(ns1.length === ns2.length, 'nodesEqual method is not correct');
     return ns1.every((n, i) => checkEqual(n, ns2[i]));
   };
   return checkEqual(expectedDiagram.root, actualDiagram.root);

@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 import ExpressionTutorLogo from '../components/ExpressionTutorLogo/ExpressionTutorLogo.js';
 
-import { getBlockly, getScratchVM } from './stateHandler.js';
+import { getScratchVM } from './stateHandler.js';
 import createDiagram from './diagramUtils.js';
 
 import {

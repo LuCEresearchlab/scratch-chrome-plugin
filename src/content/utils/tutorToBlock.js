@@ -11,9 +11,8 @@ import typeToMsg, {
   shadowPlaceholder,
   variablePlaceholder,
 } from '../../assets/data/scratch_type_to_msg.js';
+import { getChildNodes, holePlaceholder, isTree, nodeToString } from './solutionFeedback.js';
 import { getBlockly, getScratchToolbox } from './stateHandler.js';
-
-const holePlaceholder = '{{}}';
 
 function opcodeToXml(opcode, blockly, scratchTB) {
   switch (opcode) {
@@ -42,18 +41,6 @@ function opcodeToXml(opcode, blockly, scratchTB) {
       .DataCategory(blockly.mainWorkspace)
       .find((xml) => xml.getAttribute('type') === opcode)
   );
-}
-
-export function nodeToString(node) {
-  let str = '';
-  node.content.forEach((part) => {
-    if (part.type === 'hole') {
-      str += holePlaceholder;
-    } else {
-      str += part.content;
-    }
-  });
-  return str;
 }
 
 function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
@@ -116,13 +103,6 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
     }
   });
   return opcodes;
-}
-
-export function getChildNodes(node, diagram) {
-  const nodeId = node.nodePlug.valA;
-  const outEdges = diagram.edges.filter((edge) => edge.plugA.valA === nodeId);
-  const childIds = outEdges.map((edge) => edge.plugB.valA);
-  return diagram.nodes.filter((child) => childIds.includes(child.nodePlug.valA));
 }
 
 /**
@@ -341,6 +321,10 @@ export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
 }
 
 function tutorToBlock(diagram, isBeginner) {
+  if (!isTree(diagram)) {
+    alert('The diagram is not a tree. Please try again.');
+    return;
+  }
   if (process.env.NODE_ENV === 'testing') console.log(JSON.parse(JSON.stringify(diagram)));
   labelDiagramWithOpcodes(diagram, getBlockly(), getScratchToolbox());
   if (process.env.NODE_ENV === 'testing') console.log(JSON.parse(JSON.stringify(diagram)));
