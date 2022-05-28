@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import {
-  bool, color, expressionBlocks, nonExpressionBlocks, number, string,
+  bool, color, expressionBlocks, nonExpressionBlocks, number,
 } from '../../assets/data/scratch-blocks-map.js';
 
 const opcodeToTypeInfo = (opcode, isExpression = true) => {
@@ -37,7 +37,6 @@ const unrawValue = (type, value) => {
   switch (type) {
     case bool: return !value ? 'false' : String(value);
     case number: return !value ? '0' : String(value);
-    case string: return value;
     case color: return !value ? '#000000' : String(value);
     default: return String(value);
   }
