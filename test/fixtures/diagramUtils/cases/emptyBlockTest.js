@@ -144,13 +144,13 @@ const test = {
     nodes: [
       {
         nodePlug: { valA: 1, valB: 0 },
-        content: [{ content: 'false' }],
+        content: [{ content: '' }],
         type: 'Boolean',
         value: 'false',
       },
       {
         nodePlug: { valA: 2, valB: 0 },
-        content: [{ content: 'false' }],
+        content: [{ content: '' }],
         type: 'Boolean',
         value: 'false',
       },

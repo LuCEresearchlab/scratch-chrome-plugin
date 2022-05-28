@@ -80,13 +80,13 @@ const test = {
     nodes: [
       {
         nodePlug: { valA: 1, valB: 0 },
-        content: [{ content: '0' }],
+        content: [{ content: '' }],
         type: 'Number',
         value: '0',
       },
       {
         nodePlug: { valA: 2, valB: 0 },
-        content: [{ content: '0' }],
+        content: [{ content: '' }],
         type: 'Number',
         value: '0',
       },

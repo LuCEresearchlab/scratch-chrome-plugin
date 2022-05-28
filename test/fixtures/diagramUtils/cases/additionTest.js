@@ -1,5 +1,5 @@
 const test = {
-  it: 'create diagram for block ("23"+"5"): test for non-empty shadow blocks',
+  it: 'create diagram for block ("23"+"0"): test for non-empty shadow blocks, one with default value',
   args: [
     {
       id: '0c3v@0V;@PgX{Mgb0@Qb',
@@ -37,7 +37,7 @@ const test = {
                   {
                     type: 5,
                     connection: null,
-                    fieldRow: [{ text_: '5', useTouchInteraction_: false }],
+                    fieldRow: [{ text_: '0', useTouchInteraction_: false }],
                   },
                 ],
                 type: 'math_number',
@@ -68,7 +68,7 @@ const test = {
             '}IjUDd;dX?Cb/CH^*4=f': {
               id: '}IjUDd;dX?Cb/CH^*4=f',
               _isShadowBlock: true,
-              _shadowValue: '5',
+              _shadowValue: '0',
               _parentKey: 'NUM2',
             },
             '0c3v@0V;@PgX{Mgb0@Qb': {
@@ -94,9 +94,9 @@ const test = {
       },
       {
         nodePlug: { valA: 2, valB: 0 },
-        content: [{ content: '5' }],
+        content: [{ content: '0' }],
         type: 'Number',
-        value: '5',
+        value: '0',
       },
       {
         nodePlug: { valA: 0, valB: 0 },
