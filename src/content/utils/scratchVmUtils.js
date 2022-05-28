@@ -37,7 +37,7 @@ const unrawValue = (type, value) => {
   switch (type) {
     case bool: return !value ? 'false' : String(value);
     case number: return !value ? '0' : String(value);
-    case string: return `"${value}"`;
+    case string: return value;
     case color: return !value ? '#000000' : String(value);
     default: return String(value);
   }

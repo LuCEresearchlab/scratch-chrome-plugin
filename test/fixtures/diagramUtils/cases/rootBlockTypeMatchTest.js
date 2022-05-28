@@ -414,7 +414,7 @@ const test = {
         nodePlug: { valA: 0, valB: 0 },
         content: [{ content: 'answer' }],
         type: 'String',
-        value: '""',
+        value: '',
       },
     ],
     edges: [],
@@ -422,7 +422,7 @@ const test = {
       nodePlug: { valA: 0, valB: 0 },
       content: [{ content: 'answer' }],
       type: 'String',
-      value: '""',
+      value: '',
     },
   },
 };

@@ -214,17 +214,17 @@ const test = {
     nodes: [
       {
         nodePlug: { valA: 0, valB: 0 },
-        content: [{ content: '"message1"' }],
+        content: [{ content: 'message1' }],
         type: 'String',
-        value: '"message1"',
+        value: 'message1',
       },
     ],
     edges: [],
     root: {
       nodePlug: { valA: 0, valB: 0 },
-      content: [{ content: '"message1"' }],
+      content: [{ content: 'message1' }],
       type: 'String',
-      value: '"message1"',
+      value: 'message1',
     },
   },
 };

@@ -240,7 +240,7 @@ const test = {
         content: [{ content: 'username' }],
         type: 'String',
         isHighlighted: true,
-        value: '"asd6011"',
+        value: 'asd6011',
       },
     ],
     edges: [],
@@ -249,7 +249,7 @@ const test = {
       content: [{ content: 'username' }],
       type: 'String',
       isHighlighted: true,
-      value: '"asd6011"',
+      value: 'asd6011',
     },
   },
 };

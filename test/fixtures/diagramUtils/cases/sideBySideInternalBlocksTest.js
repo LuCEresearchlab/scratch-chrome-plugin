@@ -346,15 +346,15 @@ const test = {
     nodes: [
       {
         nodePlug: { valA: 1, valB: 0 },
-        content: [{ content: '"apple "' }],
+        content: [{ content: 'apple ' }],
         type: 'String',
-        value: '"apple "',
+        value: 'apple ',
       },
       {
         nodePlug: { valA: 2, valB: 0 },
-        content: [{ content: '"banana"' }],
+        content: [{ content: 'banana' }],
         type: 'String',
-        value: '"banana"',
+        value: 'banana',
       },
       {
         nodePlug: { valA: 0, valB: 0 },
@@ -365,7 +365,7 @@ const test = {
           { valA: 0, valB: 2, type: 'String' },
         ],
         type: 'String',
-        value: '"apple banana"',
+        value: 'apple banana',
       },
     ],
     edges: [
@@ -387,7 +387,7 @@ const test = {
         { valA: 0, valB: 2, type: 'String' },
       ],
       type: 'String',
-      value: '"apple banana"',
+      value: 'apple banana',
     },
   },
 };

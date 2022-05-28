@@ -241,7 +241,7 @@ const test = {
         nodePlug: { valA: 1, valB: 0 },
         content: [{ content: 'answer' }],
         type: 'String',
-        value: '""',
+        value: '',
       },
       {
         nodePlug: { valA: 0, valB: 0 },

@@ -36,8 +36,8 @@ describe('src/content/utils/scratchVmUtils', () => {
       assert.equal(typeToDefaultValue(number), '0');
     });
 
-    it('should return string "" when type is string', () => {
-      assert.equal(typeToDefaultValue(string), '""');
+    it('should return string  when type is string', () => {
+      assert.equal(typeToDefaultValue(string), '');
     });
 
     it('should return string #000000 when type is color', () => {

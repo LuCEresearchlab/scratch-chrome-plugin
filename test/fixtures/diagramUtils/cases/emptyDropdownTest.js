@@ -144,7 +144,7 @@ const test = {
         nodePlug: { valA: 0, valB: 0 },
         content: [{ content: 'backdrop' }],
         type: 'String',
-        value: '"1"',
+        value: '1',
       },
     ],
     edges: [],
@@ -152,7 +152,7 @@ const test = {
       nodePlug: { valA: 0, valB: 0 },
       content: [{ content: 'backdrop' }],
       type: 'String',
-      value: '"1"',
+      value: '1',
     },
   },
 };

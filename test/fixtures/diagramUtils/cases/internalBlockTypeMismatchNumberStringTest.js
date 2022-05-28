@@ -173,7 +173,7 @@ const test = {
         nodePlug: { valA: 1, valB: 0 },
         content: [{ content: 'username' }],
         type: 'String',
-        value: '"asd6011"',
+        value: 'asd6011',
       },
       {
         nodePlug: { valA: 0, valB: 0 },
