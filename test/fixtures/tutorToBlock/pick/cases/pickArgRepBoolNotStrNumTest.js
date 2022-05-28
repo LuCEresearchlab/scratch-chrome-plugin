@@ -11,7 +11,7 @@ const test = {
           content: [
             {
               type: 'other',
-              content: 'false',
+              content: '',
             },
           ],
           type: 'Boolean',
@@ -597,7 +597,7 @@ const test = {
         content: [
           {
             type: 'other',
-            content: 'false',
+            content: '',
           },
         ],
         type: 'Boolean',

@@ -63,7 +63,7 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
   if (
     parentOpcodes.length > 0
     && opcodesContainingEmpties.includes(parentOpcodes[0][0])
-    && str === 'false'
+    && str === ''
   ) {
     opcodes.push(['']);
   }
