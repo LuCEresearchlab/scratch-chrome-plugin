@@ -2,6 +2,7 @@
 import { shadowOpcodes } from '../../assets/data/scratch_shadow_opcodes.js';
 import {
   getCachedVmValue,
+  getEmptyOrShadowContent,
   opcodeToExpressionTypeInfo,
   opcodeToNonExpressionTypeInfo,
   typeToDefaultValue,
@@ -116,7 +117,7 @@ const createDiagram = (inputBlock, thread) => {
     diagram.nodes.push({
       nodePlug: { valA: childId, valB: 0 },
       content: [{
-        content: emptyValue,
+        content: getEmptyOrShadowContent(thread),
       }],
       type: emptyType,
       value: emptyValue,
@@ -260,7 +261,7 @@ const createDiagram = (inputBlock, thread) => {
     node.value = getCachedVmValue(block.id, node.type, thread);
     if (node.content.length === 0) {
       node.content.push({
-        content: node.value,
+        content: getEmptyOrShadowContent(thread, block.id),
       });
     }
 

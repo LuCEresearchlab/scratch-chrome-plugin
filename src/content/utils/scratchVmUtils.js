@@ -68,3 +68,15 @@ export const getCachedVmValue = (blockId, type, thread) => {
   const raw = getRawValue();
   return unrawValue(type, raw);
 };
+
+export const getEmptyOrShadowContent = (thread, blockId) => {
+  if (!blockId) {
+    return ''; // for empty block
+  }
+  const c = thread.blockContainer._cache._executeCached[blockId];
+  console.assert(c._isShadowBlock, 'Invalid block id passed');
+  if (!c._shadowValue) {
+    return '';
+  }
+  return c._shadowValue;
+};
