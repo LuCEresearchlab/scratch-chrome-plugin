@@ -3,7 +3,7 @@ import assert from 'assert';
 import getFeedback from '../src/content/utils/solutionFeedback.js';
 import getFeedbackTests from './fixtures/solutionFeedback/getFeedbackTest.js';
 
-describe('src/content/utils/diagramUtils', () => {
+describe('src/content/utils/solutionFeedback', () => {
   describe('getFeedbackTests(expectedDiagram, actualDiagram)', () => {
     getFeedbackTests.forEach((test) => {
       it(test.it, () => {

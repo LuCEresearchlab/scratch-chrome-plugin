@@ -246,7 +246,7 @@ const test = {
       },
     },
   ],
-  expected: false,
+  expected: '# of holes and child nodes of node 0 do not equal',
 };
 
 export default test;

@@ -194,7 +194,7 @@ const test = {
       ],
     },
   ],
-  expected: false,
+  expected: 'no root',
 };
 
 export default test;

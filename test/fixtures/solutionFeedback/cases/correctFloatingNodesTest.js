@@ -236,7 +236,7 @@ const test = {
       },
     },
   ],
-  expected: true,
+  expected: '',
 };
 
 export default test;

@@ -29,23 +29,28 @@ export function getChildNodes(node, diagram) {
   return diagram.nodes.filter((child) => childIds.includes(child.nodePlug.valA));
 }
 
-export function isTree(diagram) {
+export function getTreeFeedback(diagram) {
+  let feedback = '';
   if (!diagram.root) {
-    return false;
+    feedback = 'no root';
+    return feedback;
   }
   const visited = {};
   const traverse = (node) => {
     if (visited[node.nodePlug.valA]) {
-      return false; // cycle
+      feedback = `cycle found at node ${node.nodePlug.valA}`;
+      return false;
     }
     visited[node.nodePlug.valA] = true;
     const childNodes = getChildNodes(node, diagram);
     if (childNodes.length !== getNumHoles(node)) {
-      return false; // empty or overused hole
+      feedback = `# of holes and child nodes of node ${node.nodePlug.valA} do not equal`;
+      return false;
     }
     return childNodes.every(traverse);
   };
-  return traverse(diagram.root);
+  traverse(diagram.root);
+  return feedback;
 }
 
 function nodesEqual(n1, n2) {
@@ -55,12 +60,14 @@ function nodesEqual(n1, n2) {
 }
 
 function getFeedback(expectedDiagram, actualDiagram) {
-  console.assert(isTree(expectedDiagram), 'expected diagram is not a tree');
-  if (!isTree(actualDiagram)) {
-    return false;
+  console.assert(!getTreeFeedback(expectedDiagram), 'expected diagram is not a tree');
+  let feedback = getTreeFeedback(actualDiagram);
+  if (feedback) {
+    return feedback;
   }
   const checkEqual = (n1, n2) => {
     if (!nodesEqual(n1, n2)) {
+      feedback = `node ${n2.nodePlug.valA} is not correct`;
       return false;
     }
     const ns1 = getChildNodes(n1, expectedDiagram);
@@ -68,7 +75,8 @@ function getFeedback(expectedDiagram, actualDiagram) {
     console.assert(ns1.length === ns2.length, 'nodesEqual method is not correct');
     return ns1.every((n, i) => checkEqual(n, ns2[i]));
   };
-  return checkEqual(expectedDiagram.root, actualDiagram.root);
+  checkEqual(expectedDiagram.root, actualDiagram.root);
+  return feedback;
 }
 
 export default getFeedback;

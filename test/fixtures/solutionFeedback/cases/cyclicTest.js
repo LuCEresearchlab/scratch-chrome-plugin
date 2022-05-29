@@ -243,7 +243,7 @@ const test = {
       },
     },
   ],
-  expected: false,
+  expected: 'cycle found at node 0',
 };
 
 export default test;

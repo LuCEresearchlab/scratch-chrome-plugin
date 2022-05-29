@@ -11,7 +11,9 @@ import typeToMsg, {
   shadowPlaceholder,
   variablePlaceholder,
 } from '../../assets/data/scratch_type_to_msg.js';
-import { getChildNodes, holePlaceholder, isTree, nodeToString } from './solutionFeedback.js';
+import {
+  getChildNodes, getTreeFeedback, holePlaceholder, nodeToString,
+} from './solutionFeedback.js';
 import { getBlockly, getScratchToolbox } from './stateHandler.js';
 
 function opcodeToXml(opcode, blockly, scratchTB) {
@@ -321,7 +323,7 @@ export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
 }
 
 function tutorToBlock(diagram, isBeginner) {
-  if (!isTree(diagram)) {
+  if (getTreeFeedback(diagram)) {
     alert('The diagram is not a tree. Please try again.');
     return;
   }

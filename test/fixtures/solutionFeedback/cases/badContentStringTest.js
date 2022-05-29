@@ -222,7 +222,7 @@ const test = {
       },
     },
   ],
-  expected: false,
+  expected: 'node 2 is not correct',
 };
 
 export default test;

@@ -284,7 +284,7 @@ const test = {
       },
     },
   ],
-  expected: false,
+  expected: 'node 0 is not correct',
 };
 
 export default test;
