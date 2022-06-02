@@ -1,13 +1,15 @@
+// Feedback structure
 // [ {}, {}, {} ]
 
-// structuralRoot: { type: 'structuralRoot', node: '1' }
-// structuralRootEdges: { type: 'structuralRoot', node: '1', edges: [] }
-// structuralMissingChild: { type: 'structuralMissingChild', node: '1', labelIndex:  }
-// structuralMultipleChildren: { type: 'structuralMultipleChildren', nodes: ['1'], edges: [] }
-// structuralMultipleParents: { type: 'structuralMultipleParents', nodes: ['1'], edges: [] }
-// nodeLabel -> { type: 'nodeLabel', node: '1', labelIndex:  }
-// nodeType -> { type: 'nodeType', node: '1' }
-// nodeValue -> { type: 'nodeValue', node: '1' }
+// structuralRoot: { type: 'structuralRoot' }
+// structuralRootEdges: { type: 'structuralRoot', node: 1, edges: [] }
+// structuralMissingChild: { type: 'structuralMissingChild', node: 1, labelIndex: 0 }
+// structuralMultipleChildren:
+//   { type: 'structuralMultipleChildren', node: 1, edges: [], labelIndex: 0 }
+// structuralMultipleParents: { type: 'structuralMultipleParents', node: 1, edges: [] }
+// nodeLabel -> { type: 'nodeLabel', node: 1, labelIndex: 0 }
+// nodeType -> { type: 'nodeType', node: 1 }
+// nodeValue -> { type: 'nodeValue', node: 1 }
 
 export const holePlaceholder = '{{}}';
 
