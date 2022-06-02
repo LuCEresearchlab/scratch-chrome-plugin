@@ -1,3 +1,17 @@
+/*
+
+expected:
+
+{{}} + {{}}
+ /       \
+0       34567
+
+actual:
+
+(same but without star)
+
+*/
+
 const test = {
   it: 'no root in actual diagram',
   args: [
@@ -194,7 +208,11 @@ const test = {
       ],
     },
   ],
-  expected: 'no root',
+  expected: [
+    {
+      type: 'structuralRoot',
+    },
+  ],
 };
 
 export default test;

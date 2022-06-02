@@ -9,13 +9,13 @@ expected:
 actual:
 
 {{}} + {{}}
- /       \
-0       3456
+ /       \\
+0        {{}}
 
 */
 
 const test = {
-  it: 'bad content (only string) in actual diagram',
+  it: 'root-involved cycle in actual diagram',
   args: [
     {
       nodes: [
@@ -151,7 +151,18 @@ const test = {
           content: [
             {
               type: 'other',
-              content: '3456',
+              content: '',
+            },
+            {
+              type: 'hole',
+              plug: {
+                valA: 2,
+                valB: 1,
+              },
+            },
+            {
+              type: 'other',
+              content: '',
             },
           ],
           type: 'Number',
@@ -207,6 +218,16 @@ const test = {
             valB: 0,
           },
         },
+        {
+          plugA: {
+            valA: 2,
+            valB: 1,
+          },
+          plugB: {
+            valA: 0,
+            valB: 0,
+          },
+        },
       ],
       root: {
         nodePlug: {
@@ -240,9 +261,20 @@ const test = {
   ],
   expected: [
     {
-      labelIndex: 4,
-      node: 2,
-      type: 'nodeLabel',
+      edges: [
+        {
+          plugA: {
+            valA: 2,
+            valB: 1,
+          },
+          plugB: {
+            valA: 0,
+            valB: 0,
+          },
+        },
+      ],
+      node: 0,
+      type: 'structuralRootEdges',
     },
   ],
 };

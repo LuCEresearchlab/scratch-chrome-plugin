@@ -1,3 +1,19 @@
+/*
+
+expected:
+
+{{}} + {{}}
+ /       \
+0       34567
+
+actual:
+
+{{}} + {{}} + {{}}
+ /       \      \
+0       3456  234325
+
+*/
+
 const test = {
   it: 'bad content (string and extra hole) in actual diagram',
   args: [
@@ -284,7 +300,18 @@ const test = {
       },
     },
   ],
-  expected: 'node 0 is not correct',
+  expected: [
+    {
+      labelIndex: 11,
+      node: 0,
+      type: 'nodeLabel',
+    },
+    {
+      labelIndex: 4,
+      node: 2,
+      type: 'nodeLabel',
+    },
+  ],
 };
 
 export default test;

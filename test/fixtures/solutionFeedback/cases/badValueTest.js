@@ -1,3 +1,19 @@
+/*
+
+expected:
+
+{{}} + {{}}
+ /       \
+0       34567
+
+actual:
+
+{{}} + {{}}
+ /       \
+0       34567 (v: 3456)
+
+*/
+
 const test = {
   it: 'bad value in actual diagram',
   args: [
@@ -222,7 +238,12 @@ const test = {
       },
     },
   ],
-  expected: 'node 2 is not correct',
+  expected: [
+    {
+      node: 2,
+      type: 'nodeValue',
+    },
+  ],
 };
 
 export default test;

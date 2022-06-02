@@ -4,7 +4,8 @@ import badTypeTest from './cases/badTypeTest.js';
 import badValueTest from './cases/badValueTest.js';
 import correctBasicTest from './cases/correctBasicTest.js';
 import correctFloatingNodesTest from './cases/correctFloatingNodesTest.js';
-import cyclicTest from './cases/cyclicTest.js';
+import rootCyclicTest from './cases/rootCyclicTest.js';
+import noRootCyclicTest from './cases/noRootCyclicTest.js';
 import emptyHoleTest from './cases/emptyHoleTest.js';
 import noRootTest from './cases/noRootTest.js';
 import overusedHoleTest from './cases/overusedHoleTest.js';
@@ -19,7 +20,8 @@ const getFeedbackTests = [
   badContentHoleTest,
   badTypeTest,
   badValueTest,
-  cyclicTest,
+  rootCyclicTest,
+  noRootCyclicTest,
 ];
 
 export default getFeedbackTests;

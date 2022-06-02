@@ -1,5 +1,23 @@
+/*
+
+expected:
+
+{{}} + {{}}
+ /       \
+0       34567
+
+actual:
+
+{{}} + {{}}
+ /       \
+0       {{}}
+          \\
+          {{}}
+
+*/
+
 const test = {
-  it: 'cycle in actual diagram',
+  it: 'no-root-involved cycle in actual diagram',
   args: [
     {
       nodes: [
@@ -180,6 +198,31 @@ const test = {
           type: 'Number',
           value: '34567',
         },
+        {
+          nodePlug: {
+            valA: 734603436,
+            valB: 0,
+          },
+          content: [
+            {
+              type: 'other',
+              content: '',
+            },
+            {
+              type: 'hole',
+              plug: {
+                valA: 734603436,
+                valB: 1,
+              },
+            },
+            {
+              type: 'other',
+              content: '',
+            },
+          ],
+          type: '',
+          value: '',
+        },
       ],
       edges: [
         {
@@ -208,7 +251,17 @@ const test = {
             valB: 1,
           },
           plugB: {
-            valA: 0,
+            valA: 734603436,
+            valB: 0,
+          },
+        },
+        {
+          plugA: {
+            valA: 734603436,
+            valB: 1,
+          },
+          plugB: {
+            valA: 2,
             valB: 0,
           },
         },
@@ -243,7 +296,34 @@ const test = {
       },
     },
   ],
-  expected: 'cycle found at node 0',
+  expected: [
+    {
+      type: 'structuralMultipleParents',
+      node: 2,
+      edges: [
+        {
+          plugA: {
+            valA: 0,
+            valB: 2,
+          },
+          plugB: {
+            valA: 2,
+            valB: 0,
+          },
+        },
+        {
+          plugA: {
+            valA: 734603436,
+            valB: 1,
+          },
+          plugB: {
+            valA: 2,
+            valB: 0,
+          },
+        },
+      ],
+    },
+  ],
 };
 
 export default test;

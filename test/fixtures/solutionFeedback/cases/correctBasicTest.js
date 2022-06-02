@@ -1,3 +1,17 @@
+/*
+
+expected:
+
+{{}} + {{}}
+ /       \
+0       34567
+
+actual:
+
+(same)
+
+*/
+
 const test = {
   it: 'expected matches actual diagram',
   args: [
@@ -222,7 +236,7 @@ const test = {
       },
     },
   ],
-  expected: '',
+  expected: [],
 };
 
 export default test;

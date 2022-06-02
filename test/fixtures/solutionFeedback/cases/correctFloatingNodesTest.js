@@ -1,3 +1,17 @@
+/*
+
+expected:
+
+{{}} + {{}}
+ /       \
+0       34567
+
+actual:
+
+(same but with floating nodes)
+
+*/
+
 const test = {
   it: 'a floating node in actual diagram',
   args: [
@@ -236,7 +250,7 @@ const test = {
       },
     },
   ],
-  expected: '',
+  expected: [],
 };
 
 export default test;

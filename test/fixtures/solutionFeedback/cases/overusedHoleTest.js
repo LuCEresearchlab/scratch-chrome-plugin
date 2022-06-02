@@ -1,3 +1,19 @@
+/*
+
+expected:
+
+{{}} + {{}}
+ /       \
+0       34567
+
+actual:
+
+{{}} + {{}}
+ /      \ \
+0   34567 234
+
+*/
+
 const test = {
   it: 'overused hole in actual diagram',
   args: [
@@ -246,7 +262,35 @@ const test = {
       },
     },
   ],
-  expected: '# of holes and child nodes of node 0 do not equal',
+  expected: [
+    {
+      edges: [
+        {
+          plugA: {
+            valA: 0,
+            valB: 2,
+          },
+          plugB: {
+            valA: 2,
+            valB: 0,
+          },
+        },
+        {
+          plugA: {
+            valA: 0,
+            valB: 2,
+          },
+          plugB: {
+            valA: 460971077,
+            valB: 0,
+          },
+        },
+      ],
+      labelIndex: 7,
+      node: 0,
+      type: 'structuralMultipleChildren',
+    },
+  ],
 };
 
 export default test;

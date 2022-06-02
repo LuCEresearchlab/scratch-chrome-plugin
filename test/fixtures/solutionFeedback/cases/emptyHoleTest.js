@@ -1,3 +1,19 @@
+/*
+
+expected:
+
+{{}} + {{}}
+ /       \
+0       34567
+
+actual:
+
+{{}} + {{}}
+ /
+0
+
+*/
+
 const test = {
   it: 'empty hole in actual diagram',
   args: [
@@ -198,7 +214,13 @@ const test = {
       },
     },
   ],
-  expected: '# of holes and child nodes of node 0 do not equal',
+  expected: [
+    {
+      labelIndex: 7,
+      node: 0,
+      type: 'structuralMissingChild',
+    },
+  ],
 };
 
 export default test;
