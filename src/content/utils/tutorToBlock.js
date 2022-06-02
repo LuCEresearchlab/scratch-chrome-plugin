@@ -11,10 +11,11 @@ import typeToMsg, {
   shadowPlaceholder,
   variablePlaceholder,
 } from '../../assets/data/scratch_type_to_msg.js';
-import {
+import getFeedback, {
   getChildNodes, getTreeFeedback, holePlaceholder, nodeToString,
 } from './solutionFeedback.js';
 import { getBlockly, getScratchToolbox } from './stateHandler.js';
+import { lastClickInfo } from './svgUtils.js';
 
 function opcodeToXml(opcode, blockly, scratchTB) {
   switch (opcode) {
@@ -210,7 +211,7 @@ function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
       if (!xml) {
         throw new Error(`could not create block of type ${opcode}`);
       }
-      block = createBlockFromXml(xml, null, blockly);
+      block = createBlockFromXml(xml, lastClickInfo.block, blockly);
     }
     node.blockId = block.id;
     getChildNodes(node, diagram).forEach((n, i) => {
@@ -323,6 +324,7 @@ export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
 }
 
 function tutorToBlock(diagram, isBeginner) {
+  if (lastClickInfo.diagram) console.log(getFeedback(lastClickInfo.diagram, diagram));
   if (getTreeFeedback(diagram).length > 0) {
     alert('The diagram is not a tree. Please try again.');
     return;

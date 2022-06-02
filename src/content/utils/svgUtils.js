@@ -12,7 +12,7 @@ import {
   typeToDefaultValue,
 } from './scratchVmUtils.js';
 import { postMessageToContentScript } from '../contentScripts/messages.js';
-import serviceToTutor from './serviceToTutor.js';
+import serviceToTutor, { tutorToService } from './serviceToTutor.js';
 import { expressionBlocks } from '../../assets/data/scratch-blocks-map.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';
@@ -69,6 +69,11 @@ const removeSvgButtonFromSvg = (svg) => {
       }
       return remove;
     });
+};
+
+export const lastClickInfo = {
+  diagram: undefined,
+  block: undefined,
 };
 
 /**
@@ -169,7 +174,10 @@ const createSvgButtonExpressionListener = (block) => (e) => {
     }
 
     const d = createDiagram(block, newThreads[0]);
-    postMessageToContentScript('selectedNewDiagram', serviceToTutor(d));
+    const dt = serviceToTutor(d);
+    lastClickInfo.block = block;
+    lastClickInfo.diagram = tutorToService(dt);
+    postMessageToContentScript('selectedNewDiagram', dt);
 
     // resume other threads
     otherThreads.forEach((thread) => runtime.threads.push(thread));
