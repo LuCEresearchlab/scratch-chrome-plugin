@@ -8,6 +8,7 @@ import rootCyclicTest from './cases/rootCyclicTest.js';
 import noRootCyclicTest from './cases/noRootCyclicTest.js';
 import emptyHoleTest from './cases/emptyHoleTest.js';
 import noRootTest from './cases/noRootTest.js';
+import noRootWithOptionsTest from './cases/noRootWithOptionsTest.js';
 import overusedHoleTest from './cases/overusedHoleTest.js';
 
 const getFeedbackTests = [
@@ -22,6 +23,7 @@ const getFeedbackTests = [
   badValueTest,
   rootCyclicTest,
   noRootCyclicTest,
+  noRootWithOptionsTest,
 ];
 
 export default getFeedbackTests;

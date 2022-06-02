@@ -1,16 +1,3 @@
-// Feedback structure
-// [ {}, {}, {} ]
-
-// structuralRoot: { type: 'structuralRoot' }
-// structuralRootEdges: { type: 'structuralRoot', node: 1, edges: [] }
-// structuralMissingChild: { type: 'structuralMissingChild', node: 1, labelIndex: 0 }
-// structuralMultipleChildren:
-//   { type: 'structuralMultipleChildren', node: 1, edges: [], labelIndex: 0 }
-// structuralMultipleParents: { type: 'structuralMultipleParents', node: 1, edges: [] }
-// nodeLabel -> { type: 'nodeLabel', node: 1, labelIndex: 0 }
-// nodeType -> { type: 'nodeType', node: 1 }
-// nodeValue -> { type: 'nodeValue', node: 1 }
-
 export const holePlaceholder = '{{}}';
 
 function getNumHoles(node, labelIndex) {
@@ -123,11 +110,36 @@ export function getTreeFeedback(diagram) {
   return feedback;
 }
 
-function getFeedback(expectedDiagram, actualDiagram) {
+function filterFeedback(feedback, options) {
+  if (!options) return feedback;
+  return feedback.filter((feedbackEntry) => !options.includes(feedbackEntry.type));
+}
+
+/**
+ * Compares the expect and the actual diagram and returns feedback for the latter.
+ *
+ * Feedback types:
+ *
+ * structuralRoot: { type: 'structuralRoot' }
+ * structuralRootEdges: { type: 'structuralRoot', node: 1, edges: [] }
+ * structuralMissingChild: { type: 'structuralMissingChild', node: 1, labelIndex: 0 }
+ * structuralMultipleChildren:
+ *   { type: 'structuralMultipleChildren', node: 1, edges: [], labelIndex: 0 }
+ * structuralMultipleParents: { type: 'structuralMultipleParents', node: 1, edges: [] }
+ * nodeLabel -> { type: 'nodeLabel', node: 1, labelIndex: 0 }
+ * nodeType -> { type: 'nodeType', node: 1 }
+ * nodeValue -> { type: 'nodeValue', node: 1 }
+ *
+ * @param {Object} expectedDiagram the expect service diagram
+ * @param {Object} actualDiagram the actual service diagram
+ * @param {Array<string>} options array of feedback types to not include
+ * @returns {Array<Object>} feedback
+ */
+function getFeedback(expectedDiagram, actualDiagram, options) {
   console.assert(getTreeFeedback(expectedDiagram).length === 0, 'expected diagram is not a tree');
   const feedback = getTreeFeedback(actualDiagram);
   if (feedback.length > 0) {
-    return feedback;
+    return filterFeedback(feedback, options);
   }
   const findFirstDiffPos = (a, b) => {
     let i = 0;
@@ -168,7 +180,7 @@ function getFeedback(expectedDiagram, actualDiagram) {
     ns1.forEach((n, i) => checkEqual(n, ns2[i]));
   };
   checkEqual(expectedDiagram.root, actualDiagram.root);
-  return feedback;
+  return filterFeedback(feedback, options);
 }
 
 export default getFeedback;
