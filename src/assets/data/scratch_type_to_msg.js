@@ -16,6 +16,9 @@ export const opcodesContainingEmpties = [
   'operator_not',
 ];
 
+/**
+ * Maps an expression opcode to the text of the block in English.
+ */
 const typeToMsgEn = {
   motion_direction: 'direction',
   motion_xposition: 'x position',
@@ -149,6 +152,9 @@ const typeToMsgEn = {
 
 const typeToMsg = {};
 
+/**
+ * For each locale, creates the mapping from an expression opcode to the text of the block.
+ */
 function setupTypeToMsg(blockly) {
   Object.entries(blockly.ScratchMsgs.locales).forEach((e1) => {
     const [locale, info] = e1;

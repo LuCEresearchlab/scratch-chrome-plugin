@@ -49,6 +49,13 @@ const unrawValue = (type, value) => {
  */
 export const typeToDefaultValue = (type) => unrawValue(type, '');
 
+/**
+ * Gets the value of this block.
+ * @param {*} blockId the id of the block
+ * @param {*} type the output type of the block
+ * @param {*} thread the thread used to evaluate the block
+ * @returns the value
+ */
 export const getCachedVmValue = (blockId, type, thread) => {
   const getRawValue = () => {
     const c = thread.blockContainer._cache._executeCached[blockId];
@@ -69,6 +76,12 @@ export const getCachedVmValue = (blockId, type, thread) => {
   return unrawValue(type, raw);
 };
 
+/**
+ * Gets the content of an empty block or a shadow block.
+ * @param {Object} thread the thread used to evaluate the block
+ * @param {string} blockId the id of the block
+ * @returns {string} the content
+ */
 export const getEmptyOrShadowContent = (thread, blockId) => {
   if (!blockId) {
     return ''; // for empty block

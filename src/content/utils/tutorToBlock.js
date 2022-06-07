@@ -18,6 +18,7 @@ import { getBlockly, getScratchToolbox } from './stateHandler.js';
 import { lastClickInfo } from './svgUtils.js';
 
 function opcodeToXml(opcode, blockly, scratchTB) {
+  /* the two opcodes below are not in the toolbox, so we have them writen manually here */
   switch (opcode) {
     case 'argument_reporter_boolean':
       return blockly.Xml.textToDom(
@@ -35,6 +36,8 @@ function opcodeToXml(opcode, blockly, scratchTB) {
 
     default:
   }
+  /* the opcode may be found in the toolbox
+  or in a data category (such as for data-variable opcode) */
   const toolbox = scratchTB.toolboxXML;
   return (
     blockly.Xml.textToDom(toolbox).querySelector(
@@ -46,6 +49,17 @@ function opcodeToXml(opcode, blockly, scratchTB) {
   );
 }
 
+/**
+ * Gets the possible opcodes for the given node.
+ * The returned value is an array of pairs.
+ * For each pair, the first element is the opcode and the second optional
+ * element is the value of the dropdown for the opcode.
+ * @param {Object} node the node
+ * @param {Object} blockly a Blockly instance
+ * @param {Object} scratchTB a ScratchToolbox instance
+ * @param {Array<Array<string>>} parentOpcodes parent opcodes
+ * @returns {Array<Array<string>>} the possible opcodes.
+ */
 function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
   const str = nodeToString(node);
   const opcodes = [];
@@ -109,7 +123,12 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
 }
 
 /**
+ * Creates the block corresponding to the given xml on the main workspace.
  * Inspired by scratch-blocks function Blockly.scratchBlocksUtils.duplicateAndDragCallback
+ * @param {string} xml the xml corresponding to the to-be-created block
+ * @param {Object} lastCreatedBlock the block that the to-be-created block should be placed next to
+ * @param {Object} blockly a Blockly instance
+ * @returns {Object} the to-be-created/created block
  */
 function createBlockFromXml(xml, lastCreatedBlock, blockly) {
   let newBlock = null;
@@ -150,6 +169,14 @@ function createBlockFromXml(xml, lastCreatedBlock, blockly) {
   return newBlock;
 }
 
+/**
+ * Gets the child index (not left-to-right but in the reading direction of the currentLocal_)
+ * given the childNum (this is the left-to-right index).
+ * @param {string} opcode the opcode of the parent node
+ * @param {int} childNum the zero-indexed child number
+ * @param {Object} blockly a Blockly instance
+ * @returns {int} the child index
+ */
 function getChildIndex(opcode, childNum, blockly) {
   // eslint-disable-next-line no-underscore-dangle
   let msg = typeToMsg[blockly.ScratchMsgs.currentLocale_][opcode];
@@ -200,6 +227,14 @@ function getDropdown(block) {
   return dropdown;
 }
 
+/**
+ * Given a labeled diagram, creates blocks on the main workspace and
+ * updates the blocks' values in fields.
+ * A labeled diagram is a diagram containing one opcode for each node.
+ * @param {Object} diagram the labeled diagram
+ * @param {Object} blockly a Blockly instance
+ * @param {Object} scratchTB a ScratchToolbox instance
+ */
 function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
   const nodeToDom = (node, block) => {
     const opcode = node.opcode[0][0];
@@ -323,8 +358,14 @@ export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
   pickOpcodeForNode(diagram.root);
 }
 
+/**
+ * Exports the diagram into a block on the main workspace.
+ * @param {Object} diagram a tutor diagram to be exported into a block
+ * @param {boolean} isBeginner whether the user knows about the Scratch opcodes
+ */
 function tutorToBlock(diagram, isBeginner) {
   if (lastClickInfo.diagram) console.log(getFeedback(lastClickInfo.diagram, diagram));
+  /* First check if diagram is a tree */
   if (getTreeFeedback(diagram).length > 0) {
     alert('The diagram is not a tree. Please try again.');
     return;

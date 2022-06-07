@@ -8,6 +8,7 @@ import {
   typeToDefaultValue,
 } from './scratchVmUtils.js';
 
+/* For testing purposes */
 const getCircularReplacer = () => {
   const seen = new WeakSet();
   const keys = [
@@ -47,6 +48,12 @@ const getCircularReplacer = () => {
   };
 };
 
+/**
+ * Converts the given block into a diagram.
+ * @param {Object} inputBlock the block
+ * @param {Object} thread the thread used to evaluate the block
+ * @returns the created diagram
+ */
 const createDiagram = (inputBlock, thread) => {
   let uuid = 0;
 

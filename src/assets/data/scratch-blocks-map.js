@@ -23,6 +23,9 @@ const unaryArithmetic = nary(number, [number]);
 const numberLeaf = nary(number, []);
 const stringLeaf = nary(string, []);
 
+/**
+ * Maps opcodes to output types and child types.
+ */
 export const expressionBlocks = {
   motion_direction: numberLeaf,
   motion_xposition: numberLeaf,
@@ -168,6 +171,9 @@ export const expressionBlocks = {
   empty: nary(bool, []),
 };
 
+/**
+ * Maps opcode to child types.
+ */
 export const nonExpressionBlocks = {
   motion_movesteps: [number],
   motion_turnright: [number],
