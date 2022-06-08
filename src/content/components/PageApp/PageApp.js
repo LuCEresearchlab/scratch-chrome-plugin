@@ -18,7 +18,7 @@ import theme from '../../../themes/pageTheme.js';
 import { handleMessageFromContentScript } from '../../contentScripts/messages.js';
 import AppModal from '../AppModal/AppModal.js';
 import tutorToBlock from '../../utils/tutorToBlock.js';
-import { lastClickInfo } from '../../utils/svgUtils.js';
+import { createSvgButtonExpressionListenerWithCallback, lastClickInfo } from '../../utils/svgUtils.js';
 import getFeedback from '../../utils/solutionFeedback.js';
 
 function PageApp({
@@ -100,8 +100,9 @@ function PageApp({
   }, [temporaryDiagram]);
 
   const evaluateHandler = useCallback(() => {
-    // const d = tutorToService(temporaryDiagram);
-    // tutorToBlock(d, isBegginner);
+    const d = tutorToService(temporaryDiagram);
+    const block = tutorToBlock(d, isBegginner);
+    createSvgButtonExpressionListenerWithCallback(block, (dt) => setDiagram(dt), true)();
   }, [temporaryDiagram]);
 
   const checkHandler = useCallback(() => {

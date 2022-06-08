@@ -133,38 +133,49 @@ const createSvgButtonEmptyListener = (type) => (e) => {
   postMessageToContentScript('selectedNewDiagram', serviceToTutor(d));
 };
 
-const createSvgButtonExpressionListener = (block) => (e) => {
-  e.stopPropagation();
-  e.preventDefault();
+export const createSvgButtonExpressionListenerWithCallback = (
+  block,
+  callback,
+  clickedEvaluate,
+) => (e) => {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
   const { runtime } = getScratchVM();
   const { _editingTarget: currentTarget } = runtime;
   const newThreads = [];
+  const otherThreads = [];
 
-  // We create an artificial script if the block is not a topLevel block
   let addedTemporaryScript = false;
-  if (!currentTarget.blocks.getScripts().includes(block.id)) {
-    currentTarget.blocks._addScript(block.id);
-    addedTemporaryScript = true;
-  }
-  runtime.allScriptsDo((topBlockId, target) => {
-    if (block.id !== topBlockId) return;
-    const pushedThread = runtime.threads.some((t) => {
-      if (t.target === target && t.topBlock === topBlockId
+  const targetListener = () => {
+    runtime.removeListener('PROJECT_CHANGED', targetListener);
+    // We create an artificial script if the block is not a topLevel block
+    if (!currentTarget.blocks.getScripts().includes(block.id)) {
+      currentTarget.blocks._blocks[block.id].topLevel = true;
+      currentTarget.blocks._addScript(block.id);
+      addedTemporaryScript = true;
+    }
+    runtime.allScriptsDo((topBlockId, target) => {
+      if (block.id !== topBlockId) return;
+      const pushedThread = runtime.threads.some((t) => {
+        if (t.target === target && t.topBlock === topBlockId
           // stack click threads and hat threads can coexist
           && !t.stackClick) {
-        newThreads.push(runtime._restartThread(t));
-        return true;
-      }
-      return false;
-    });
-    if (pushedThread) return;
-    newThreads.push(runtime._pushThread(topBlockId, target));
-  }, currentTarget);
-  console.assert(newThreads.length === 1, 'Thread creation error');
-  const otherThreads = [];
-  while (runtime.threads.length > 1) {
-    otherThreads.push(runtime.threads.shift());
-  }
+          newThreads.push(runtime._restartThread(t));
+          return true;
+        }
+        return false;
+      });
+      if (pushedThread) return;
+      newThreads.push(runtime._pushThread(topBlockId, target));
+    }, currentTarget);
+    console.assert(newThreads.length === 1, 'Thread creation error');
+    while (runtime.threads.length > 1) {
+      otherThreads.push(runtime.threads.shift());
+    }
+  };
+
   const listener = () => {
     runtime.removeListener('PROJECT_RUN_STOP', listener);
 
@@ -175,15 +186,32 @@ const createSvgButtonExpressionListener = (block) => (e) => {
 
     const d = createDiagram(block, newThreads[0]);
     const dt = serviceToTutor(d);
-    lastClickInfo.block = block;
-    lastClickInfo.diagram = tutorToService(dt);
-    postMessageToContentScript('selectedNewDiagram', dt);
+    if (!clickedEvaluate) {
+      lastClickInfo.block = block;
+      lastClickInfo.diagram = tutorToService(dt);
+    }
+    callback(dt);
 
     // resume other threads
     otherThreads.forEach((thread) => runtime.threads.push(thread));
+
+    if (clickedEvaluate) {
+      block.dispose();
+    }
   };
+
+  if (clickedEvaluate) {
+    runtime.addListener('PROJECT_CHANGED', targetListener);
+  } else {
+    targetListener();
+  }
   runtime.addListener('PROJECT_RUN_STOP', listener);
 };
+
+const createSvgButtonExpressionListener = (block) => createSvgButtonExpressionListenerWithCallback(
+  block,
+  (tutorDiagram) => postMessageToContentScript('selectedNewDiagram', tutorDiagram),
+);
 
 /**
  * Returns the SVG path and type of each empty block directly under this block

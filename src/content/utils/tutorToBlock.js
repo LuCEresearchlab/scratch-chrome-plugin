@@ -362,23 +362,27 @@ export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
  * Exports the diagram into a block on the main workspace.
  * @param {Object} diagram a tutor diagram to be exported into a block
  * @param {boolean} isBeginner whether the user knows about the Scratch opcodes
+ * @return {Object} the created block
  */
 function tutorToBlock(diagram, isBeginner) {
   /* First check if diagram is a tree */
   if (getTreeFeedback(diagram).length > 0) {
     alert('The diagram is not a tree. Please try again.');
-    return;
+    return null;
   }
+  const blockly = getBlockly();
+  const toolbox = getScratchToolbox();
   if (process.env.NODE_ENV === 'testing') console.log(JSON.parse(JSON.stringify(diagram)));
-  labelDiagramWithOpcodes(diagram, getBlockly(), getScratchToolbox());
+  labelDiagramWithOpcodes(diagram, blockly, toolbox);
   if (process.env.NODE_ENV === 'testing') console.log(JSON.parse(JSON.stringify(diagram)));
   try {
-    pickOpcodesInDiagram(diagram, getBlockly(), getScratchToolbox(), isBeginner);
+    pickOpcodesInDiagram(diagram, blockly, toolbox, isBeginner);
     if (process.env.NODE_ENV === 'testing') console.log(JSON.parse(JSON.stringify(diagram)));
-    createBlocksFromLabeledDiagram(diagram, getBlockly(), getScratchToolbox());
+    createBlocksFromLabeledDiagram(diagram, blockly, toolbox);
   } catch (e) {
     alert('Sorry, something went wrong during the export. The created blocks (if any) may be incorrect. Please try again.');
   }
+  return blockly.mainWorkspace.getBlockById(diagram.root.blockId);
 }
 
 export default tutorToBlock;
