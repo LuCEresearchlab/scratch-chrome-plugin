@@ -61,6 +61,8 @@ function AppModal({
   closeModal,
   setTemporaryDiagram,
   exportHandler,
+  evaluateHandler,
+  checkHandler,
 }) {
   const classes = useStyles();
   const containerRef = useRef();
@@ -90,6 +92,12 @@ function AppModal({
             <Button variant="contained" color="primary" onClick={exportHandler}>
               Export
             </Button>
+            <Button variant="contained" color="primary" onClick={evaluateHandler}>
+              Evaluate
+            </Button>
+            <Button variant="contained" color="primary" onClick={checkHandler}>
+              Check
+            </Button>
           </Box>
         </Box>
       </Modal>
@@ -104,6 +112,8 @@ AppModal.propTypes = {
   closeModal: PropTypes.func,
   setTemporaryDiagram: PropTypes.func,
   exportHandler: PropTypes.func,
+  evaluateHandler: PropTypes.func,
+  checkHandler: PropTypes.func,
 };
 
 AppModal.defaultProps = {
@@ -113,6 +123,8 @@ AppModal.defaultProps = {
   closeModal: () => {},
   setTemporaryDiagram: () => {},
   exportHandler: () => {},
+  evaluateHandler: () => {},
+  checkHandler: () => {},
 };
 
 export default AppModal;

@@ -364,7 +364,6 @@ export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
  * @param {boolean} isBeginner whether the user knows about the Scratch opcodes
  */
 function tutorToBlock(diagram, isBeginner) {
-  if (lastClickInfo.diagram) console.log(getFeedback(lastClickInfo.diagram, diagram));
   /* First check if diagram is a tree */
   if (getTreeFeedback(diagram).length > 0) {
     alert('The diagram is not a tree. Please try again.');

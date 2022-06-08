@@ -18,6 +18,8 @@ import theme from '../../../themes/pageTheme.js';
 import { handleMessageFromContentScript } from '../../contentScripts/messages.js';
 import AppModal from '../AppModal/AppModal.js';
 import tutorToBlock from '../../utils/tutorToBlock.js';
+import { lastClickInfo } from '../../utils/svgUtils.js';
+import getFeedback from '../../utils/solutionFeedback.js';
 
 function PageApp({
   initialIsEnabled,
@@ -97,6 +99,18 @@ function PageApp({
     tutorToBlock(d, isBegginner);
   }, [temporaryDiagram]);
 
+  const evaluateHandler = useCallback(() => {
+    // const d = tutorToService(temporaryDiagram);
+    // tutorToBlock(d, isBegginner);
+  }, [temporaryDiagram]);
+
+  const checkHandler = useCallback(() => {
+    const d = tutorToService(temporaryDiagram);
+    if (lastClickInfo.diagram) {
+      console.log(getFeedback(lastClickInfo.diagram, d));
+    }
+  }, [temporaryDiagram]);
+
   useEffect(() => {
     if (!showEdges) {
       diagram.edges = {};
@@ -134,6 +148,8 @@ function PageApp({
             closeModal={closeModal}
             setTemporaryDiagram={setTemporaryDiagram}
             exportHandler={exportHandler}
+            evaluateHandler={evaluateHandler}
+            checkHandler={checkHandler}
           />
         </div>
       </ThemeProvider>
