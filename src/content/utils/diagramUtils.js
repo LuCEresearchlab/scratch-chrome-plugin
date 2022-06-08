@@ -102,7 +102,7 @@ const createDiagram = (inputBlock, thread) => {
   function addTrailingTextToNode(node, text) {
     if (text.length !== 0) {
       node.content.push({
-        content: node.content.length === 0 ? text : ` ${text}`,
+        content: node.content.length === 0 || text === '?' ? text : ` ${text}`,
       });
     }
   }

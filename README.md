@@ -33,6 +33,7 @@ npm run coverage
 To add more tests for `createDiagram(...)`, which returns an Expression Tutor diagram
 given a Scratch block and the thread that was used to evaluate the block,
 run the chrome extension on a Scratch project, and click on the 'e' button on the block to test.
+Make sure update the condition in `diagramUtils.js` to `process.env.NODE_ENV` instead of `process.env.NODE_ENV === testing`.
 There will be 4 strings in the console after the click:
 
 1. stringified version of the block

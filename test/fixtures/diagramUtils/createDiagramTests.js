@@ -20,6 +20,7 @@ import argumentReporterStringNumberShadowBlockTest from './cases/argumentReporte
 import argumentReporterStringNumberBlockTest from './cases/argumentReporterStringNumberBlockTest.js';
 import argumentReporterBooleanShadowBlockTest from './cases/argumentReporterBooleanShadowBlockTest.js';
 import argumentReporterBooleanBlockTest from './cases/argumentReporterBooleanBlockTest.js';
+import spaceBeforeQuestionMarkTest from './cases/spaceBeforeQuestionMarkTest.js';
 
 const createDiagramTests = [
   additionBasicTest,
@@ -44,6 +45,7 @@ const createDiagramTests = [
   argumentReporterStringNumberBlockTest,
   argumentReporterBooleanShadowBlockTest,
   argumentReporterBooleanBlockTest,
+  spaceBeforeQuestionMarkTest,
 ];
 
 export default createDiagramTests;

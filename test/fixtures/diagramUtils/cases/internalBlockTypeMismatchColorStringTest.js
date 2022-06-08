@@ -248,7 +248,7 @@ const test = {
         content: [
           { content: 'touching color ' },
           { valA: 0, valB: 1, type: 'Colour' },
-          { content: ' ?' },
+          { content: '?' },
         ],
         type: 'Boolean',
         value: 'false',
@@ -266,7 +266,7 @@ const test = {
       content: [
         { content: 'touching color ' },
         { valA: 0, valB: 1, type: 'Colour' },
-        { content: ' ?' },
+        { content: '?' },
       ],
       type: 'Boolean',
       value: 'false',
