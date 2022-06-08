@@ -216,7 +216,8 @@ function setupTypeToMsg(blockly) {
 if (process.env.NODE_ENV === 'testing') {
   typeToMsg.en = typeToMsgEn;
 } else {
-  setupTypeToMsg(getBlockly());
+  const blockly = getBlockly();
+  if (blockly) setupTypeToMsg(blockly);
 }
 
 export default typeToMsg;
