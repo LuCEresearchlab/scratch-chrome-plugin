@@ -91,5 +91,5 @@ export const getEmptyOrShadowContent = (thread, blockId) => {
   if (!c._shadowValue) {
     return '';
   }
-  return c._shadowValue;
+  return String(c._shadowValue);
 };
