@@ -51,10 +51,10 @@ export const typeToDefaultValue = (type) => unrawValue(type, '');
 
 /**
  * Gets the value of this block.
- * @param {*} blockId the id of the block
- * @param {*} type the output type of the block
- * @param {*} thread the thread used to evaluate the block
- * @returns the value
+ * @param {string} blockId the id of the block
+ * @param {string} type the output type of the block
+ * @param {Object} thread the thread used to evaluate the block
+ * @returns {string} the value
  */
 export const getCachedVmValue = (blockId, type, thread) => {
   const getRawValue = () => {

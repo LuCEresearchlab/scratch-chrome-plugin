@@ -60,3 +60,7 @@ export const pseudoShadowOpcodes = [
   'argument_reporter_string_number',
   'argument_reporter_boolean',
 ];
+
+export const variableOpcode = 'data_variable';
+
+export const listOpcode = 'data_listcontents';

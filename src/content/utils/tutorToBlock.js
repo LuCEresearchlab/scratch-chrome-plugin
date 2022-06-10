@@ -1,6 +1,8 @@
 import {
+  listOpcode,
   pseudoShadowOpcodes,
   shadowOpcodes,
+  variableOpcode,
 } from '../../assets/data/scratch_shadow_opcodes.js';
 import typeToMsg, {
   argumentPlaceholder,
@@ -11,7 +13,7 @@ import typeToMsg, {
   shadowPlaceholder,
   variablePlaceholder,
 } from '../../assets/data/scratch_type_to_msg.js';
-import getFeedback, {
+import {
   getChildNodes, getTreeFeedback, holePlaceholder, nodeToString,
 } from './solutionFeedback.js';
 import { getBlockly, getScratchToolbox } from './stateHandler.js';
@@ -261,9 +263,22 @@ function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
     if (inputConnection) {
       block.outputConnection.connect(inputConnection);
     }
-    if (block.isShadow() || pseudoShadowOpcodes.includes(block.type)) {
+    if (block.isShadow()
+      || pseudoShadowOpcodes.includes(block.type)
+      || variableOpcode === block.type
+      || listOpcode === block.type) {
       const field = block.inputList[0].fieldRow[0];
-      const newValue = node.content[0].content;
+      let newValue = node.content[0].content;
+      if (variableOpcode === block.type || listOpcode === block.typ) {
+        const data = blockly.mainWorkspace.getVariablesOfType(variableOpcode === block.type ? '' : 'list');
+        data.some((d) => {
+          if (d.name === newValue) {
+            newValue = d.getId();
+            return true;
+          }
+          return false;
+        });
+      }
       field.setValue(newValue);
       return;
     }
@@ -381,6 +396,7 @@ function tutorToBlock(diagram, isBeginner) {
     createBlocksFromLabeledDiagram(diagram, blockly, toolbox);
   } catch (e) {
     alert('Sorry, something went wrong during the export. The created blocks (if any) may be incorrect. Please try again.');
+    throw e;
   }
   return blockly.mainWorkspace.getBlockById(diagram.root.blockId);
 }
