@@ -4,8 +4,8 @@ import ReactDOM from 'react-dom';
 
 import ExpressionTutorLogo from '../components/ExpressionTutorLogo/ExpressionTutorLogo.js';
 
-import { getScratchVM } from './stateHandler.js';
-import createDiagram from './diagramUtils.js';
+import { getBlockly, getScratchVM } from './stateHandler.js';
+import createDiagram, { getNodesAndDepth } from './diagramUtils.js';
 
 import {
   opcodeToExpressionTypeInfo,
@@ -272,6 +272,49 @@ export const appendSvgButtonToBlock = (block) => {
     removeSvgButtonFromSvg(block.svgGroup_);
   }
 };
+
+const getAllBlockIds = () => {
+  const allButtons = document.querySelectorAll(`.${svgButtonClassName}`);
+  const ids = [];
+  allButtons.forEach((button) => {
+    if (button.dataset.blockId) ids.push(button.dataset.blockId);
+  });
+  return ids;
+};
+
+/**
+ * Gets the list of all expression in the main workspace.
+ * The structure of the returned objects is as follows:
+ * { expression: string, blockId: string, nodes: int, depth: int }.
+ * @returns {Array<Object>} the list of all expressions in the main workspace
+ */
+export function getExpressionList() {
+  const ids = getAllBlockIds();
+  return ids.map((id) => {
+    const block = getBlockly().mainWorkspace.getBlockById(id);
+    const expression = block.toString();
+    const blockId = id;
+    const [nodes, depth] = getNodesAndDepth(block);
+    return {
+      expression,
+      blockId,
+      nodes,
+      depth,
+    };
+  });
+}
+
+/**
+ * Acts as a click on the svg button of the block with the given id.
+ * @param {string} blockId the id of the block associated with the button to click
+ */
+export function clickSvgButtonOfBlock(blockId) {
+  const block = getBlockly().mainWorkspace.getBlockById(blockId);
+  createSvgButtonExpressionListenerWithCallback(
+    block,
+    (tutorDiagram) => postMessageToContentScript('selectedNewDiagram', tutorDiagram),
+  )();
+}
 
 export const updateDisplaySvgButtons = (newValue) => {
   if (displaySvgButtons === newValue) return;

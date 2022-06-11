@@ -18,7 +18,9 @@ import theme from '../../../themes/pageTheme.js';
 import { handleMessageFromContentScript } from '../../contentScripts/messages.js';
 import AppModal from '../AppModal/AppModal.js';
 import tutorToBlock from '../../utils/tutorToBlock.js';
-import { createSvgButtonExpressionListenerWithCallback, lastClickInfo } from '../../utils/svgUtils.js';
+import {
+  createSvgButtonExpressionListenerWithCallback, lastClickInfo, getExpressionList,
+} from '../../utils/svgUtils.js';
 import getFeedback from '../../utils/solutionFeedback.js';
 
 function PageApp({
@@ -112,6 +114,10 @@ function PageApp({
     }
   }, [temporaryDiagram]);
 
+  const listHandler = useCallback(() => {
+    console.log(getExpressionList());
+  }, [temporaryDiagram]);
+
   useEffect(() => {
     if (!showEdges) {
       diagram.edges = {};
@@ -151,6 +157,7 @@ function PageApp({
             exportHandler={exportHandler}
             evaluateHandler={evaluateHandler}
             checkHandler={checkHandler}
+            listHandler={listHandler}
           />
         </div>
       </ThemeProvider>

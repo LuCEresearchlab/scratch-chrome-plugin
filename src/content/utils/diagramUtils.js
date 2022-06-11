@@ -292,4 +292,25 @@ const createDiagram = (inputBlock, thread) => {
   return diagramAccumulator;
 };
 
+/**
+ * Gets the number of nodes and depth, respectively, of the given block
+ * @param {Object} block the block to evaluate
+ * @returns {Array<int>} the number of nodes and depth
+ */
+export function getNodesAndDepth(block) {
+  let numNodes = 1;
+  let depth = 1;
+  block.inputList.forEach((input) => {
+    if (input.connection) {
+      const child = input.connection.targetBlock();
+      const [childNodes, childDepth] = child ? getNodesAndDepth(child) : [1, 1];
+      numNodes += childNodes;
+      if (childDepth + 1 > depth) {
+        depth = childDepth + 1;
+      }
+    }
+  });
+  return [numNodes, depth];
+}
+
 export default createDiagram;
