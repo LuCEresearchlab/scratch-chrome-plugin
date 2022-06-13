@@ -64,6 +64,7 @@ function AppModal({
   evaluateHandler,
   checkHandler,
   listHandler,
+  getStepsHandler,
 }) {
   const classes = useStyles();
   const containerRef = useRef();
@@ -102,6 +103,9 @@ function AppModal({
             <Button variant="contained" color="primary" onClick={listHandler}>
               List
             </Button>
+            <Button variant="contained" color="primary" onClick={getStepsHandler}>
+              Get Steps
+            </Button>
           </Box>
         </Box>
       </Modal>
@@ -119,6 +123,7 @@ AppModal.propTypes = {
   evaluateHandler: PropTypes.func,
   checkHandler: PropTypes.func,
   listHandler: PropTypes.func,
+  getStepsHandler: PropTypes.func,
 };
 
 AppModal.defaultProps = {
@@ -131,6 +136,7 @@ AppModal.defaultProps = {
   evaluateHandler: () => {},
   checkHandler: () => {},
   listHandler: () => {},
+  getStepsHandler: () => {},
 };
 
 export default AppModal;

@@ -22,6 +22,7 @@ import {
   createSvgButtonExpressionListenerWithCallback, lastClickInfo, getExpressionList,
 } from '../../utils/svgUtils.js';
 import getFeedback from '../../utils/solutionFeedback.js';
+import { getSteps } from '../../utils/diagramUtils.js';
 
 function PageApp({
   initialIsEnabled,
@@ -118,6 +119,12 @@ function PageApp({
     console.log(getExpressionList());
   }, [temporaryDiagram]);
 
+  const getStepsHandler = useCallback(() => {
+    const d = tutorToService(temporaryDiagram);
+    console.log(d);
+    console.log(getSteps(d));
+  }, [temporaryDiagram]);
+
   useEffect(() => {
     if (!showEdges) {
       diagram.edges = {};
@@ -158,6 +165,7 @@ function PageApp({
             evaluateHandler={evaluateHandler}
             checkHandler={checkHandler}
             listHandler={listHandler}
+            getStepsHandler={getStepsHandler}
           />
         </div>
       </ThemeProvider>

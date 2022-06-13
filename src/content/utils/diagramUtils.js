@@ -7,6 +7,7 @@ import {
   opcodeToNonExpressionTypeInfo,
   typeToDefaultValue,
 } from './scratchVmUtils.js';
+import { getChildNodes } from './solutionFeedback.js';
 
 /* For testing purposes */
 const getCircularReplacer = () => {
@@ -290,6 +291,59 @@ const createDiagram = (inputBlock, thread) => {
     console.log(JSON.stringify(diagramAccumulator));
   }
   return diagramAccumulator;
+};
+
+/**
+ * Returns the steps needed to create the given final diagram.
+ * First in the array, preorder traversal to set root, nodes (values excluded) and edges.
+ * Second in the array, postorder traversal to set values if showValues is true.
+ * @param {Object} finalDiagram the final diagram
+ * @returns {Array<Array<Object>>} an pair of arrays of diagrams (steps) needed
+ */
+export const getSteps = (finalDiagram) => {
+  const steps = [[], []];
+  const diagram = {
+    edges: [],
+    nodes: [],
+  };
+  const preorder = (finalDiagramNode) => {
+    const node = JSON.parse(JSON.stringify(finalDiagramNode));
+    node.value = undefined;
+    node.isHighlighted = true;
+    if (finalDiagramNode === finalDiagram.root) {
+      diagram.root = node;
+    } else {
+      diagram.nodes[diagram.nodes.length - 1].isHighlighted = false;
+      if (diagram.edges.length > 0) {
+        diagram.edges[diagram.edges.length - 1].isHighlighted = false;
+      }
+      const finalDiagramEdge = finalDiagram.edges.find((e) => e.plugB.valA === node.nodePlug.valA);
+      const edge = JSON.parse(JSON.stringify(finalDiagramEdge));
+      edge.isHighlighted = true;
+      diagram.edges.push(edge);
+    }
+    diagram.nodes.push(node);
+    steps[0].push(JSON.parse(JSON.stringify(diagram)));
+    getChildNodes(finalDiagramNode, finalDiagram).forEach(preorder);
+  };
+  const postorder = (finalDiagramNode, prevNodeId) => {
+    const childNodes = getChildNodes(finalDiagramNode, finalDiagram);
+    childNodes.forEach((childNode, i) => {
+      postorder(childNode, childNodes[i - 1]?.nodePlug?.valA ?? prevNodeId);
+    });
+    const node = diagram.nodes.find((n) => finalDiagramNode.nodePlug.valA === n.nodePlug.valA);
+    node.value = finalDiagramNode.value;
+    node.isHighlighted = true;
+    const prevNode = diagram.nodes.find((n) => prevNodeId === n.nodePlug.valA);
+    prevNode.isHighlighted = false;
+    steps[1].push(JSON.parse(JSON.stringify(diagram)));
+  };
+  preorder(finalDiagram.root);
+  if (diagram.edges.length > 0) {
+    diagram.edges[diagram.edges.length - 1].isHighlighted = false;
+  }
+  postorder(finalDiagram.root, diagram.nodes[diagram.nodes.length - 1].nodePlug.valA);
+  return steps;
 };
 
 /**
