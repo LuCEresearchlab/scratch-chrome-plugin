@@ -379,7 +379,7 @@ export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
  * @param {boolean} isBeginner whether the user knows about the Scratch opcodes
  * @return {Object} the created block
  */
-function tutorToBlock(diagram, isBeginner) {
+function serviceToBlock(diagram, isBeginner) {
   /* First check if diagram is a tree */
   if (getTreeFeedback(diagram).length > 0) {
     alert('The diagram is not a tree. Please try again.');
@@ -401,4 +401,4 @@ function tutorToBlock(diagram, isBeginner) {
   return blockly.mainWorkspace.getBlockById(diagram.root.blockId);
 }
 
-export default tutorToBlock;
+export default serviceToBlock;

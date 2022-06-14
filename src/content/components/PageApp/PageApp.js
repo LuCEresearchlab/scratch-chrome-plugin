@@ -17,7 +17,7 @@ import { reducer, initialState, createDispatchActions } from '../../store/pageAp
 import theme from '../../../themes/pageTheme.js';
 import { handleMessageFromContentScript } from '../../contentScripts/messages.js';
 import AppModal from '../AppModal/AppModal.js';
-import tutorToBlock from '../../utils/tutorToBlock.js';
+import serviceToBlock from '../../utils/serviceToBlock.js';
 import {
   createSvgButtonExpressionListenerWithCallback, lastClickInfo, getExpressionList,
 } from '../../utils/svgUtils.js';
@@ -99,12 +99,12 @@ function PageApp({
 
   const exportHandler = useCallback(() => {
     const d = tutorToService(temporaryDiagram);
-    tutorToBlock(d, isBegginner);
+    serviceToBlock(d, isBegginner);
   }, [temporaryDiagram]);
 
   const evaluateHandler = useCallback(() => {
     const d = tutorToService(temporaryDiagram);
-    const block = tutorToBlock(d, isBegginner);
+    const block = serviceToBlock(d, isBegginner);
     createSvgButtonExpressionListenerWithCallback(block, (dt) => setDiagram(dt), true)();
   }, [temporaryDiagram]);
 
