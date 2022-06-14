@@ -298,7 +298,7 @@ const createDiagram = (inputBlock, thread) => {
  * First in the array, preorder traversal to set root, nodes (values excluded) and edges.
  * Second in the array, postorder traversal to set values if showValues is true.
  * @param {Object} finalDiagram the final diagram
- * @returns {Array<Array<Object>>} an pair of arrays of diagrams (steps) needed
+ * @returns {Array<Array<Object>>} a pair of arrays of diagrams (steps) needed
  */
 export const getSteps = (finalDiagram) => {
   const steps = [[], []];
@@ -329,7 +329,7 @@ export const getSteps = (finalDiagram) => {
   const postorder = (finalDiagramNode, prevNodeId) => {
     const childNodes = getChildNodes(finalDiagramNode, finalDiagram);
     childNodes.forEach((childNode, i) => {
-      postorder(childNode, childNodes[i - 1]?.nodePlug?.valA ?? prevNodeId);
+      postorder(childNode, i === 0 ? prevNodeId : childNodes[i - 1].nodePlug.valA);
     });
     const node = diagram.nodes.find((n) => finalDiagramNode.nodePlug.valA === n.nodePlug.valA);
     node.value = finalDiagramNode.value;

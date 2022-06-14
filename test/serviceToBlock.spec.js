@@ -1,22 +1,13 @@
 import assert from 'assert';
-import ScratchVM from 'scratch-vm';
 import jsdomGlobal from 'jsdom-global';
 
-import { labelDiagramWithOpcodes, pickOpcodesInDiagram } from '../src/content/utils/tutorToBlock.js';
-import labelDiagramWithOpcodesTests from './fixtures/tutorToBlock/label/labelDiagramWithOpcodesTests.js';
-import pickOpcodesInDiagramTests from './fixtures/tutorToBlock/pick/pickOpcodesInDiagramTests.js';
-import blockly from './fixtures/tutorToBlock/blockly.js';
-import scratchTB from './fixtures/tutorToBlock/scratchToolbox.js';
+import { labelDiagramWithOpcodes, pickOpcodesInDiagram } from '../src/content/utils/serviceToBlock.js';
+import labelDiagramWithOpcodesTests from './fixtures/serviceToBlock/label/labelDiagramWithOpcodesTests.js';
+import pickOpcodesInDiagramTests from './fixtures/serviceToBlock/pick/pickOpcodesInDiagramTests.js';
+import blockly from './fixtures/serviceToBlock/blockly.js';
+import scratchTB from './fixtures/serviceToBlock/scratchToolbox.js';
 
-const getNewScratchVM = () => {
-  const vm = new ScratchVM();
-  vm.setCompatibilityMode(true);
-  vm.clear();
-
-  return vm;
-};
-
-describe('src/content/utils/tutorToBlock', () => {
+describe('src/content/utils/serviceToBlock', () => {
   it('setup', () => {
     jsdomGlobal();
     global.DOMParser = window.DOMParser;
