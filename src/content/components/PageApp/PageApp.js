@@ -17,7 +17,7 @@ import { reducer, initialState, createDispatchActions } from '../../store/pageAp
 import theme from '../../../themes/pageTheme.js';
 import { handleMessageFromContentScript } from '../../contentScripts/messages.js';
 import AppModal from '../AppModal/AppModal.js';
-import serviceToBlock from '../../utils/serviceToBlock.js';
+import { serviceToBlock } from '../../utils/serviceToBlock.js';
 import {
   createSvgButtonExpressionListenerWithCallback, lastClickInfo, getExpressionList,
 } from '../../utils/svgUtils.js';
@@ -131,11 +131,13 @@ function PageApp({
     }
     if (!showTypes) {
       Object.values(diagram.nodes).forEach((node) => {
+        // eslint-disable-next-line no-param-reassign
         node.type = undefined;
       });
     }
     if (!showValues) {
       Object.values(diagram.nodes).forEach((node) => {
+        // eslint-disable-next-line no-param-reassign
         node.value = undefined;
       });
     }

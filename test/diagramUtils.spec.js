@@ -1,7 +1,6 @@
 import assert from 'assert';
 import createDiagramTests from './fixtures/diagramUtils/createDiagramTests.js';
 import createDiagram, { getNodesAndDepth, getSteps } from '../src/content/utils/diagramUtils.js';
-import getStepsTests from './fixtures/diagramUtils/getStepsTests.js';
 
 describe('src/content/utils/diagramUtils', () => {
   describe('createDiagram(inputBlock, thread)', () => {
@@ -21,9 +20,9 @@ describe('src/content/utils/diagramUtils', () => {
   });
 
   describe('getSteps(finalDiagram)', () => {
-    getStepsTests.forEach((test) => {
+    createDiagramTests.forEach((test) => {
       it(test.it, () => {
-        assert.deepEqual(getSteps(...test.args), test.expected);
+        assert.deepEqual(getSteps(test.expected[0]), test.expected[2]);
       });
     });
   });

@@ -248,8 +248,10 @@ function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
       if (!xml) {
         throw new Error(`could not create block of type ${opcode}`);
       }
+      // eslint-disable-next-line no-param-reassign
       block = createBlockFromXml(xml, lastClickInfo.block, blockly);
     }
+    // eslint-disable-next-line no-param-reassign
     node.blockId = block.id;
     getChildNodes(node, diagram).forEach((n, i) => {
       nodeToDom(n, getChildBlock(block, i, blockly));
@@ -315,15 +317,16 @@ function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
  * @param {Object} blockly the instance of Blockly to be used
  * @param {Object} scratchTB the instance of ScratchToolbox to be used
  */
-export function labelDiagramWithOpcodes(diagram, blockly, scratchTB) {
+export const labelDiagramWithOpcodes = (diagram, blockly, scratchTB) => {
   const labelNode = (node, parentOpcodes) => {
+    // eslint-disable-next-line no-param-reassign
     node.opcode = nodeToOpcode(node, blockly, scratchTB, parentOpcodes);
     getChildNodes(node, diagram).forEach((n) => {
       labelNode(n, node.opcode);
     });
   };
   labelNode(diagram.root);
-}
+};
 
 /**
  * Selects one opcode for each node in the diagram.
@@ -332,23 +335,26 @@ export function labelDiagramWithOpcodes(diagram, blockly, scratchTB) {
  * @param {Object} scratchTB the instance of ScratchToolbox to be used
  * @param {boolean} isBeginner whether the user is a beginner or not
  */
-export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
+export const pickOpcodesInDiagram = (diagram, blockly, scratchTB, isBeginner) => {
   const pickOpcodeForNode = (node, parentNode, num) => {
     if (parentNode) {
       // filter opcode options based on parent block
       const parentOp = parentNode.opcode[0][0];
       const value = getValue(opcodeToXml(parentOp, blockly, scratchTB), num, blockly);
       const shadowOp = value?.querySelector(':scope > shadow')?.getAttribute('type') ?? '';
+      // eslint-disable-next-line no-param-reassign
       node.opcode = node.opcode.filter(
         (op) => !shadowOpcodes.includes(op[0]) || op[0] === shadowOp,
       );
     } else {
+      // eslint-disable-next-line no-param-reassign
       node.opcode = node.opcode.filter((op) => !shadowOpcodes.includes(op[0]));
     }
     if (node.opcode.length === 0) {
       throw new Error('could not find block corresponding to node');
     } else if (node.opcode.length > 1) {
       if (isBeginner) {
+        // eslint-disable-next-line no-param-reassign
         node.opcode = [node.opcode[0]];
       } else {
         const str = nodeToString(node);
@@ -365,13 +371,14 @@ export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
             node.opcode[0][0],
           );
         }
+        // eslint-disable-next-line no-param-reassign
         node.opcode = [option];
       }
     }
     getChildNodes(node, diagram).forEach((n, i) => pickOpcodeForNode(n, node, i));
   };
   pickOpcodeForNode(diagram.root);
-}
+};
 
 /**
  * Exports the diagram into a block on the main workspace.
@@ -379,7 +386,7 @@ export function pickOpcodesInDiagram(diagram, blockly, scratchTB, isBeginner) {
  * @param {boolean} isBeginner whether the user knows about the Scratch opcodes
  * @return {Object} the created block
  */
-function serviceToBlock(diagram, isBeginner) {
+export const serviceToBlock = (diagram, isBeginner) => {
   /* First check if diagram is a tree */
   if (getTreeFeedback(diagram).length > 0) {
     alert('The diagram is not a tree. Please try again.');
@@ -399,6 +406,4 @@ function serviceToBlock(diagram, isBeginner) {
     throw e;
   }
   return blockly.mainWorkspace.getBlockById(diagram.root.blockId);
-}
-
-export default serviceToBlock;
+};
