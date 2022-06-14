@@ -1002,7 +1002,7 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: {
+  expected: [{
     nodes: [{
       nodePlug: { valA: 1, valB: 0 }, content: [{ content: '_mouse_' }], type: 'String', value: '_mouse_',
     }, {
@@ -1012,8 +1012,7 @@ const test = {
     root: {
       nodePlug: { valA: 0, valB: 0 }, content: [{ content: 'touching ' }, { valA: 0, valB: 1, type: 'String' }, { content: '?' }], type: 'Boolean', value: 'false',
     },
-  }
-  ,
+  }, [2, 2]],
 };
 
 export default test;

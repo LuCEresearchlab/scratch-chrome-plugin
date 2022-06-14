@@ -342,7 +342,7 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: {
+  expected: [{
     nodes: [
       {
         nodePlug: { valA: 1, valB: 0 },
@@ -389,7 +389,7 @@ const test = {
       type: 'String',
       value: 'apple banana',
     },
-  },
+  }, [3, 2]],
 };
 
 export default test;

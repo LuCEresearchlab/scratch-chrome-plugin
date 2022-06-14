@@ -439,7 +439,7 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: {
+  expected: [{
     nodes: [
       {
         nodePlug: { valA: 1, valB: 0 },
@@ -508,7 +508,7 @@ const test = {
       type: 'Number',
       value: '9',
     },
-  },
+  }, [5, 3]],
 };
 
 export default test;

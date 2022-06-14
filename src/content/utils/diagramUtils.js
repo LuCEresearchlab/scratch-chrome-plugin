@@ -356,7 +356,7 @@ export function getNodesAndDepth(block) {
   let depth = 1;
   block.inputList.forEach((input) => {
     if (input.connection) {
-      const child = input.connection.targetBlock();
+      const child = input.connection.targetConnection?.sourceBlock_;
       const [childNodes, childDepth] = child ? getNodesAndDepth(child) : [1, 1];
       numNodes += childNodes;
       if (childDepth + 1 > depth) {
