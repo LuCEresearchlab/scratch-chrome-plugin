@@ -16,7 +16,9 @@ const moveEventListener = (event) => {
 };
 
 const onBlocklyEvent = (event) => {
-  if (event.type === 'move') {
+  /* Most cases are covered by the move event.
+     Create event is only needed when no automatic move after creation. */
+  if (event.type === 'move' || event.type === 'create') {
     moveEventListener(event);
   }
 };
