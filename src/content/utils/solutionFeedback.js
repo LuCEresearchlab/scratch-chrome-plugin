@@ -18,18 +18,6 @@ function getNumHoles(node, labelIndex) {
   return count;
 }
 
-export function nodeToString(node) {
-  let str = '';
-  node.content.forEach((part) => {
-    if (part.type === 'hole') {
-      str += holePlaceholder;
-    } else {
-      str += part.content;
-    }
-  });
-  return str;
-}
-
 function getInEdges(node, diagram) {
   const nodeId = node.nodePlug.valA;
   return diagram.edges.filter((edge) => edge.plugB.valA === nodeId);
@@ -52,6 +40,33 @@ export function getChildNodes(node, diagram, holeNumberLow, holeNumberHigh) {
   const outEdges = getOutEdges(node, diagram, holeNumberLow, holeNumberHigh);
   const childIds = outEdges.map((edge) => edge.plugB.valA);
   return diagram.nodes.filter((n) => childIds.includes(n.nodePlug.valA));
+}
+
+export function nodeToString(node) {
+  let str = '';
+  node.content.forEach((part) => {
+    if (part.type === 'hole') {
+      str += holePlaceholder;
+    } else {
+      str += part.content;
+    }
+  });
+  return str;
+}
+
+export function nodeToDeepString(node, diagram) {
+  let str = '';
+  let holeNum = 0;
+  const childNodes = getChildNodes(node, diagram);
+  node.content.forEach((part) => {
+    if (part.type === 'hole') {
+      str += nodeToDeepString(childNodes[holeNum], diagram);
+      holeNum += 1;
+    } else {
+      str += part.content;
+    }
+  });
+  return str;
 }
 
 export function getTreeFeedback(diagram) {

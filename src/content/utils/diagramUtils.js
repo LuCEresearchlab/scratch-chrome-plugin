@@ -7,7 +7,7 @@ import {
   opcodeToNonExpressionTypeInfo,
   typeToDefaultValue,
 } from './scratchVmUtils.js';
-import { getChildNodes } from './solutionFeedback.js';
+import { getChildNodes, getTreeFeedback, nodeToDeepString } from './solutionFeedback.js';
 
 /* For testing purposes */
 const getCircularReplacer = () => {
@@ -294,14 +294,70 @@ const createDiagram = (inputBlock, thread) => {
 };
 
 /**
- * Returns the steps needed to create the given final diagram.
- * First in the array, preorder traversal to set root, nodes (values excluded) and edges.
- * Second in the array, postorder traversal to set values if showValues is true.
- * @param {Object} finalDiagram the final diagram
- * @returns {Array<Array<Object>>} a pair of arrays of diagrams (steps) needed
+ * Returns the start and end indices of the given node string
+ * with respect to the entire tree string.
+ * @param {Object} node the node targeted
+ * @param {Object} diagram the diagram to compare to
+ * @returns {Array<int>} a pair of integers (start, end)
  */
-export const getSteps = (finalDiagram) => {
-  const steps = [[], []];
+function getStartAndEnd(node, diagram) {
+  const nodeLength = nodeToDeepString(node, diagram).length;
+  let start = 0;
+  let ans;
+  const tryFindAns = (n) => {
+    if (node === n) {
+      ans = [start, start + nodeLength];
+      return;
+    }
+    const childNodes = getChildNodes(n, diagram);
+    let holeNum = 0;
+    n.content.some((part) => {
+      if (part.type === 'hole') {
+        tryFindAns(childNodes[holeNum]);
+        if (ans) {
+          return true;
+        }
+        holeNum += 1;
+      } else {
+        start += part.content.length;
+      }
+      return false;
+    });
+  };
+  tryFindAns(diagram.root);
+  return ans;
+}
+
+/**
+ * Returns the steps needed to create the given final diagram.
+ * Structure of steps array: [
+ *   {
+ *     diagram: {...}
+ *     start: int,
+ *     end: int,
+ *   },
+ *   ...
+ * ]
+ * @param {Object} finalDiagram the final diagram
+ * @param {Object} options options for hiding values, types, edges, and/or root
+ * default {
+ *   noShowTypes: false,
+ *   noShowValues: false,
+ *   noShowSelectedRootNode: false,
+ *   noShowEdges: false,
+ * }
+ * @returns {Object} an empty object if diagram is not a tree;
+ * otherwise, an object containing the steps: {
+ *   expression: string,
+ *   steps: Array,
+ * }
+ */
+export const getSteps = (finalDiagram, options = {}) => {
+  if (getTreeFeedback(finalDiagram).length > 0) {
+    alert('The diagram is not a tree. Please try again.');
+    return {};
+  }
+  let steps = [];
   const diagram = {
     edges: [],
     nodes: [],
@@ -309,9 +365,15 @@ export const getSteps = (finalDiagram) => {
   const preorder = (finalDiagramNode) => {
     const node = JSON.parse(JSON.stringify(finalDiagramNode));
     node.value = undefined;
+    if (options.noShowTypes) {
+      node.type = undefined;
+    }
     node.isHighlighted = true;
     if (finalDiagramNode === finalDiagram.root) {
-      diagram.root = node;
+      if (!options.noShowSelectedRootNode) {
+        // eslint-disable-next-line no-param-reassign
+        diagram.root = node;
+      }
     } else {
       diagram.nodes[diagram.nodes.length - 1].isHighlighted = false;
       if (diagram.edges.length > 0) {
@@ -323,7 +385,12 @@ export const getSteps = (finalDiagram) => {
       diagram.edges.push(edge);
     }
     diagram.nodes.push(node);
-    steps[0].push(JSON.parse(JSON.stringify(diagram)));
+    const [start, end] = getStartAndEnd(finalDiagramNode, finalDiagram);
+    steps.push({
+      diagram: JSON.parse(JSON.stringify(diagram)),
+      start,
+      end,
+    });
     getChildNodes(finalDiagramNode, finalDiagram).forEach(preorder);
   };
   const postorder = (finalDiagramNode, prevNodeId) => {
@@ -336,14 +403,28 @@ export const getSteps = (finalDiagram) => {
     node.isHighlighted = true;
     const prevNode = diagram.nodes.find((n) => prevNodeId === n.nodePlug.valA);
     prevNode.isHighlighted = false;
-    steps[1].push(JSON.parse(JSON.stringify(diagram)));
+    steps.push({
+      diagram: JSON.parse(JSON.stringify(diagram)),
+    });
   };
   preorder(finalDiagram.root);
-  if (diagram.edges.length > 0) {
-    diagram.edges[diagram.edges.length - 1].isHighlighted = false;
+  if (!options.noShowValue) {
+    if (diagram.edges.length > 0) {
+      diagram.edges[diagram.edges.length - 1].isHighlighted = false;
+    }
+    postorder(finalDiagram.root, diagram.nodes[diagram.nodes.length - 1].nodePlug.valA);
   }
-  postorder(finalDiagram.root, diagram.nodes[diagram.nodes.length - 1].nodePlug.valA);
-  return steps;
+  if (options.noShowEdges) {
+    steps = steps.map((step) => {
+      // eslint-disable-next-line no-param-reassign
+      step.diagram.edges = [];
+      return step;
+    });
+  }
+  return {
+    expression: nodeToDeepString(finalDiagram.root, finalDiagram),
+    steps,
+  };
 };
 
 /**
