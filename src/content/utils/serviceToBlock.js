@@ -17,7 +17,6 @@ import {
   getChildNodes, getTreeFeedback, holePlaceholder, nodeToString,
 } from './solutionFeedback.js';
 import { getBlockly, getScratchToolbox } from './stateHandler.js';
-import { lastClickInfo } from './svgUtils.js';
 
 function opcodeToXml(opcode, blockly, scratchTB) {
   /* the two opcodes below are not in the toolbox, so we have them writen manually here */
@@ -37,6 +36,7 @@ function opcodeToXml(opcode, blockly, scratchTB) {
       );
 
     default:
+      break;
   }
   /* the opcode may be found in the toolbox
   or in a data category (such as for data-variable opcode) */
@@ -128,11 +128,11 @@ function nodeToOpcode(node, blockly, scratchTB, parentOpcodes = []) {
  * Creates the block corresponding to the given xml on the main workspace.
  * Inspired by scratch-blocks function Blockly.scratchBlocksUtils.duplicateAndDragCallback
  * @param {string} xml the xml corresponding to the to-be-created block
- * @param {Object} lastCreatedBlock the block that the to-be-created block should be placed next to
+ * @param {Object} lastClickedBlock the block that the to-be-created block should be placed next to
  * @param {Object} blockly a Blockly instance
  * @returns {Object} the to-be-created/created block
  */
-function createBlockFromXml(xml, lastCreatedBlock, blockly) {
+function createBlockFromXml(xml, lastClickedBlock, blockly) {
   let newBlock = null;
   // Disable events and manually emit events after the block has been
   // positioned and has had its shadow IDs fixed (Scratch-specific).
@@ -155,9 +155,9 @@ function createBlockFromXml(xml, lastCreatedBlock, blockly) {
   if (blockly.Events.isEnabled()) {
     blockly.Events.fire(new blockly.Events.BlockCreate(newBlock));
 
-    if (lastCreatedBlock) {
+    if (lastClickedBlock) {
       // The position of the old block in workspace coordinates.
-      const oldBlockPosWs = lastCreatedBlock.getRelativeToSurfaceXY();
+      const oldBlockPosWs = lastClickedBlock.getRelativeToSurfaceXY();
 
       // Place the new block as the same position as the old block.
       // TODO: Offset by the difference between the mouse position and the upper
@@ -236,8 +236,9 @@ function getDropdown(block) {
  * @param {Object} diagram the labeled diagram
  * @param {Object} blockly a Blockly instance
  * @param {Object} scratchTB a ScratchToolbox instance
+ * @param {Object} lastClickedBlock the last block that was clicked on
  */
-function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
+function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB, lastClickedBlock) {
   const nodeToDom = (node, block) => {
     const opcode = node.opcode[0][0];
     if (opcode === '') {
@@ -249,7 +250,7 @@ function createBlocksFromLabeledDiagram(diagram, blockly, scratchTB) {
         throw new Error(`could not create block of type ${opcode}`);
       }
       // eslint-disable-next-line no-param-reassign
-      block = createBlockFromXml(xml, lastClickInfo.block, blockly);
+      block = createBlockFromXml(xml, lastClickedBlock, blockly);
     }
     // eslint-disable-next-line no-param-reassign
     node.blockId = block.id;
@@ -386,7 +387,7 @@ export const pickOpcodesInDiagram = (diagram, blockly, scratchTB, isBeginner) =>
  * @param {boolean} isBeginner whether the user knows about the Scratch opcodes
  * @return {Object} the created block
  */
-export const serviceToBlock = (diagram, isBeginner) => {
+export const serviceToBlock = (diagram, lastClickedBlock, isBeginner) => {
   /* First check if diagram is a tree */
   if (getTreeFeedback(diagram).length > 0) {
     alert('The diagram is not a tree. Please try again.');
@@ -400,7 +401,7 @@ export const serviceToBlock = (diagram, isBeginner) => {
   try {
     pickOpcodesInDiagram(diagram, blockly, toolbox, isBeginner);
     if (process.env.NODE_ENV === 'testing') console.log(JSON.parse(JSON.stringify(diagram)));
-    createBlocksFromLabeledDiagram(diagram, blockly, toolbox);
+    createBlocksFromLabeledDiagram(diagram, blockly, toolbox, lastClickedBlock);
   } catch (e) {
     alert('Sorry, something went wrong during the export. The created blocks (if any) may be incorrect. Please try again.');
     throw e;

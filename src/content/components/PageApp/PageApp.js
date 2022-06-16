@@ -99,12 +99,12 @@ function PageApp({
 
   const exportHandler = useCallback(() => {
     const d = tutorToService(temporaryDiagram);
-    serviceToBlock(d, isBegginner);
+    serviceToBlock(d, lastClickInfo.block, isBegginner);
   }, [temporaryDiagram]);
 
   const evaluateHandler = useCallback(() => {
     const d = tutorToService(temporaryDiagram);
-    const block = serviceToBlock(d, isBegginner);
+    const block = serviceToBlock(d, undefined, isBegginner);
     createSvgButtonExpressionListenerWithCallback(block, (dt) => setDiagram(dt), true)();
   }, [temporaryDiagram]);
 
