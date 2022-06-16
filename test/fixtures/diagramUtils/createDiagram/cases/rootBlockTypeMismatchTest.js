@@ -233,25 +233,28 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [
-      {
+  expected: [
+    {
+      nodes: [
+        {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [{ content: 'username' }],
+          type: 'String',
+          isHighlighted: true,
+          value: 'asd6011',
+        },
+      ],
+      edges: [],
+      root: {
         nodePlug: { valA: 0, valB: 0 },
         content: [{ content: 'username' }],
         type: 'String',
         isHighlighted: true,
         value: 'asd6011',
       },
-    ],
-    edges: [],
-    root: {
-      nodePlug: { valA: 0, valB: 0 },
-      content: [{ content: 'username' }],
-      type: 'String',
-      isHighlighted: true,
-      value: 'asd6011',
     },
-  }, [1, 1]],
+    [1, 1],
+  ],
 };
 
 export default test;

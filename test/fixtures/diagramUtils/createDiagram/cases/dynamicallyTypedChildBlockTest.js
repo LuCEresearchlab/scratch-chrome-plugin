@@ -241,23 +241,26 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [
-      {
+  expected: [
+    {
+      nodes: [
+        {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [{ content: 'my variable' }],
+          type: ['Number', 'String', 'Boolean', 'Colour'],
+          value: '0',
+        },
+      ],
+      edges: [],
+      root: {
         nodePlug: { valA: 0, valB: 0 },
         content: [{ content: 'my variable' }],
         type: ['Number', 'String', 'Boolean', 'Colour'],
         value: '0',
       },
-    ],
-    edges: [],
-    root: {
-      nodePlug: { valA: 0, valB: 0 },
-      content: [{ content: 'my variable' }],
-      type: ['Number', 'String', 'Boolean', 'Colour'],
-      value: '0',
     },
-  }, [1, 1]],
+    [1, 1],
+  ],
 };
 
 export default test;

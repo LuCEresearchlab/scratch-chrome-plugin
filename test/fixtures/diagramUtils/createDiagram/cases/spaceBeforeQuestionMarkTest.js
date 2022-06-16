@@ -1002,17 +1002,20 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [{
-      nodePlug: { valA: 1, valB: 0 }, content: [{ content: '_mouse_' }], type: 'String', value: '_mouse_',
-    }, {
-      nodePlug: { valA: 0, valB: 0 }, content: [{ content: 'touching ' }, { valA: 0, valB: 1, type: 'String' }, { content: '?' }], type: 'Boolean', value: 'false',
-    }],
-    edges: [{ plugA: { valA: 0, valB: 1, type: 'String' }, plugB: { valA: 1, valB: 0 } }],
-    root: {
-      nodePlug: { valA: 0, valB: 0 }, content: [{ content: 'touching ' }, { valA: 0, valB: 1, type: 'String' }, { content: '?' }], type: 'Boolean', value: 'false',
+  expected: [
+    {
+      nodes: [{
+        nodePlug: { valA: 1, valB: 0 }, content: [{ content: '_mouse_' }], type: 'String', value: '_mouse_',
+      }, {
+        nodePlug: { valA: 0, valB: 0 }, content: [{ content: 'touching ' }, { valA: 0, valB: 1, type: 'String' }, { content: '?' }], type: 'Boolean', value: 'false',
+      }],
+      edges: [{ plugA: { valA: 0, valB: 1, type: 'String' }, plugB: { valA: 1, valB: 0 } }],
+      root: {
+        nodePlug: { valA: 0, valB: 0 }, content: [{ content: 'touching ' }, { valA: 0, valB: 1, type: 'String' }, { content: '?' }], type: 'Boolean', value: 'false',
+      },
     },
-  }, [2, 2]],
+    [2, 2],
+  ],
 };
 
 export default test;

@@ -450,37 +450,40 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [
-      {
-        nodePlug: { valA: 1, valB: 0 },
-        content: [{ content: '2.1' }],
-        type: 'Number',
-        value: '2.1',
-      },
-      {
+  expected: [
+    {
+      nodes: [
+        {
+          nodePlug: { valA: 1, valB: 0 },
+          content: [{ content: '2.1' }],
+          type: 'Number',
+          value: '2.1',
+        },
+        {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [
+            { content: 'round ' },
+            { valA: 0, valB: 1, type: 'Number' },
+          ],
+          type: 'Number',
+          value: '2',
+        },
+      ],
+      edges: [
+        {
+          plugA: { valA: 0, valB: 1, type: 'Number' },
+          plugB: { valA: 1, valB: 0 },
+        },
+      ],
+      root: {
         nodePlug: { valA: 0, valB: 0 },
-        content: [
-          { content: 'round ' },
-          { valA: 0, valB: 1, type: 'Number' },
-        ],
+        content: [{ content: 'round ' }, { valA: 0, valB: 1, type: 'Number' }],
         type: 'Number',
         value: '2',
       },
-    ],
-    edges: [
-      {
-        plugA: { valA: 0, valB: 1, type: 'Number' },
-        plugB: { valA: 1, valB: 0 },
-      },
-    ],
-    root: {
-      nodePlug: { valA: 0, valB: 0 },
-      content: [{ content: 'round ' }, { valA: 0, valB: 1, type: 'Number' }],
-      type: 'Number',
-      value: '2',
     },
-  }, [2, 2]],
+    [2, 2],
+  ],
 };
 
 export default test;

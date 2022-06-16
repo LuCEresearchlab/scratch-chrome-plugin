@@ -140,21 +140,43 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [
-      {
-        nodePlug: { valA: 1, valB: 0 },
-        content: [{ content: '' }],
-        type: 'Boolean',
-        value: 'false',
-      },
-      {
-        nodePlug: { valA: 2, valB: 0 },
-        content: [{ content: '' }],
-        type: 'Boolean',
-        value: 'false',
-      },
-      {
+  expected: [
+    {
+      nodes: [
+        {
+          nodePlug: { valA: 1, valB: 0 },
+          content: [{ content: '' }],
+          type: 'Boolean',
+          value: 'false',
+        },
+        {
+          nodePlug: { valA: 2, valB: 0 },
+          content: [{ content: '' }],
+          type: 'Boolean',
+          value: 'false',
+        },
+        {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [
+            { valA: 0, valB: 1, type: 'Boolean' },
+            { content: ' and ' },
+            { valA: 0, valB: 2, type: 'Boolean' },
+          ],
+          type: 'Boolean',
+          value: 'false',
+        },
+      ],
+      edges: [
+        {
+          plugA: { valA: 0, valB: 1, type: 'Boolean' },
+          plugB: { valA: 1, valB: 0 },
+        },
+        {
+          plugA: { valA: 0, valB: 2, type: 'Boolean' },
+          plugB: { valA: 2, valB: 0 },
+        },
+      ],
+      root: {
         nodePlug: { valA: 0, valB: 0 },
         content: [
           { valA: 0, valB: 1, type: 'Boolean' },
@@ -164,28 +186,9 @@ const test = {
         type: 'Boolean',
         value: 'false',
       },
-    ],
-    edges: [
-      {
-        plugA: { valA: 0, valB: 1, type: 'Boolean' },
-        plugB: { valA: 1, valB: 0 },
-      },
-      {
-        plugA: { valA: 0, valB: 2, type: 'Boolean' },
-        plugB: { valA: 2, valB: 0 },
-      },
-    ],
-    root: {
-      nodePlug: { valA: 0, valB: 0 },
-      content: [
-        { valA: 0, valB: 1, type: 'Boolean' },
-        { content: ' and ' },
-        { valA: 0, valB: 2, type: 'Boolean' },
-      ],
-      type: 'Boolean',
-      value: 'false',
     },
-  }, [3, 2]],
+    [3, 2],
+  ],
 };
 
 export default test;

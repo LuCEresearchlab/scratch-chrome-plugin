@@ -342,21 +342,44 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [
-      {
-        nodePlug: { valA: 1, valB: 0 },
-        content: [{ content: 'apple ' }],
-        type: 'String',
-        value: 'apple ',
-      },
-      {
-        nodePlug: { valA: 2, valB: 0 },
-        content: [{ content: 'banana' }],
-        type: 'String',
-        value: 'banana',
-      },
-      {
+  expected: [
+    {
+      nodes: [
+        {
+          nodePlug: { valA: 1, valB: 0 },
+          content: [{ content: 'apple ' }],
+          type: 'String',
+          value: 'apple ',
+        },
+        {
+          nodePlug: { valA: 2, valB: 0 },
+          content: [{ content: 'banana' }],
+          type: 'String',
+          value: 'banana',
+        },
+        {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [
+            { content: 'join ' },
+            { valA: 0, valB: 1, type: 'String' },
+            { content: ' ' },
+            { valA: 0, valB: 2, type: 'String' },
+          ],
+          type: 'String',
+          value: 'apple banana',
+        },
+      ],
+      edges: [
+        {
+          plugA: { valA: 0, valB: 1, type: 'String' },
+          plugB: { valA: 1, valB: 0 },
+        },
+        {
+          plugA: { valA: 0, valB: 2, type: 'String' },
+          plugB: { valA: 2, valB: 0 },
+        },
+      ],
+      root: {
         nodePlug: { valA: 0, valB: 0 },
         content: [
           { content: 'join ' },
@@ -367,29 +390,9 @@ const test = {
         type: 'String',
         value: 'apple banana',
       },
-    ],
-    edges: [
-      {
-        plugA: { valA: 0, valB: 1, type: 'String' },
-        plugB: { valA: 1, valB: 0 },
-      },
-      {
-        plugA: { valA: 0, valB: 2, type: 'String' },
-        plugB: { valA: 2, valB: 0 },
-      },
-    ],
-    root: {
-      nodePlug: { valA: 0, valB: 0 },
-      content: [
-        { content: 'join ' },
-        { valA: 0, valB: 1, type: 'String' },
-        { content: ' ' },
-        { valA: 0, valB: 2, type: 'String' },
-      ],
-      type: 'String',
-      value: 'apple banana',
     },
-  }, [3, 2]],
+    [3, 2],
+  ],
 };
 
 export default test;

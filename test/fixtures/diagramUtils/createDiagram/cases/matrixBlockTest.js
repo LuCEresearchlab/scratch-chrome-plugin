@@ -232,23 +232,26 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [
-      {
+  expected: [
+    {
+      nodes: [
+        {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [{ content: '0101010101100010101000100' }],
+          type: 'Number',
+          value: '0101010101100010101000100',
+        },
+      ],
+      edges: [],
+      root: {
         nodePlug: { valA: 0, valB: 0 },
         content: [{ content: '0101010101100010101000100' }],
         type: 'Number',
         value: '0101010101100010101000100',
       },
-    ],
-    edges: [],
-    root: {
-      nodePlug: { valA: 0, valB: 0 },
-      content: [{ content: '0101010101100010101000100' }],
-      type: 'Number',
-      value: '0101010101100010101000100',
     },
-  }, [1, 1]],
+    [1, 1],
+  ],
 };
 
 export default test;

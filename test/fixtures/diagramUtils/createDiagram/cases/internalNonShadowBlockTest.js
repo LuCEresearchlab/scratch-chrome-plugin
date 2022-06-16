@@ -439,37 +439,67 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [
-      {
-        nodePlug: { valA: 1, valB: 0 },
-        content: [{ content: '3' }],
-        type: 'Number',
-        value: '3',
-      },
-      {
-        nodePlug: { valA: 3, valB: 0 },
-        content: [{ content: '2' }],
-        type: 'Number',
-        value: '2',
-      },
-      {
-        nodePlug: { valA: 4, valB: 0 },
-        content: [{ content: '1' }],
-        type: 'Number',
-        value: '1',
-      },
-      {
-        nodePlug: { valA: 2, valB: 0 },
-        content: [
-          { valA: 2, valB: 1, type: 'Number' },
-          { content: ' + ' },
-          { valA: 2, valB: 2, type: 'Number' },
-        ],
-        type: 'Number',
-        value: '3',
-      },
-      {
+  expected: [
+    {
+      nodes: [
+        {
+          nodePlug: { valA: 1, valB: 0 },
+          content: [{ content: '3' }],
+          type: 'Number',
+          value: '3',
+        },
+        {
+          nodePlug: { valA: 3, valB: 0 },
+          content: [{ content: '2' }],
+          type: 'Number',
+          value: '2',
+        },
+        {
+          nodePlug: { valA: 4, valB: 0 },
+          content: [{ content: '1' }],
+          type: 'Number',
+          value: '1',
+        },
+        {
+          nodePlug: { valA: 2, valB: 0 },
+          content: [
+            { valA: 2, valB: 1, type: 'Number' },
+            { content: ' + ' },
+            { valA: 2, valB: 2, type: 'Number' },
+          ],
+          type: 'Number',
+          value: '3',
+        },
+        {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [
+            { valA: 0, valB: 1, type: 'Number' },
+            { content: ' * ' },
+            { valA: 0, valB: 2, type: 'Number' },
+          ],
+          type: 'Number',
+          value: '9',
+        },
+      ],
+      edges: [
+        {
+          plugA: { valA: 0, valB: 1, type: 'Number' },
+          plugB: { valA: 1, valB: 0 },
+        },
+        {
+          plugA: { valA: 0, valB: 2, type: 'Number' },
+          plugB: { valA: 2, valB: 0 },
+        },
+        {
+          plugA: { valA: 2, valB: 1, type: 'Number' },
+          plugB: { valA: 3, valB: 0 },
+        },
+        {
+          plugA: { valA: 2, valB: 2, type: 'Number' },
+          plugB: { valA: 4, valB: 0 },
+        },
+      ],
+      root: {
         nodePlug: { valA: 0, valB: 0 },
         content: [
           { valA: 0, valB: 1, type: 'Number' },
@@ -479,36 +509,9 @@ const test = {
         type: 'Number',
         value: '9',
       },
-    ],
-    edges: [
-      {
-        plugA: { valA: 0, valB: 1, type: 'Number' },
-        plugB: { valA: 1, valB: 0 },
-      },
-      {
-        plugA: { valA: 0, valB: 2, type: 'Number' },
-        plugB: { valA: 2, valB: 0 },
-      },
-      {
-        plugA: { valA: 2, valB: 1, type: 'Number' },
-        plugB: { valA: 3, valB: 0 },
-      },
-      {
-        plugA: { valA: 2, valB: 2, type: 'Number' },
-        plugB: { valA: 4, valB: 0 },
-      },
-    ],
-    root: {
-      nodePlug: { valA: 0, valB: 0 },
-      content: [
-        { valA: 0, valB: 1, type: 'Number' },
-        { content: ' * ' },
-        { valA: 0, valB: 2, type: 'Number' },
-      ],
-      type: 'Number',
-      value: '9',
     },
-  }, [5, 3]],
+    [5, 3],
+  ],
 };
 
 export default test;

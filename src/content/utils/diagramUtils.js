@@ -312,7 +312,7 @@ function getStartAndEnd(node, diagram) {
     const childNodes = getChildNodes(n, diagram);
     let holeNum = 0;
     n.content.some((part) => {
-      if (part.type === 'hole') {
+      if (typeof part.content !== 'string') {
         tryFindAns(childNodes[holeNum]);
         if (ans) {
           return true;
@@ -354,7 +354,6 @@ function getStartAndEnd(node, diagram) {
  */
 export const getSteps = (finalDiagram, options = {}) => {
   if (getTreeFeedback(finalDiagram).length > 0) {
-    alert('The diagram is not a tree. Please try again.');
     return {};
   }
   let steps = [];
@@ -408,7 +407,7 @@ export const getSteps = (finalDiagram, options = {}) => {
     });
   };
   preorder(finalDiagram.root);
-  if (!options.noShowValue) {
+  if (!options.noShowValues) {
     if (diagram.edges.length > 0) {
       diagram.edges[diagram.edges.length - 1].isHighlighted = false;
     }

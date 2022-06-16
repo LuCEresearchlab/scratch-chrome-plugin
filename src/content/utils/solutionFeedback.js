@@ -7,7 +7,7 @@ function getNumHoles(node, labelIndex) {
     if (labelIndex !== undefined && labelIndex <= index) {
       return true;
     }
-    if (part.type === 'hole') {
+    if (typeof part.content !== 'string') {
       count += 1;
       index += holePlaceholder.length;
     } else {
@@ -45,7 +45,7 @@ export function getChildNodes(node, diagram, holeNumberLow, holeNumberHigh) {
 export function nodeToString(node) {
   let str = '';
   node.content.forEach((part) => {
-    if (part.type === 'hole') {
+    if (typeof part.content !== 'string') {
       str += holePlaceholder;
     } else {
       str += part.content;
@@ -59,7 +59,7 @@ export function nodeToDeepString(node, diagram) {
   let holeNum = 0;
   const childNodes = getChildNodes(node, diagram);
   node.content.forEach((part) => {
-    if (part.type === 'hole') {
+    if (typeof part.content !== 'string') {
       str += nodeToDeepString(childNodes[holeNum], diagram);
       holeNum += 1;
     } else {
@@ -100,7 +100,7 @@ export function getTreeFeedback(diagram) {
     let holeNumber = 0;
     let labelIndex = 0;
     node.content.forEach((part) => {
-      if (part.type === 'hole') {
+      if (typeof part.content !== 'string') {
         const childNodes = getChildNodes(node, diagram, holeNumber, holeNumber + 1);
         if (childNodes.length === 0) {
           feedback.push({ type: 'structuralMissingChild', node: node.nodePlug.valA, labelIndex });

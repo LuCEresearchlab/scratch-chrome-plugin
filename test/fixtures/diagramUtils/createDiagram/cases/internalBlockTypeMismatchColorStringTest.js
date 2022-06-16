@@ -235,15 +235,34 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [
-      {
-        nodePlug: { valA: 1, valB: 0 },
-        content: [{ content: 'answer' }],
-        type: 'String',
-        value: '',
-      },
-      {
+  expected: [
+    {
+      nodes: [
+        {
+          nodePlug: { valA: 1, valB: 0 },
+          content: [{ content: 'answer' }],
+          type: 'String',
+          value: '',
+        },
+        {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [
+            { content: 'touching color ' },
+            { valA: 0, valB: 1, type: 'Colour' },
+            { content: '?' },
+          ],
+          type: 'Boolean',
+          value: 'false',
+        },
+      ],
+      edges: [
+        {
+          plugA: { valA: 0, valB: 1, type: 'Colour' },
+          plugB: { valA: 1, valB: 0 },
+          isHighlighted: true,
+        },
+      ],
+      root: {
         nodePlug: { valA: 0, valB: 0 },
         content: [
           { content: 'touching color ' },
@@ -253,25 +272,9 @@ const test = {
         type: 'Boolean',
         value: 'false',
       },
-    ],
-    edges: [
-      {
-        plugA: { valA: 0, valB: 1, type: 'Colour' },
-        plugB: { valA: 1, valB: 0 },
-        isHighlighted: true,
-      },
-    ],
-    root: {
-      nodePlug: { valA: 0, valB: 0 },
-      content: [
-        { content: 'touching color ' },
-        { valA: 0, valB: 1, type: 'Colour' },
-        { content: '?' },
-      ],
-      type: 'Boolean',
-      value: 'false',
     },
-  }, [2, 2]],
+    [2, 2],
+  ],
 };
 
 export default test;

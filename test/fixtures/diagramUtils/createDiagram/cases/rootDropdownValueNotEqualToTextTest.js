@@ -328,23 +328,26 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [
-      {
+  expected: [
+    {
+      nodes: [
+        {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [{ content: '_random_' }],
+          type: 'String',
+          value: '_random_',
+        },
+      ],
+      edges: [],
+      root: {
         nodePlug: { valA: 0, valB: 0 },
         content: [{ content: '_random_' }],
         type: 'String',
         value: '_random_',
       },
-    ],
-    edges: [],
-    root: {
-      nodePlug: { valA: 0, valB: 0 },
-      content: [{ content: '_random_' }],
-      type: 'String',
-      value: '_random_',
     },
-  }, [1, 1]],
+    [1, 1],
+  ],
 };
 
 export default test;

@@ -408,23 +408,26 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [
-      {
+  expected: [
+    {
+      nodes: [
+        {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [{ content: 'answer' }],
+          type: 'String',
+          value: '',
+        },
+      ],
+      edges: [],
+      root: {
         nodePlug: { valA: 0, valB: 0 },
         content: [{ content: 'answer' }],
         type: 'String',
         value: '',
       },
-    ],
-    edges: [],
-    root: {
-      nodePlug: { valA: 0, valB: 0 },
-      content: [{ content: 'answer' }],
-      type: 'String',
-      value: '',
     },
-  }, [1, 1]],
+    [1, 1],
+  ],
 };
 
 export default test;

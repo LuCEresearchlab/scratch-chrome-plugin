@@ -375,21 +375,45 @@ const test = {
       updateMonitor: false,
     },
   ],
-  expected: [{
-    nodes: [
-      {
-        nodePlug: { valA: 1, valB: 0 },
-        content: [{ content: '#61feff' }],
-        type: 'Colour',
-        value: '#61feff',
-      },
-      {
-        nodePlug: { valA: 2, valB: 0 },
-        content: [{ content: '#19577c' }],
-        type: 'Colour',
-        value: '#19577c',
-      },
-      {
+  expected: [
+    {
+      nodes: [
+        {
+          nodePlug: { valA: 1, valB: 0 },
+          content: [{ content: '#61feff' }],
+          type: 'Colour',
+          value: '#61feff',
+        },
+        {
+          nodePlug: { valA: 2, valB: 0 },
+          content: [{ content: '#19577c' }],
+          type: 'Colour',
+          value: '#19577c',
+        },
+        {
+          nodePlug: { valA: 0, valB: 0 },
+          content: [
+            { content: 'color ' },
+            { valA: 0, valB: 1, type: 'Colour' },
+            { content: ' is touching ' },
+            { valA: 0, valB: 2, type: 'Colour' },
+            { content: '?' },
+          ],
+          type: 'Boolean',
+          value: 'false',
+        },
+      ],
+      edges: [
+        {
+          plugA: { valA: 0, valB: 1, type: 'Colour' },
+          plugB: { valA: 1, valB: 0 },
+        },
+        {
+          plugA: { valA: 0, valB: 2, type: 'Colour' },
+          plugB: { valA: 2, valB: 0 },
+        },
+      ],
+      root: {
         nodePlug: { valA: 0, valB: 0 },
         content: [
           { content: 'color ' },
@@ -401,30 +425,9 @@ const test = {
         type: 'Boolean',
         value: 'false',
       },
-    ],
-    edges: [
-      {
-        plugA: { valA: 0, valB: 1, type: 'Colour' },
-        plugB: { valA: 1, valB: 0 },
-      },
-      {
-        plugA: { valA: 0, valB: 2, type: 'Colour' },
-        plugB: { valA: 2, valB: 0 },
-      },
-    ],
-    root: {
-      nodePlug: { valA: 0, valB: 0 },
-      content: [
-        { content: 'color ' },
-        { valA: 0, valB: 1, type: 'Colour' },
-        { content: ' is touching ' },
-        { valA: 0, valB: 2, type: 'Colour' },
-        { content: '?' },
-      ],
-      type: 'Boolean',
-      value: 'false',
     },
-  }, [3, 2]],
+    [3, 2],
+  ],
 };
 
 export default test;
