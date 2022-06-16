@@ -798,6 +798,8 @@ const test = {
             isHighlighted: false,
           },
         },
+        start: 0,
+        end: 1,
       },
       {
         diagram: {
@@ -964,6 +966,8 @@ const test = {
             isHighlighted: false,
           },
         },
+        start: 4,
+        end: 5,
       },
       {
         diagram: {
@@ -1077,174 +1081,6 @@ const test = {
               ],
               type: 'Number',
               isHighlighted: false,
-            },
-            {
-              nodePlug: {
-                valA: 3,
-                valB: 0,
-              },
-              content: [
-                {
-                  content: '2',
-                },
-              ],
-              type: 'Number',
-              value: '2',
-              isHighlighted: false,
-            },
-            {
-              nodePlug: {
-                valA: 4,
-                valB: 0,
-              },
-              content: [
-                {
-                  content: '1',
-                },
-              ],
-              type: 'Number',
-              value: '1',
-              isHighlighted: true,
-            },
-          ],
-          root: {
-            nodePlug: {
-              valA: 0,
-              valB: 0,
-            },
-            content: [
-              {
-                valA: 0,
-                valB: 1,
-                type: 'Number',
-              },
-              {
-                content: ' * ',
-              },
-              {
-                valA: 0,
-                valB: 2,
-                type: 'Number',
-              },
-            ],
-            type: 'Number',
-            isHighlighted: false,
-          },
-        },
-      },
-      {
-        diagram: {
-          edges: [
-            {
-              plugA: {
-                valA: 0,
-                valB: 1,
-                type: 'Number',
-              },
-              plugB: {
-                valA: 1,
-                valB: 0,
-              },
-              isHighlighted: false,
-            },
-            {
-              plugA: {
-                valA: 0,
-                valB: 2,
-                type: 'Number',
-              },
-              plugB: {
-                valA: 2,
-                valB: 0,
-              },
-              isHighlighted: false,
-            },
-            {
-              plugA: {
-                valA: 2,
-                valB: 1,
-                type: 'Number',
-              },
-              plugB: {
-                valA: 3,
-                valB: 0,
-              },
-              isHighlighted: false,
-            },
-            {
-              plugA: {
-                valA: 2,
-                valB: 2,
-                type: 'Number',
-              },
-              plugB: {
-                valA: 4,
-                valB: 0,
-              },
-              isHighlighted: false,
-            },
-          ],
-          nodes: [
-            {
-              nodePlug: {
-                valA: 0,
-                valB: 0,
-              },
-              content: [
-                {
-                  valA: 0,
-                  valB: 1,
-                  type: 'Number',
-                },
-                {
-                  content: ' * ',
-                },
-                {
-                  valA: 0,
-                  valB: 2,
-                  type: 'Number',
-                },
-              ],
-              type: 'Number',
-              isHighlighted: false,
-            },
-            {
-              nodePlug: {
-                valA: 1,
-                valB: 0,
-              },
-              content: [
-                {
-                  content: '3',
-                },
-              ],
-              type: 'Number',
-              value: '3',
-              isHighlighted: false,
-            },
-            {
-              nodePlug: {
-                valA: 2,
-                valB: 0,
-              },
-              content: [
-                {
-                  valA: 2,
-                  valB: 1,
-                  type: 'Number',
-                },
-                {
-                  content: ' + ',
-                },
-                {
-                  valA: 2,
-                  valB: 2,
-                  type: 'Number',
-                },
-              ],
-              type: 'Number',
-              value: '3',
-              isHighlighted: true,
             },
             {
               nodePlug: {
@@ -1299,6 +1135,178 @@ const test = {
             isHighlighted: false,
           },
         },
+        start: 8,
+        end: 9,
+      },
+      {
+        diagram: {
+          edges: [
+            {
+              plugA: {
+                valA: 0,
+                valB: 1,
+                type: 'Number',
+              },
+              plugB: {
+                valA: 1,
+                valB: 0,
+              },
+              isHighlighted: false,
+            },
+            {
+              plugA: {
+                valA: 0,
+                valB: 2,
+                type: 'Number',
+              },
+              plugB: {
+                valA: 2,
+                valB: 0,
+              },
+              isHighlighted: false,
+            },
+            {
+              plugA: {
+                valA: 2,
+                valB: 1,
+                type: 'Number',
+              },
+              plugB: {
+                valA: 3,
+                valB: 0,
+              },
+              isHighlighted: false,
+            },
+            {
+              plugA: {
+                valA: 2,
+                valB: 2,
+                type: 'Number',
+              },
+              plugB: {
+                valA: 4,
+                valB: 0,
+              },
+              isHighlighted: false,
+            },
+          ],
+          nodes: [
+            {
+              nodePlug: {
+                valA: 0,
+                valB: 0,
+              },
+              content: [
+                {
+                  valA: 0,
+                  valB: 1,
+                  type: 'Number',
+                },
+                {
+                  content: ' * ',
+                },
+                {
+                  valA: 0,
+                  valB: 2,
+                  type: 'Number',
+                },
+              ],
+              type: 'Number',
+              isHighlighted: false,
+            },
+            {
+              nodePlug: {
+                valA: 1,
+                valB: 0,
+              },
+              content: [
+                {
+                  content: '3',
+                },
+              ],
+              type: 'Number',
+              value: '3',
+              isHighlighted: false,
+            },
+            {
+              nodePlug: {
+                valA: 2,
+                valB: 0,
+              },
+              content: [
+                {
+                  valA: 2,
+                  valB: 1,
+                  type: 'Number',
+                },
+                {
+                  content: ' + ',
+                },
+                {
+                  valA: 2,
+                  valB: 2,
+                  type: 'Number',
+                },
+              ],
+              type: 'Number',
+              value: '3',
+              isHighlighted: true,
+            },
+            {
+              nodePlug: {
+                valA: 3,
+                valB: 0,
+              },
+              content: [
+                {
+                  content: '2',
+                },
+              ],
+              type: 'Number',
+              value: '2',
+              isHighlighted: false,
+            },
+            {
+              nodePlug: {
+                valA: 4,
+                valB: 0,
+              },
+              content: [
+                {
+                  content: '1',
+                },
+              ],
+              type: 'Number',
+              value: '1',
+              isHighlighted: true,
+            },
+          ],
+          root: {
+            nodePlug: {
+              valA: 0,
+              valB: 0,
+            },
+            content: [
+              {
+                valA: 0,
+                valB: 1,
+                type: 'Number',
+              },
+              {
+                content: ' * ',
+              },
+              {
+                valA: 0,
+                valB: 2,
+                type: 'Number',
+              },
+            ],
+            type: 'Number',
+            isHighlighted: false,
+          },
+        },
+        start: 4,
+        end: 9,
       },
       {
         diagram: {
@@ -1469,6 +1477,8 @@ const test = {
             isHighlighted: true,
           },
         },
+        start: 0,
+        end: 9,
       },
     ],
   },

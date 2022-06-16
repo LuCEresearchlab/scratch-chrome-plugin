@@ -397,6 +397,8 @@ const test = {
             isHighlighted: false,
           },
         },
+        start: 0,
+        end: 2,
       },
       {
         diagram: {
@@ -503,6 +505,8 @@ const test = {
             isHighlighted: false,
           },
         },
+        start: 5,
+        end: 6,
       },
       {
         diagram: {
@@ -611,6 +615,8 @@ const test = {
             isHighlighted: true,
           },
         },
+        start: 0,
+        end: 6,
       },
     ],
   },

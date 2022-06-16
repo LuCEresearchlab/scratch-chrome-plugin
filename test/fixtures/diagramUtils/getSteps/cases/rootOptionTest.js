@@ -308,6 +308,8 @@ const test = {
             },
           ],
         },
+        start: 0,
+        end: 0,
       },
       {
         diagram: {
@@ -391,6 +393,8 @@ const test = {
             },
           ],
         },
+        start: 3,
+        end: 3,
       },
       {
         diagram: {
@@ -475,6 +479,8 @@ const test = {
             },
           ],
         },
+        start: 0,
+        end: 3,
       },
     ],
   },

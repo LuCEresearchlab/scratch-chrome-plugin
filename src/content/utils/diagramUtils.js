@@ -361,6 +361,7 @@ export const getSteps = (finalDiagram, options = {}) => {
     edges: [],
     nodes: [],
   };
+  const startEnds = {};
   const preorder = (finalDiagramNode) => {
     const node = JSON.parse(JSON.stringify(finalDiagramNode));
     node.value = undefined;
@@ -385,6 +386,7 @@ export const getSteps = (finalDiagram, options = {}) => {
     }
     diagram.nodes.push(node);
     const [start, end] = getStartAndEnd(finalDiagramNode, finalDiagram);
+    startEnds[finalDiagramNode.nodePlug.valA] = [start, end];
     steps.push({
       diagram: JSON.parse(JSON.stringify(diagram)),
       start,
@@ -402,8 +404,11 @@ export const getSteps = (finalDiagram, options = {}) => {
     node.isHighlighted = true;
     const prevNode = diagram.nodes.find((n) => prevNodeId === n.nodePlug.valA);
     prevNode.isHighlighted = false;
+    const [start, end] = startEnds[finalDiagramNode.nodePlug.valA];
     steps.push({
       diagram: JSON.parse(JSON.stringify(diagram)),
+      start,
+      end,
     });
   };
   preorder(finalDiagram.root);
