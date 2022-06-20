@@ -71,6 +71,9 @@ const removeSvgButtonFromSvg = (svg) => {
     });
 };
 
+/**
+ * Info about the last clicked SVG button: the button's block and service diagram.
+ */
 export const lastClickInfo = {
   diagram: undefined,
   block: undefined,
@@ -214,9 +217,10 @@ const createSvgButtonExpressionListener = (block) => createSvgButtonExpressionLi
 );
 
 /**
- * Returns the SVG path and type of each empty block directly under this block
+ * Returns the SVG path and type of each empty block directly under this block.
+ * format: { outlinePath: path, type: string }
  * @param {Blockly.Block} block the parent block of the empty blocks
- * @returns the SVG path and type of each empty block directly under this block
+ * @returns {Array<Object>} the SVG path and type of each empty block directly under this block
  */
 const getEmptyBlockSvgElementsAndTypes = (block) => {
   const emptyInfo = [];
@@ -241,6 +245,10 @@ const appendSvgButtonToExpressionBlock = (block) => {
   createSvgButton(svgGroup_, onClickListener, blockId);
 };
 
+/**
+ * Adds a button to the given block
+ * @param {Blockly.Block} block the block to add button to
+ */
 export const appendSvgButtonToBlock = (block) => {
   if (!block) return;
 
@@ -273,6 +281,10 @@ export const appendSvgButtonToBlock = (block) => {
   }
 };
 
+/**
+ * Returns an array of block ids (all blocks with buttons in this main workspace).
+ * @returns an array of block ids (all blocks with buttons in this main workspace)
+ */
 const getAllBlockIds = () => {
   const allButtons = document.querySelectorAll(`.${svgButtonClassName}`);
   const ids = [];
@@ -292,7 +304,10 @@ export function getExpressionList() {
   const ids = getAllBlockIds();
   return ids.map((id) => {
     const block = getBlockly().mainWorkspace.getBlockById(id);
-    const expression = block.toString();
+    let expression = block.toString(); // toString may insert an extra space before question marks
+    if (expression.endsWith(' ?')) {
+      expression = `${expression.substring(0, expression.length - 2)}?`;
+    }
     const blockId = id;
     const [nodes, depth] = getNodesAndDepth(block);
     return {
@@ -316,6 +331,10 @@ export function clickSvgButtonOfBlock(blockId) {
   )();
 }
 
+/**
+ * Hides or displayes svg buttons based on the new value.
+ * @param {*} newValue whether to display buttons
+ */
 export const updateDisplaySvgButtons = (newValue) => {
   if (displaySvgButtons === newValue) return;
   displaySvgButtons = newValue;

@@ -217,6 +217,7 @@ if (process.env.NODE_ENV === 'testing') {
   typeToMsg.en = typeToMsgEn;
 } else {
   const blockly = getBlockly();
+  /* this could be done before building */
   if (blockly) setupTypeToMsg(blockly);
 }
 

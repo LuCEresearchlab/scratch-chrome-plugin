@@ -102,6 +102,7 @@ const createDiagram = (inputBlock, thread) => {
 
   function addTrailingTextToNode(node, text) {
     if (text.length !== 0) {
+      /* ternary used to avoid adding an extra space before question mark */
       node.content.push({
         content: node.content.length === 0 || text === '?' ? text : ` ${text}`,
       });

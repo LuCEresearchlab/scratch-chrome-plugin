@@ -1,5 +1,13 @@
 export const holePlaceholder = '{{}}';
 
+/**
+ * Returns the number of holes until that are before the labelIndex.
+ * If labelIndex is undefined, return total number of holes.
+ * Note that the string length of a hole is `holePlaceholder.length`
+ * @param {Object} node the node to count holes on
+ * @param {Object} labelIndex the upper bound index for hole counting
+ * @returns the number of holes until that are before the labelIndex (if defined)
+ */
 function getNumHoles(node, labelIndex) {
   let count = 0;
   let index = 0;
@@ -23,6 +31,9 @@ function getInEdges(node, diagram) {
   return diagram.edges.filter((edge) => edge.plugB.valA === nodeId);
 }
 
+/**
+ * See getChildNodes
+ */
 function getOutEdges(node, diagram, holeNumberLow, holeNumberHigh) {
   const nodeId = node.nodePlug.valA;
   return diagram.edges.filter((edge) => edge.plugA.valA === nodeId
@@ -36,12 +47,28 @@ function getParentNodes(node, diagram) {
   return diagram.nodes.filter((n) => parentIds.includes(n.nodePlug.valA));
 }
 
+/**
+ * Returns the child nodes that are
+ * between holeNumberLow (inclusive) and holeNumberHigh (exclusive).
+ * If holeNumberLow is undefined, all children are returned.
+ * @param {Object} node the parent node
+ * @param {Object} diagram the diagram of the parent node
+ * @param {int} holeNumberLow the lower bound for child-node selection
+ * @param {int} holeNumberHigh the upper bound for child-node selection
+ * @returns the child nodes that are
+ * between holeNumberLow (inclusive) and holeNumberHigh (exclusive)
+ */
 export function getChildNodes(node, diagram, holeNumberLow, holeNumberHigh) {
   const outEdges = getOutEdges(node, diagram, holeNumberLow, holeNumberHigh);
   const childIds = outEdges.map((edge) => edge.plugB.valA);
   return diagram.nodes.filter((n) => childIds.includes(n.nodePlug.valA));
 }
 
+/**
+ * Returns the string of this node, using the holePlaceholder for holes.
+ * @param {Object} node the node to convert
+ * @returns the string of this node, using the holePlaceholder for holes
+ */
 export function nodeToString(node) {
   let str = '';
   node.content.forEach((part) => {
@@ -54,6 +81,12 @@ export function nodeToString(node) {
   return str;
 }
 
+/**
+ * Returns the string of this node, replacing all its holes with the strings of its child nodes.
+ * @param {Object} node the node to convert
+ * @param {Object} diagram the diagram of the node
+ * @returns the string of this node, replacing all its holes with the strings of its child nodes.
+ */
 export function nodeToDeepString(node, diagram) {
   let str = '';
   let holeNum = 0;

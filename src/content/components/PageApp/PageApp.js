@@ -121,7 +121,6 @@ function PageApp({
 
   const getStepsHandler = useCallback(() => {
     const d = tutorToService(temporaryDiagram);
-    console.log(d);
     console.log(getSteps(d));
   }, [temporaryDiagram]);
 
