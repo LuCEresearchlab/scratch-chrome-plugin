@@ -50,6 +50,30 @@ const getCircularReplacer = () => {
 };
 
 /**
+ * Returns the diagram for an empty hole with the given type (only possibility is boolean).
+ * @param {string} type the type of the hole
+ * @returns the created diagram
+ */
+export const createDiagramForEmptyHole = (type) => {
+  /* create diagram for empty block/hole */
+  const value = typeToDefaultValue(type);
+  const node = {
+    nodePlug: { valA: 0, valB: 0 },
+    content: [{
+      content: getEmptyOrShadowContent(),
+    }],
+    type,
+    value,
+  };
+  const d = {
+    nodes: [node],
+    edges: [],
+    root: node,
+  };
+  return d;
+};
+
+/**
  * Converts the given block into a diagram.
  * @param {Object} inputBlock the block
  * @param {Object} thread the thread used to evaluate the block

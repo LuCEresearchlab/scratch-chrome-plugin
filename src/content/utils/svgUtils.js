@@ -5,11 +5,10 @@ import ReactDOM from 'react-dom';
 import ExpressionTutorLogo from '../components/ExpressionTutorLogo/ExpressionTutorLogo.js';
 
 import { getBlockly, getScratchVM } from './stateHandler.js';
-import createDiagram, { getNodesAndDepth } from './diagramUtils.js';
+import createDiagram, { createDiagramForEmptyHole, getNodesAndDepth } from './diagramUtils.js';
 
 import {
   opcodeToExpressionTypeInfo,
-  typeToDefaultValue,
 } from './scratchVmUtils.js';
 import { postMessageToContentScript } from '../contentScripts/messages.js';
 import serviceToTutor, { tutorToService } from './serviceToTutor.js';
@@ -119,20 +118,7 @@ const createSvgButton = (element, onClickListener, blockId = '') => {
 const createSvgButtonEmptyListener = (type) => (e) => {
   e.stopPropagation();
   e.preventDefault();
-  const value = typeToDefaultValue(type);
-  const node = {
-    nodePlug: { valA: 0, valB: 0 },
-    content: [{
-      content: value,
-    }],
-    type,
-    value,
-  };
-  const d = {
-    nodes: [node],
-    edges: [],
-    root: node,
-  };
+  const d = createDiagramForEmptyHole(type);
   postMessageToContentScript('selectedNewDiagram', serviceToTutor(d));
 };
 
