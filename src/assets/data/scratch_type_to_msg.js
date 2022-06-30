@@ -216,8 +216,13 @@ function setupTypeToMsg(blockly) {
 if (process.env.NODE_ENV === 'testing') {
   typeToMsg.en = typeToMsgEn;
 } else {
+  /*
+   * this could be done before building;
+   * however, keeping it this way makes it easier
+   * to adapt to new changes in extensions-msgs.js in scratch-l10n,
+   * updating ./locales/extensions-msgs.js as needed.
+   */
   const blockly = getBlockly();
-  /* this could be done before building */
   if (blockly) setupTypeToMsg(blockly);
 }
 
