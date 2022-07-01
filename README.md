@@ -58,3 +58,4 @@ The expected is (4).
 ## Authors
 
 * Alen Sugimoto
+* Andrea Gallidabino
