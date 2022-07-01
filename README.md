@@ -54,3 +54,7 @@ The expected is (4).
   3. Make sure that `Developer mode` is active (top-right of the page);
   4. Press `load unpacked`;
   5. Browse to the location of this plugin and select the `build` directory;
+
+## Authors
+
+* Alen Sugimoto
