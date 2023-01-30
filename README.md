@@ -59,6 +59,7 @@ The expected is (4).
   5. Browse to the location of this plugin and select the `build` directory;
   ![alt text](img/4.png)
   
+  When you open a Scratch project you will see the Chrome Plugin tooltip!
   ![alt text](img/5.png)
 
 ## Authors
