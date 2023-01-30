@@ -52,9 +52,14 @@ The expected is (4).
   1. Open Chrome;
   2. Go to the following URI: `chrome://extensions/`;
   ![alt text](img/1.png)
-  4. Make sure that `Developer mode` is active (top-right of the page);
-  5. Press `load unpacked`;
-  6. Browse to the location of this plugin and select the `build` directory;
+  3. Make sure that `Developer mode` is active (top-right of the page);
+  ![alt text](img/2.png)
+  4. Press `load unpacked`;
+  ![alt text](img/3.png)
+  5. Browse to the location of this plugin and select the `build` directory;
+  ![alt text](img/4.png)
+  
+  ![alt text](img/5.png)
 
 ## Authors
 
